@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>巨量資料概論 模擬測驗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F6F8; --sheet:#FFFFFF; --ink:#1C2733; --muted:#5B6773;
+  --line:#D9DEE4; --card:#C0245C; --card-soft:#FBE7EE;
+  --ok:#23704F; --ok-soft:#E3F2EA; --bad:#A8322F; --bad-soft:#F8E5E4; --flag:#B7791F;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#12171D; --sheet:#1A2129; --ink:#E6EBF0; --muted:#9AA6B2;
+    --line:#2D3742; --card:#F06292; --card-soft:#3A2030;
+    --ok:#6FCF9F; --ok-soft:#1A3328; --bad:#F08A85; --bad-soft:#3A2223; --flag:#E8B24A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#12171D; --sheet:#1A2129; --ink:#E6EBF0; --muted:#9AA6B2;
+  --line:#2D3742; --card:#F06292; --card-soft:#3A2030;
+  --ok:#6FCF9F; --ok-soft:#1A3328; --bad:#F08A85; --bad-soft:#3A2223; --flag:#E8B24A;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.7}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+h1,h2{font-family:"Noto Serif TC","PMingLiU",serif;line-height:1.3}
+h1{font-size:1.6rem;margin:0 0 4px} h2{font-size:1.25rem;margin:28px 0 12px}
+.sub{margin:0;color:var(--muted);font-size:.92rem}
+.back{appearance:none;border:0;background:none;color:var(--card);font:500 .95rem inherit;font-family:inherit;padding:0;cursor:pointer;margin-bottom:10px}
+.panel{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:18px}
+.exams{display:grid;gap:10px}
+.exam{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--sheet);border:1px solid var(--line);border-left:4px solid var(--card);border-radius:4px;padding:14px 16px}
+.exam h3{margin:0;font-size:1.05rem}
+.exam p{margin:2px 0 0;font-size:.85rem;color:var(--muted)}
+.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.action{text-align:left;background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:14px 16px;font:inherit;color:var(--ink);cursor:pointer}
+.action:hover{border-color:var(--card)}
+.action strong{display:block;font-size:1rem}
+.action span{font-size:.85rem;color:var(--muted)}
+.sheet{margin:16px 0;background:var(--sheet);border:1.5px solid var(--card);border-radius:4px;padding:14px 14px 12px}
+.sheet-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;color:var(--card);font-size:.88rem;font-weight:700;border-bottom:1px solid var(--card);padding-bottom:8px;margin-bottom:12px}
+.score{color:var(--ink);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:8px}
+.cell{position:relative;appearance:none;border:1.5px solid var(--card);background:transparent;color:var(--card);height:40px;border-radius:999px;font:600 .85rem/1 inherit;font-family:inherit;cursor:pointer}
+.cell.ok{background:var(--ok);border-color:var(--ok);color:var(--sheet)}
+.cell.bad{background:var(--bad);border-color:var(--bad);color:var(--sheet)}
+.cell.cur{outline:3px solid var(--ink);outline-offset:2px}
+.cell.fl::after{content:"";position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:var(--flag);border:2px solid var(--sheet)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:.8rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.qno{color:var(--card);font-weight:700;font-size:.9rem}
+.chip{display:inline-block;font-size:.78rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin-left:8px;font-weight:500}
+.flagbtn{appearance:none;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 12px;font:500 .85rem inherit;font-family:inherit;cursor:pointer}
+.flagbtn.on{border-color:var(--flag);background:var(--flag);color:var(--sheet)}
+.qtext{font-family:"Noto Serif TC","PMingLiU",serif;font-size:1.12rem;line-height:1.75;margin:0 0 16px;font-weight:600}
+.src{font-size:.82rem;color:var(--muted);margin:-8px 0 12px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:4px;padding:12px 14px;font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--card)}
+.opt:disabled{cursor:default}
+.bub{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--card);color:var(--card);display:grid;place-items:center;font-size:.8rem;font-weight:700}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.right .bub{background:var(--ok);border-color:var(--ok);color:var(--sheet)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .bub{background:var(--bad);border-color:var(--bad);color:var(--sheet)}
+.hint{margin-top:14px} .hint summary{cursor:pointer;color:var(--muted);font-size:.9rem} .hint p{margin:6px 0 0;color:var(--muted);font-size:.92rem}
+.exp{margin-top:18px;border-left:3px solid var(--ok);padding:4px 0 4px 14px}
+.exp.isbad{border-left-color:var(--bad)}
+.verdict{font-weight:700;margin:0 0 6px}
+.exp.isbad .verdict{color:var(--bad)} .exp:not(.isbad) .verdict{color:var(--ok)}
+.exp p{margin:0 0 8px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:4px;padding:9px 16px;font:500 .95rem inherit;font-family:inherit;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--sheet)}
+.btn:disabled{opacity:.35;cursor:default}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;padding-top:16px;border-top:1px solid var(--line)}
+.tools .btn{font-size:.85rem;padding:7px 12px;border-color:var(--line);color:var(--muted)}
+.note{font-size:.85rem;color:var(--muted)}
+.result{border:1.5px solid var(--ok);background:var(--ok-soft);border-radius:4px;padding:14px 16px;margin-bottom:16px}
+.result p{margin:0 0 10px}
+fieldset{border:0;padding:0;margin:0 0 18px}
+legend{font-weight:700;margin-bottom:8px}
+.radio{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.radio:last-child{border-bottom:0}
+.radio input{accent-color:var(--card);width:18px;height:18px}
+.count{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.count input{width:90px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--sheet);color:var(--ink);font:inherit}
+.quick{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 12px;font:500 .85rem inherit;font-family:inherit;cursor:pointer}
+.tagrow{display:grid;grid-template-columns:minmax(120px,1.2fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.tagrow:last-child{border-bottom:0}
+.bar{height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok)}
+.bar i.lo{background:var(--bad)} .bar i.mid{background:var(--flag)}
+.pct{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem;white-space:nowrap}
+.weak{border-left:3px solid var(--bad);padding:2px 0 2px 14px;margin:0 0 22px}
+.weak h3{margin:0 0 4px;font-size:1.05rem}
+.weak .stat{font-size:.85rem;color:var(--bad);margin:0 0 8px}
+.weak p{margin:0 0 8px}
+.wlist{margin:6px 0 0;padding:0;list-style:none}
+.wlist li{margin:4px 0}
+.link{appearance:none;border:0;background:none;padding:0;color:var(--card);font:inherit;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+@media (prefers-reduced-motion:no-preference){.exp{animation:in .25s ease-out}@keyframes in{from{opacity:0;transform:translateY(4px)}}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const TAGS={
+basic:{n:"巨量資料基本概念",t:"複習 5V（Volume、Velocity、Variety、Veracity、Value）各自的定義與實例，熟記 KB→MB→GB→TB→PB→EB→ZB→YB 的順序與每級 1,024 倍的換算，並理解巨量資料重視「相關性」而非「因果」的思維。"},
+hadoop:{n:"Hadoop 生態系",t:"畫一次 HDFS 的 NameNode／DataNode 架構，記住區塊大小（128 MB）與副本數（預設 3）如何影響實際儲存空間，再整理 YARN、Hive、HBase、Sqoop、Flume、ZooKeeper、Oozie 的用途對照表。"},
+mr:{n:"MapReduce",t:"用 word count 範例手算一次 Map → Shuffle/Sort → Reduce 每個階段的輸入與輸出，並分清楚 Combiner、Partitioner、InputFormat 的分工。"},
+spark:{n:"Apache Spark",t:"整理 RDD 的不可變、分區、lineage、延遲執行等特性，區分 transformation 與 action、窄依賴與寬依賴（寬依賴會造成 shuffle），並記住 Spark SQL、Streaming、MLlib、GraphX 的功能。"},
+nosql:{n:"NoSQL 與分散式理論",t:"做一張四大 NoSQL（鍵值、文件、欄族、圖形）與代表產品的對照表，理解 CAP 定理的取捨、ACID 與 BASE 的差異，以及分片、複寫、水平擴充的意義。"},
+dw:{n:"資料倉儲與 OLAP",t:"複習事實表與維度表、星狀與雪花綱要的差異，熟練 roll-up、drill-down、slice、dice、pivot 五種 OLAP 操作，並比較 OLTP 與 OLAP、資料倉儲與資料湖。"},
+prep:{n:"資料前處理與整合",t:"釐清 ETL 與 ELT 的步驟順序，找出結構化、半結構化、非結構化資料的例子，並練習 Min-Max 標準化、Z-score 與 IQR 離群值判斷的計算。"},
+mining:{n:"資料探勘",t:"練習手算支持度、信賴度與提升度，理解 Apriori 的剪枝原理（頻繁項目集的所有子集也必須頻繁），並比較 K-means、階層式、DBSCAN 等分群方法的適用情境。"},
+ml:{n:"機器學習與模型評估",t:"分清監督式與非監督式任務，熟記 Precision、Recall、F1、Accuracy 的公式與不平衡資料下的指標選擇，並複習過度擬合的對策、交叉驗證、Gini／Entropy 計算、PCA 與常見深度學習模型。"},
+cloud:{n:"雲端運算與串流處理",t:"整理 IaaS／PaaS／SaaS 與公有、私有、混合雲的代表例子，並理解 Kafka、Lambda 架構與串流視窗（滾動、滑動、會話）的差異。"},
+privacy:{n:"隱私與資料治理",t:"比較 k-匿名、差分隱私、加密與去識別化的差別，並熟悉 GDPR 與個資法中當事人的主要權利。"}
+};
+const EXAMS=[
+{id:"e1",title:"模擬測驗 1",qs:[
+{g:"basic",q:"巨量資料的 V 特性中，「真實性 (Veracity)」主要強調下列何者？",o:["資料儲存量已超過傳統資料庫可處理的規模","資料產生與需要處理的速度非常快","資料的品質、可信度與不確定性","資料包含文字、影像、聲音等多種格式"],a:2,h:"Veracity 的字根與 verify（驗證）相同。",e:"Veracity 指資料的可信度與品質，例如雜訊、缺漏、偏差或假資料都會影響分析結果。",w:"(A) 描述的是 Volume（巨量性）；(B) 描述的是 Velocity（速度性）；(D) 描述的是 Variety（多樣性）。"},
+{g:"basic",q:"以 2 進位制換算儲存單位，1 ZB (Zettabyte) 等於下列何者？",o:["1,024 PB","1,024 EB","1,024 YB","1,024² TB"],a:1,h:"順序：KB < MB < GB < TB < PB < EB < ZB < YB。",e:"依序為 GB→TB→PB→EB→ZB→YB，每一級相差 1,024 倍，所以 1 ZB = 1,024 EB。",w:"(A) 1,024 PB = 1 EB，少了一級；(C) YB 比 ZB 大，應為 1 YB = 1,024 ZB；(D) 1,024² TB = 1 EB，同樣少了一級。"},
+{g:"hadoop",q:"關於 Hadoop 分散式檔案系統 (HDFS) 的架構，下列敘述何者正確？",o:["DataNode 負責記錄整個檔案系統的命名空間與區塊位置等中繼資料","NameNode 管理中繼資料 (metadata)，實際的資料區塊則存放在 DataNode","Secondary NameNode 是 NameNode 的即時熱備援，NameNode 故障時會立即接手","HDFS 特別適合儲存大量的小型檔案，以提升存取效率"],a:1,h:"想想「主管」與「倉庫」的角色分工。",e:"HDFS 採主從式架構，NameNode 管理命名空間與區塊對應表，DataNode 實際儲存區塊並定期回報心跳。",w:"(A) 管理中繼資料的是 NameNode；(C) Secondary NameNode 只負責定期合併 fsimage 與 edit log（checkpoint），熱備援要靠 HA 架構的 Standby NameNode；(D) 每個檔案的中繼資料都佔用 NameNode 記憶體，大量小檔案反而拖垮效能。"},
+{g:"hadoop",q:"Hadoop 2.x 起，負責叢集運算資源管理與工作排程的元件為下列何者？",o:["ZooKeeper","Sqoop","YARN","Oozie"],a:2,h:"全名是 Yet Another Resource Negotiator。",e:"YARN 將 Hadoop 1.x 中 JobTracker 的資源管理與工作監控拆開，由 ResourceManager 與 NodeManager 負責資源分配，讓 Spark 等框架也能在叢集上執行。",w:"(A) ZooKeeper 提供分散式協調服務；(B) Sqoop 用於 RDBMS 與 Hadoop 之間的資料傳輸；(D) Oozie 是工作流程排程器，不負責分配叢集資源。"},
+{g:"hadoop",q:"某公司欲將 Oracle 資料庫中的大量交易資料批次匯入 HDFS，最適合使用 Hadoop 生態系中的哪一項工具？",o:["Flume","Sqoop","Pig","Mahout"],a:1,h:"名稱由 SQL + Hadoop 組成。",e:"Sqoop (SQL-to-Hadoop) 專門在 RDBMS 與 HDFS／Hive／HBase 之間做雙向的批次資料傳輸。",w:"(A) Flume 主要收集串流型的日誌資料；(C) Pig 是以 Pig Latin 腳本做資料轉換的高階語言；(D) Mahout 是機器學習函式庫。"},
+{g:"spark",q:"關於 Apache Spark 的 RDD，下列敘述何者有誤？",o:["RDD 被切割成多個分區 (partition)，分散在叢集的節點上平行處理","RDD 透過血統 (lineage) 記錄轉換過程，節點故障時可重新計算遺失的分區","轉換 (transformation) 採延遲執行，直到遇到動作 (action) 才實際運算","RDD 建立後可以直接修改其中的元素值，以節省記憶體"],a:3,h:"RDD 有一個重要特性叫「不可變」。",e:"RDD 是不可變 (immutable) 的，任何轉換都會產生新的 RDD。不可變性正是 lineage 容錯機制能成立的前提。",w:"(A)(B)(C) 都是正確敘述：分區是平行運算的基本單位；Resilient 指的就是靠 lineage 重算容錯；Lazy evaluation 讓 Spark 先建立 DAG 再最佳化執行。"},
+{g:"spark",q:"下列 Spark 操作中，何者屬於「動作 (action)」，會立即觸發實際運算？",o:["map()","filter()","flatMap()","count()"],a:3,h:"哪一個會回傳結果給 Driver，而不是產生新的 RDD？",e:"count() 回傳元素數量給 Driver，屬於 action。其他 action 還有 collect()、reduce()、saveAsTextFile() 等。",w:"(A) map()、(B) filter()、(C) flatMap() 都會產生新的 RDD，屬於 transformation，不會立即運算。"},
+{g:"nosql",q:"下列 NoSQL 資料庫與其資料模型的配對，何者正確？",o:["Cassandra － 文件型 (Document)","Redis － 圖形型 (Graph)","MongoDB － 欄族型 (Column-family)","Neo4j － 圖形型 (Graph)"],a:3,h:"社群網路「朋友的朋友」查詢最適合哪一種？",e:"Neo4j 以節點與關係儲存資料，是代表性的圖形資料庫。",w:"(A) Cassandra 是欄族型；(B) Redis 是鍵值型 (Key-Value)；(C) MongoDB 是文件型 (BSON)。"},
+{g:"nosql",q:"關於分散式系統的 CAP 定理，下列敘述何者正確？",o:["設計良好的分散式系統可以同時完全滿足一致性、可用性與分割容錯性","CAP 中的 A 代表原子性 (Atomicity)","發生網路分割時，系統必須在一致性與可用性之間做取捨","傳統關聯式資料庫的交易設計以 BASE 原則為核心"],a:2,h:"分散式系統中網路分割幾乎無法避免。",e:"CAP 三者最多同時滿足兩者；分散式系統必須容忍分割，因此實務上在 C 與 A 之間取捨（CP 或 AP）。",w:"(A) 違反 CAP 定理；(B) CAP 的 A 是 Availability，Atomicity 是 ACID 的 A；(D) 傳統 RDBMS 以 ACID 為核心，BASE 是許多 NoSQL 的原則。"},
+{g:"nosql",q:"許多 NoSQL 系統遵循 BASE 原則，其中「E」代表下列何者？",o:["Eventually consistent（最終一致性）","Exactly once（恰好一次）","Encrypted storage（加密儲存）","Elastic scaling（彈性擴充）"],a:0,h:"BASE = Basically Available, Soft state, ……",e:"BASE 為 Basically Available、Soft state、Eventually consistent，允許短暫不一致，但最終收斂到一致。",w:"(B) Exactly once 是串流處理的訊息傳遞語意；(C) 加密是資安機制；(D) 彈性擴充是雲端特性，不是 BASE 的組成。"},
+{g:"mr",q:"以 MapReduce 執行 word count，輸入兩行「a b a」與「b c a」。經過 Map 與 Shuffle/Sort 後，送入 Reducer 的鍵 a 之資料形式為何？",o:["(a, 3)","(a, 1)","(a, [1, 1, 1])","([a, a, a], 1)"],a:2,h:"Shuffle 會把相同的 key 聚集在一起，但還沒加總。",e:"Map 對每個字輸出 (字, 1)，a 共 3 次；Shuffle/Sort 彙整成 (a, [1, 1, 1]) 送入 Reducer，再加總輸出 (a, 3)。",w:"(A) 是 Reducer 的輸出；(B) 是 Map 的單筆輸出；(D) key 與 value 格式顛倒。"},
+{g:"mr",q:"在 MapReduce 中加入 Combiner 的主要目的為何？",o:["在 Map 端先做局部彙總，以減少傳送到 Reducer 的網路資料量","完全取代 Reducer，使工作不再需要 Reduce 階段","負責將輸入檔案切割成 input split","決定每個 key 要送往哪一個 Reducer"],a:0,h:"它常被稱為「迷你 Reducer」。",e:"Combiner 在 Map 節點本地先合併相同 key 的中間結果，可大幅降低 Shuffle 的網路傳輸量。",w:"(B) Combiner 是可選的最佳化，不能取代 Reducer；(C) 切割輸入是 InputFormat 的工作；(D) 決定 key 去向的是 Partitioner。"},
+{g:"dw",q:"分析人員在資料立方體中，由檢視「各年度」銷售總額改為檢視「各月份」銷售額，這屬於何種 OLAP 操作？",o:["上捲 (Roll-up)","下鑽 (Drill-down)","切片 (Slice)","旋轉 (Pivot)"],a:1,h:"從粗粒度到細粒度。",e:"從「年」到「月」是沿時間維度往更細的層級展開，屬於下鑽。",w:"(A) 上捲是反方向（月→年）；(C) 切片是固定某一維度的單一值；(D) 旋轉是改變維度排列方向，不改變粒度。"},
+{g:"dw",q:"關於資料倉儲的星狀綱要 (Star Schema)，下列敘述何者有誤？",o:["事實表存放可量化的衡量值，例如銷售金額與數量","事實表透過外來鍵連結到各個維度表","星狀綱要的維度表通常高度正規化，以減少資料重複","雪花綱要可視為將星狀綱要的維度表進一步正規化的結果"],a:2,h:"星狀綱要追求的是查詢效率。",e:"星狀綱要的維度表通常是非正規化的，刻意保留冗餘以減少 JOIN；將維度表正規化拆分的是雪花綱要。",w:"(A)(B)(D) 皆為正確敘述。"},
+{g:"dw",q:"關於資料湖 (Data Lake) 與資料倉儲 (Data Warehouse) 的比較，下列敘述何者正確？",o:["資料湖在資料寫入前就必須定義好綱要 (schema-on-write)","資料湖以原始格式儲存結構化、半結構化與非結構化資料，讀取時才套用綱要","資料倉儲主要存放未經處理的原始日誌與影音檔","資料湖只能儲存結構化資料"],a:1,h:"Schema-on-read 與 schema-on-write 各屬於哪一方？",e:"資料湖保留各種格式的原始資料，採 schema-on-read，彈性高。",w:"(A) schema-on-write 是資料倉儲的特性；(C) 資料倉儲存放經 ETL 清理後的結構化資料；(D) 資料湖可容納多種類型資料。"},
+{g:"prep",q:"相較於傳統 ETL，ELT 流程的主要特色為何？",o:["資料先在獨立的轉換伺服器完成轉換，再載入目標系統","資料先載入目標系統，再利用目標平台的運算能力進行轉換","ELT 完全省略資料轉換步驟","ELT 只適用於小型的單機資料庫"],a:1,h:"注意字母順序：L 在 T 之前。",e:"ELT = Extract → Load → Transform，先載入雲端資料倉儲或資料湖，再用目標平台的平行運算力轉換。",w:"(A) 描述的是傳統 ETL；(C) ELT 仍有轉換，只是順序在後；(D) ELT 因雲端大規模平台興起，適用於大量資料。"},
+{g:"prep",q:"下列何者最屬於半結構化資料 (semi-structured data)？",o:["欄位固定的員工薪資關聯式資料表","網路 API 回傳的 JSON 格式訂單資料","路口監視器錄下的影片","客服中心的通話錄音檔"],a:1,h:"有標籤或鍵值描述結構，但欄位不一定固定。",e:"JSON 以鍵值對與巢狀結構自我描述，屬於半結構化資料（XML、HTML 也是）。",w:"(A) 是結構化資料；(C) 影片與 (D) 錄音檔屬於非結構化資料。"},
+{g:"mining",q:"某超市有 10 筆交易，含「麵包」6 筆、含「牛奶」5 筆、同時含兩者 3 筆。規則「麵包 → 牛奶」的提升度 (lift) 為何？",o:["0.3","0.5","0.6","1.0"],a:3,h:"Lift = Confidence(A→B) ÷ Support(B)。",e:"信賴度 = 3/6 = 0.5；牛奶支持度 = 5/10 = 0.5；Lift = 0.5 ÷ 0.5 = 1.0，表示兩者大致獨立。",w:"(A) 0.3 是規則支持度；(B) 0.5 是信賴度或牛奶支持度；(C) 0.6 是麵包支持度。"},
+{g:"ml",q:"某分類模型的混淆矩陣為：TP = 40、FP = 10、FN = 20、TN = 130。召回率 (Recall) 約為何？",o:["0.800","0.667","0.850","0.727"],a:1,h:"Recall = TP ÷ (TP + FN)。",e:"Recall = 40 ÷ (40 + 20) = 0.667。",w:"(A) 是 Precision = 40/50；(C) 是 Accuracy = 170/200；(D) 是 F1-score。"},
+{g:"ml",q:"模型出現過度擬合 (overfitting) 時，下列哪一種做法「不適合」用來改善？",o:["加入 L1 或 L2 正則化","在神經網路中使用 Dropout","增加訓練資料量並搭配提前停止 (early stopping)","大幅增加模型參數與隱藏層數量"],a:3,h:"過度擬合代表模型把雜訊也記住了。",e:"增加參數與層數會提高模型複雜度，反而加重過度擬合；這比較適合用來改善配適不足。",w:"(A)(B)(C) 皆為有效的改善方法：正則化懲罰大權重、Dropout 降低共適應、更多資料與提前停止提升泛化能力。"},
+{g:"mining",q:"關於 K-means 分群演算法，下列敘述何者正確？",o:["需事先指定群數 k，且結果容易受到離群值影響","適合找出任意形狀（如環狀、月牙狀）的群集","屬於監督式學習，需要事先標記類別","不論初始中心點如何選取，最終結果都完全相同"],a:0,h:"群中心是用「平均值」計算的。",e:"K-means 必須先給定 k；群中心是平均值，極端值會把中心拉偏。",w:"(B) 任意形狀群集應使用 DBSCAN；(C) 分群屬於非監督式學習；(D) 初始中心不同可能收斂到不同的局部最佳解。"},
+{g:"ml",q:"關於主成分分析 (PCA)，下列敘述何者有誤？",o:["第一主成分是資料變異量最大的方向","各主成分之間彼此正交 (互不相關)","PCA 屬於監督式學習，必須使用類別標籤進行降維","變數尺度差異大時，通常先標準化再進行 PCA"],a:2,h:"PCA 只看資料本身的變異結構。",e:"PCA 是非監督式降維，不需要類別標籤；需要標籤的是 LDA。",w:"(A)(B)(D) 皆為正確敘述。"},
+{g:"cloud",q:"下列雲端服務與其服務模式的配對，何者正確？",o:["Gmail － IaaS","AWS EC2 － SaaS","Google App Engine － PaaS","Dropbox － PaaS"],a:2,h:"PaaS 提供讓開發者部署程式的平台。",e:"Google App Engine 讓開發者上傳程式即可執行，不需管理作業系統，屬於 PaaS。",w:"(A) Gmail 是 SaaS；(B) AWS EC2 是 IaaS；(D) Dropbox 是 SaaS。"},
+{g:"cloud",q:"某電商需即時收集每秒數萬筆點擊事件，並以發佈／訂閱方式供多個下游系統使用，最適合採用下列何者？",o:["Apache Kafka","Apache Hive","Apache Sqoop","Apache HBase"],a:0,h:"關鍵字是「即時串流」與「發佈／訂閱」。",e:"Kafka 是分散式訊息佇列與串流平台，以 topic 發佈／訂閱，具高吞吐量與持久化能力。",w:"(B) Hive 是批次的類 SQL 資料倉儲工具；(C) Sqoop 用於批次搬移；(D) HBase 是欄族型資料庫，不是訊息平台。"},
+{g:"privacy",q:"在巨量資料隱私保護技術中，「k-匿名 (k-anonymity)」的意義為何？",o:["以金鑰長度為 k 位元的演算法將資料全部加密","每筆紀錄在準識別欄位上，至少與其他 k－1 筆紀錄無法區分","刪除資料集中所有含個人資料的欄位，只保留 k 個欄位","在查詢結果中加入隨機雜訊，使個別紀錄的影響受到控制"],a:1,h:"重點在於「躲在一群人之中」。",e:"k-匿名透過概括化或抑制處理準識別欄位，使每筆紀錄至少與 k－1 筆相同，降低再識別風險。",w:"(A) 加密是保密技術；(C) 單純刪欄位不是 k-匿名的定義；(D) 加入雜訊是差分隱私的做法。"}
+]},
+{id:"e2",title:"模擬測驗 2",qs:[
+{g:"basic",q:"某停車場的監視器全天候錄影，一年累積大量影片，但真正對調查有幫助的畫面只有幾分鐘。這最能說明巨量資料的哪一項特性？",o:["Velocity：資料產生速度快","Value：價值密度低，需經分析才能萃取價值","Variety：資料型態多樣","Volume：資料量需以 PB 為單位"],a:1,h:"重點在「有用的部分佔比很少」。",e:"Value 強調巨量資料的價值密度低：資料總量大，但有價值的部分比例很小，必須經過篩選與分析才能萃取。",w:"(A) 題目沒有強調產生或處理速度；(C) 資料型態只有影片一種；(D) 量大是背景條件，但題目重點是有用資料佔比低，而且並未說明達到 PB。"},
+{g:"hadoop",q:"一個 300 GB 的檔案存入 HDFS，副本數 (replication factor) 設為 3，區塊大小 128 MB。此檔案實際佔用叢集的總儲存空間約為多少？",o:["300 GB","600 GB","900 GB","1.2 TB"],a:2,h:"每個區塊都會被複製成 3 份。",e:"每個區塊存 3 份，總空間約為 300 GB × 3 = 900 GB。區塊大小只影響切成幾塊（300 × 1,024 ÷ 128 = 2,400 塊），不會改變總容量。",w:"(A) 只算了一份資料，忽略副本；(B) 只算了 2 份；(D) 多算了一份，或誤把區塊大小加進計算。"},
+{g:"hadoop",q:"Hadoop 2.x 及 3.x 中，HDFS 預設的區塊 (block) 大小為下列何者？",o:["4 KB","64 MB","128 MB","1 GB"],a:2,h:"Hadoop 1.x 是 64 MB，之後加倍。",e:"Hadoop 2.x 起預設區塊為 128 MB。大區塊可以減少 NameNode 要管理的中繼資料數量，並降低尋址時間佔總傳輸時間的比例。",w:"(A) 4 KB 是一般本機檔案系統常見的區塊大小；(B) 64 MB 是 Hadoop 1.x 的預設值；(D) 1 GB 不是預設值，但可以自行調整。"},
+{g:"hadoop",q:"關於 Apache Hive，下列敘述何者有誤？",o:["使用者可用類似 SQL 的 HiveQL 查詢 HDFS 上的資料","HiveQL 會被轉換成 MapReduce、Tez 或 Spark 等作業執行","Hive 適合處理大量歷史資料的批次分析","Hive 最適合用於高頻率、低延遲的單筆交易新增與修改 (OLTP)"],a:3,h:"Hive 的定位是資料倉儲工具。",e:"Hive 是建構在 Hadoop 上的資料倉儲工具，查詢延遲較高，適合批次分析 (OLAP)，不適合需要毫秒級回應的單筆交易處理。",w:"(A)(B)(C) 皆為正確敘述：HiveQL 類似 SQL；底層會轉成分散式運算作業；擅長大量資料的批次查詢。"},
+{g:"hadoop",q:"關於 HBase，下列敘述何者正確？",o:["HBase 是關聯式資料庫，完整支援標準 SQL 的多表 JOIN","HBase 參考 Google BigTable 的設計，建構於 HDFS 之上，支援大量資料的隨機即時讀寫","HBase 是圖形資料庫，以節點與邊表示資料","HBase 的資料只存在記憶體中，關機後就會遺失"],a:1,h:"它是 Hadoop 生態系中的欄族型資料庫。",e:"HBase 是欄族型 NoSQL 資料庫，以 BigTable 為藍本、以 HDFS 為底層儲存，彌補 HDFS 只適合循序批次讀取、不擅長隨機存取的弱點。",w:"(A) HBase 不是關聯式資料庫，本身不支援標準 SQL JOIN；(C) 圖形資料庫的代表是 Neo4j；(D) HBase 的資料會持久化寫入 HDFS，並以 WAL 日誌防止遺失。"},
+{g:"spark",q:"下列 Spark 元件與功能的配對，何者有誤？",o:["Spark SQL － 以 SQL 或 DataFrame 處理結構化資料","Spark Streaming － 處理即時串流資料","MLlib － 提供機器學習演算法函式庫","GraphX － 提供深度學習的影像辨識模型"],a:3,h:"GraphX 的 Graph 指的是「圖」的結構。",e:"GraphX 是圖形運算函式庫，用於 PageRank、社群偵測等以節點和邊表示的圖形分析，並不是影像辨識模型。",w:"(A)(B)(C) 皆為正確配對。"},
+{g:"spark",q:"下列 Spark 操作中，何者屬於寬依賴 (wide dependency)，通常會引發 shuffle？",o:["map()","filter()","groupByKey()","union()"],a:2,h:"需要把相同 key 的資料從各分區集中起來的操作。",e:"groupByKey() 必須把分散在各分區、key 相同的資料重新分配到同一分區，屬於寬依賴，會產生跨節點的 shuffle。reduceByKey()、join() 也常屬於這一類。",w:"(A) map() 與 (B) filter() 都是一對一處理同一分區內的元素，屬於窄依賴；(D) union() 只是把兩個 RDD 的分區合併在一起，不需要重新分配資料，也屬於窄依賴。"},
+{g:"spark",q:"執行需要多次迭代的機器學習演算法時，Spark 通常比 Hadoop MapReduce 快很多，主要原因為何？",o:["Spark 可將中間結果保留在記憶體中重複使用，減少磁碟讀寫","Spark 不需要叢集，只在單一機器上執行","Spark 取代了 HDFS，自己擁有更快的檔案系統","Spark 只能處理小型資料，所以速度較快"],a:0,h:"MapReduce 每一輪都要寫回磁碟。",e:"MapReduce 每個作業結束都會把結果寫回 HDFS，下一輪迭代再重新讀取；Spark 則可用 cache()／persist() 把資料保留在記憶體，大幅減少 I/O。",w:"(B) Spark 是為分散式叢集設計的；(C) Spark 本身沒有儲存系統，常搭配 HDFS、S3 等使用；(D) Spark 正是用來處理大量資料的框架。"},
+{g:"nosql",q:"關於 MongoDB，下列敘述何者有誤？",o:["以類似 JSON 的 BSON 格式儲存文件","支援以分片 (sharding) 進行水平擴充","同一集合 (collection) 中的所有文件，欄位結構都必須完全相同","屬於文件型 NoSQL 資料庫"],a:2,h:"文件型資料庫最大的特色是綱要彈性。",e:"MongoDB 採彈性綱要 (schema-less)，同一集合中的文件可以有不同的欄位，因此適合快速變動的資料結構。",w:"(A)(B)(D) 皆為正確敘述。"},
+{g:"nosql",q:"下列何者屬於「水平擴充 (scale-out)」的做法？",o:["將單一伺服器的 CPU 升級為更多核心","將單一伺服器的記憶體從 64 GB 擴充到 512 GB","增加多台一般等級的伺服器組成叢集，共同分擔資料與運算","把傳統硬碟更換為 SSD"],a:2,h:"水平是「加機器」，垂直是「把機器變強」。",e:"水平擴充是增加節點數量分擔負載，理論上可近乎線性擴展，也是 Hadoop 與 NoSQL 的設計核心。",w:"(A)(B)(D) 都是提升單一機器的硬體規格，屬於垂直擴充 (scale-up)，會受到單機硬體上限與成本限制。"},
+{g:"nosql",q:"某社群平台依使用者 ID 的範圍，將資料分別存放在不同的資料庫節點上，以分散讀寫負載。此技術稱為下列何者？",o:["複寫 (Replication)","分片 (Sharding)","正規化 (Normalization)","快取 (Caching)"],a:1,h:"每個節點只保存「一部分」資料。",e:"分片是依分片鍵 (shard key) 將資料水平切割，分散到不同節點，每個節點只負責一部分資料。",w:"(A) 複寫是把相同資料複製到多個節點，提高可用性與容錯，不是分散不同資料；(C) 正規化是關聯式資料庫減少重複的設計方法；(D) 快取是把熱門資料暫存在高速儲存中，加快讀取。"},
+{g:"cloud",q:"Lambda 架構常用於同時兼顧批次與即時分析。下列何者「不是」Lambda 架構的組成層？",o:["批次層 (Batch layer)","速度層 (Speed layer)","服務層 (Serving layer)","交易層 (Transaction layer)"],a:3,h:"Lambda 架構共有三層。",e:"Lambda 架構由批次層（處理完整歷史資料）、速度層（處理即時資料以彌補延遲）與服務層（合併兩者結果供查詢）組成。",w:"(A)(B)(C) 都是 Lambda 架構的組成層；交易層並不在 Lambda 架構中。"},
+{g:"cloud",q:"串流處理系統每 5 分鐘統計一次交易筆數，且每個統計區間互不重疊（0–5、5–10、10–15 分鐘……）。此種視窗稱為下列何者？",o:["滑動視窗 (Sliding window)","會話視窗 (Session window)","滾動視窗 (Tumbling window)","全域視窗 (Global window)"],a:2,h:"視窗像滾動的輪子，一格接一格不重疊。",e:"滾動視窗的大小固定且彼此不重疊，每筆資料只屬於一個視窗。",w:"(A) 滑動視窗的區間會重疊，例如每 1 分鐘計算一次過去 5 分鐘；(B) 會話視窗依使用者活動的間隔切分，大小不固定；(D) 全域視窗把所有資料放在同一個視窗，需要自訂觸發條件。"},
+{g:"prep",q:"某變數的第一四分位數 Q1 = 20、第三四分位數 Q3 = 40。若以 1.5 × IQR 規則判斷離群值，下列哪一個數值會被視為離群值？",o:["25","55","68","75"],a:3,h:"上界 = Q3 + 1.5 × IQR。",e:"IQR = 40 − 20 = 20；上界 = 40 + 1.5 × 20 = 70；下界 = 20 − 30 = −10。只有 75 超出上界。",w:"(A) 25 落在 Q1 與 Q3 之間；(B) 55 與 (C) 68 雖然大於 Q3，但都還在上界 70 以內，不算離群值。"},
+{g:"prep",q:"某欄位的最小值為 20、最大值為 120。以 Min-Max 正規化將資料轉換到 [0, 1] 區間，原始值 60 轉換後為何？",o:["0.33","0.40","0.50","0.60"],a:1,h:"(x − min) ÷ (max − min)。",e:"(60 − 20) ÷ (120 − 20) = 40 ÷ 100 = 0.40。",w:"(A) 0.33 可能是誤算成 40 ÷ 120；(C) 0.50 可能是誤用 60 ÷ 120；(D) 0.60 可能是誤用 60 ÷ 100，忘了先減掉最小值。"},
+{g:"dw",q:"下列何者屬於線上分析處理 (OLAP) 系統的特性？",o:["大量短小的交易，需要即時新增、修改與刪除","資料表高度正規化，以避免更新異常","以歷史彙總資料支援複雜的多維度分析查詢","主要使用者是第一線櫃台人員，處理日常作業"],a:2,h:"OLAP 是給決策分析用的。",e:"OLAP 以資料倉儲中整合過的歷史資料為基礎，查詢多為讀取與彙總，支援管理者進行多維度的決策分析。",w:"(A)(B)(D) 都是 OLTP（線上交易處理）的特性：交易頻繁、強調正規化與資料一致性、服務日常作業。"},
+{g:"dw",q:"分析師在銷售資料立方體中，只想看「2025 年」、「北區與中區」、「家電類」的資料，同時對三個維度設定條件取出子立方體。這屬於何種 OLAP 操作？",o:["切片 (Slice)","切塊 (Dice)","上捲 (Roll-up)","下鑽 (Drill-down)"],a:1,h:"條件不只一個維度。",e:"切塊是在兩個以上的維度設定條件，取出一個較小的子立方體。",w:"(A) 切片只固定「一個」維度的單一值；(C) 上捲是往較粗的層級彙總；(D) 下鑽是往較細的層級展開，兩者都沒有篩選子集的意思。"},
+{g:"mining",q:"以 Apriori 演算法探勘時，頻繁 2-項目集只有 {A,B}、{A,C}、{B,C}、{B,D}。下列哪一個 3-項目集在剪枝後仍會保留為候選？",o:["{A, B, C}","{A, B, D}","{B, C, D}","{A, C, D}"],a:0,h:"候選集的每一個 2-子集都必須是頻繁的。",e:"依據反單調性，頻繁項目集的所有子集也必須頻繁。{A,B,C} 的子集 {A,B}、{A,C}、{B,C} 都是頻繁的，所以保留。",w:"(B) 子集 {A,D} 不頻繁；(C) 子集 {C,D} 不頻繁；(D) 子集 {A,D} 與 {C,D} 都不頻繁，三者都會被剪枝。"},
+{g:"ml",q:"決策樹的某個節點共有 8 筆資料，其中 6 筆屬於「是」、2 筆屬於「否」。此節點的 Gini 不純度為何？",o:["0.250","0.375","0.500","0.625"],a:1,h:"Gini = 1 − Σ pᵢ²。",e:"p(是) = 0.75、p(否) = 0.25；Gini = 1 − (0.75² + 0.25²) = 1 − 0.625 = 0.375。",w:"(A) 0.25 只是 p(否) 本身；(C) 0.5 是兩類各半時的最大 Gini 值；(D) 0.625 是 Σ pᵢ²，忘了用 1 去減。"},
+{g:"ml",q:"下列哪一項任務最適合使用非監督式學習？",o:["依據過去標記好的郵件判斷新郵件是否為垃圾郵件","根據坪數、屋齡與地段預測房價","在沒有事先定義類別的情況下，依消費行為將顧客分成若干群","依據歷史資料預測客戶下個月是否會流失"],a:2,h:"關鍵在於資料有沒有「標準答案」。",e:"沒有預先定義類別、讓演算法自行找出相似群組，屬於分群，是典型的非監督式學習。",w:"(A) 與 (D) 有已知標籤，屬於監督式的分類問題；(B) 預測連續數值，屬於監督式的迴歸問題。"},
+{g:"ml",q:"關於 5 折交叉驗證 (5-fold cross validation)，下列敘述何者正確？",o:["資料分成 5 份，每份輪流當一次驗證集，共訓練與評估 5 次模型","只把資料分成訓練集與測試集，並且只評估一次","用訓練資料直接測試模型，就能得到可靠的泛化表現","交叉驗證的目的是增加資料筆數"],a:0,h:"每一份資料都有機會當驗證集。",e:"k 折交叉驗證把資料分成 k 份，每次用 k−1 份訓練、1 份驗證，重複 k 次後取平均，可更穩定地估計泛化能力。",w:"(B) 描述的是單次的 hold-out 驗證；(C) 用訓練資料測試會高估表現，無法看出過度擬合；(D) 交叉驗證並不會增加資料量，只是更有效率地利用既有資料。"},
+{g:"ml",q:"某信用卡詐欺資料中，99% 為正常交易、1% 為詐欺。某模型把所有交易都判為正常，準確率達 99%。下列敘述何者最正確？",o:["準確率 99%，代表模型表現優異，可以直接上線","此模型的召回率為 0，應改用召回率、F1 或 PR 曲線等指標評估","應直接刪除少數的詐欺樣本，讓資料更單純","類別不平衡不會影響模型訓練與評估"],a:1,h:"它抓到了幾筆詐欺？",e:"模型一筆詐欺都沒抓到，TP = 0，所以召回率為 0。類別不平衡時，準確率容易誤導，應改看召回率、F1、PR-AUC，並可搭配過採樣、欠採樣或調整類別權重。",w:"(A) 高準確率只是反映多數類別的比例；(C) 刪掉詐欺樣本會讓模型完全學不到要偵測的目標；(D) 類別不平衡會讓模型偏向多數類別，影響很大。"},
+{g:"ml",q:"下列深度學習模型與其主要用途的配對，何者正確？",o:["CNN － 專門找出購物籃中的關聯規則","LSTM － 處理時間序列等序列資料，改善長期依賴問題","K-means － 用來生成擬真影像的深度生成模型","Transformer － 以卷積層取代注意力機制"],a:1,h:"LSTM 是一種改良的 RNN。",e:"LSTM 以輸入閘、遺忘閘、輸出閘控制資訊流動，緩解 RNN 的梯度消失，適合處理文字、語音、時間序列等序列資料。",w:"(A) CNN 主要用於影像等具有空間結構的資料，關聯規則用的是 Apriori 等演算法；(C) K-means 是分群演算法，生成影像的是 GAN、擴散模型等；(D) Transformer 的核心正是自注意力機制，不是卷積。"},
+{g:"cloud",q:"某醫院將病歷等敏感資料保留在院內自建的雲端環境，掛號系統遇到流量尖峰時再租用公有雲資源支援。此種部署方式稱為下列何者？",o:["公有雲 (Public cloud)","私有雲 (Private cloud)","混合雲 (Hybrid cloud)","社群雲 (Community cloud)"],a:2,h:"同時使用了兩種雲。",e:"混合雲結合私有雲與公有雲，敏感資料留在私有環境，尖峰時再借用公有雲的彈性資源 (cloud bursting)。",w:"(A) 只使用公有雲；(B) 只使用私有雲；(D) 社群雲是由多個需求相似的組織共同建置與使用的雲端。"},
+{g:"privacy",q:"依據歐盟《一般資料保護規則》(GDPR)，當事人在符合條件時要求企業刪除其個人資料的權利，一般稱為下列何者？",o:["資料可攜權","被遺忘權（刪除權）","資料近用權","限制處理權"],a:1,h:"讓網路上的資料「被忘記」。",e:"GDPR 第 17 條規定刪除權，常稱為被遺忘權：資料已無蒐集必要、當事人撤回同意等情形下，可要求控管者刪除其個資。",w:"(A) 資料可攜權是要求以通用格式取得或轉移自己的資料；(C) 資料近用權是查詢與取得自己被處理的資料；(D) 限制處理權是要求暫停或限制處理，但資料不一定刪除。"}
+]}
+];
+const L="ABCD",KEY="bigdata-quiz-v2";
+const QM={};EXAMS.forEach(ex=>ex.qs.forEach((q,i)=>{QM[ex.id+"-"+i]={ex,i,q}}));
+let st={view:"home",exam:"e1",cur:{},ans:{},flags:{},pr:null};
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.ans){st=Object.assign(st,s);return}}catch(e){}
+  try{const o=JSON.parse(localStorage.getItem("bigdata-quiz-v1")||"null");
+    if(o&&o.ans){Object.keys(o.ans).forEach(k=>{st.ans["e1-"+k]=o.ans[k]});st.cur.e1=o.cur||0}}catch(e){}
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const isWrong=id=>st.ans[id]!==undefined&&st.ans[id]!==QM[id].q.a;
+const wrongIds=()=>Object.keys(QM).filter(isWrong);
+const flagIds=()=>Object.keys(QM).filter(id=>st.flags[id]);
+const app=document.getElementById("app");
+
+function examStats(ex){let d=0,o=0;ex.qs.forEach((q,i)=>{const a=st.ans[ex.id+"-"+i];if(a!==undefined){d++;if(a===q.a)o++}});return{d,o}}
+
+function card(id,num,ansMap,showSrc){
+  const {ex,i,q}=QM[id],a=ansMap[id],done=a!==undefined,fl=!!st.flags[id];
+  let h=`<div class="panel"><div class="qtop"><span class="qno">第 ${num} 題<span class="chip">${TAGS[q.g].n}</span></span>
+  <button class="flagbtn ${fl?"on":""}" data-act="flag" data-id="${id}" aria-pressed="${fl}">${fl?"已標註":"標註此題"}</button></div>
+  <p class="qtext">${esc(q.q)}</p>`;
+  if(showSrc)h+=`<p class="src">出自${ex.title}第 ${i+1} 題</p>`;
+  h+=`<div class="opts">`;
+  q.o.forEach((t,k)=>{let c="opt";if(done){if(k===q.a)c+=" right";else if(k===a)c+=" wrong"}
+    h+=`<button class="${c}" data-act="pick" data-id="${id}" data-k="${k}" ${done?"disabled":""}><span class="bub">${L[k]}</span><span>${esc(t)}</span></button>`});
+  h+=`</div>`;
+  if(!done)h+=`<details class="hint"><summary>看提示</summary><p>${esc(q.h)}</p></details>`;
+  else{const g=a===q.a;h+=`<div class="exp ${g?"":"isbad"}"><p class="verdict">${g?"答對了":"答錯了，你選 ("+L[a]+")"}，正解為 (${L[q.a]})</p>
+  <p><strong>詳解：</strong>${esc(q.e)}</p><p><strong>其他選項錯誤原因：</strong>${esc(q.w)}</p></div>`}
+  return h+`</div>`;
+}
+function gridCell(id,label,ansMap,cur,act,idx){
+  const a=ansMap[id],q=QM[id].q;let c="cell";
+  if(a!==undefined)c+=a===q.a?" ok":" bad";if(cur)c+=" cur";if(st.flags[id])c+=" fl";
+  return `<button class="${c}" data-act="${act}" data-i="${idx}" aria-label="第 ${label} 題">${label}</button>`;
+}
+const legend=`<div class="legend"><span><i style="background:var(--ok)"></i>答對</span><span><i style="background:var(--bad)"></i>答錯</span><span><i style="border:1.5px solid var(--card)"></i>未作答</span><span><i style="background:var(--flag)"></i>已標註</span></div>`;
+
+function vHome(){
+  const w=wrongIds().length,f=flagIds().length;
+  let h=`<header><h1>巨量資料概論 模擬測驗</h1><p class="sub">國營聯招專業科目題型．作答與標註紀錄會自動儲存在這台裝置的瀏覽器中</p></header>
+  <h2>試題目錄</h2><div class="exams">`;
+  EXAMS.forEach(ex=>{const s=examStats(ex);
+    h+=`<div class="exam"><div><h3>${ex.title}</h3><p>已作答 ${s.d}／${ex.qs.length}．答對 ${s.o} 題${s.d?`（${Math.round(s.o/s.d*100)}%）`:""}</p></div>
+    <button class="btn ${s.d?"":"primary"}" data-act="open" data-ex="${ex.id}">${s.d===0?"開始作答":s.d<ex.qs.length?"繼續作答":"檢視結果"}</button></div>`});
+  h+=`</div><h2>複習工具</h2><div class="actions">
+  <button class="action" data-act="report"><strong>產出錯題分析報告</strong><span>找出不熟的概念，並提供補強建議</span></button>
+  <button class="action" data-act="pset"><strong>錯題隨機抽考</strong><span>目前錯題 ${w} 題．已標註 ${f} 題</span></button></div>`;
+  return h;
+}
+function vExam(){
+  const ex=EXAMS.find(e=>e.id===st.exam),cur=st.cur[ex.id]||0,s=examStats(ex),id=ex.id+"-"+cur;
+  let h=`<button class="back" data-act="home">回到目錄</button><h1>${ex.title}</h1>
+  <section class="sheet" aria-label="答案卡"><div class="sheet-head"><span>答案卡（點題號可跳題）</span><span class="score">已作答 ${s.d}／${ex.qs.length}　答對 ${s.o} 題${s.d?`（${Math.round(s.o/s.d*100)}%）`:""}</span></div><div class="grid">`;
+  ex.qs.forEach((q,i)=>{h+=gridCell(ex.id+"-"+i,i+1,st.ans,i===cur,"goto",i)});
+  h+=`</div>${legend}</section>${card(id,cur+1,st.ans,false)}
+  <div class="nav"><button class="btn" data-act="prev" ${cur===0?"disabled":""}>上一題</button>
+  <button class="btn primary" data-act="next" ${cur===ex.qs.length-1?"disabled":""}>下一題</button></div>
+  <div class="tools"><button class="btn" data-act="nextWrong">跳到下一題錯題</button><button class="btn" data-act="retryWrong">清除本卷錯題重做</button><button class="btn" data-act="resetExam">清除本卷紀錄</button></div>`;
+  return h;
+}
+function vPset(){
+  const w=wrongIds(),f=flagIds(),u=[...new Set([...w,...f])];
+  const pools=[["wrong","錯題",w.length],["flag","已標註的題目",f.length],["both","錯題＋已標註",u.length],["all","全部題目",Object.keys(QM).length]];
+  let h=`<button class="back" data-act="home">回到目錄</button><h1>錯題隨機抽考</h1><p class="sub">從選定的題庫隨機抽題，抽考作答不會覆蓋原本試卷的紀錄。</p>
+  <div class="panel" style="margin-top:18px"><fieldset><legend>出題範圍</legend>`;
+  pools.forEach(([k,n,c],j)=>{h+=`<label class="radio"><input type="radio" name="pool" value="${k}" ${j===0?"checked":""} ${c?"":"disabled"}> ${n}（${c} 題）</label>`});
+  h+=`</fieldset><fieldset><legend>題數</legend><div class="count"><input id="pcount" type="number" min="1" value="10" inputmode="numeric" aria-label="題數">
+  <button class="quick" data-act="pnum" data-n="5">5 題</button><button class="quick" data-act="pnum" data-n="10">10 題</button><button class="quick" data-act="pnum" data-n="20">20 題</button><button class="quick" data-act="pnum" data-n="999">全部</button></div>
+  <p class="note">題數超過範圍內的題數時，會出完範圍內全部題目。</p></fieldset>
+  <button class="btn primary" data-act="pstart">開始抽考</button><p class="note" id="pmsg"></p></div>`;
+  if(st.pr&&st.pr.ids.length)h+=`<p class="note" style="margin-top:14px">上一回抽考尚未清除：<button class="link" data-act="presume">繼續上一回抽考</button></p>`;
+  return h;
+}
+function vPrac(){
+  const p=st.pr,id=p.ids[p.i];let ok=0,done=0;
+  p.ids.forEach(x=>{if(p.ans[x]!==undefined){done++;if(p.ans[x]===QM[x].q.a)ok++}});
+  let h=`<button class="back" data-act="home">回到目錄</button><h1>隨機抽考</h1>`;
+  if(done===p.ids.length)h+=`<div class="result"><p><strong>本回抽考完成：答對 ${ok}／${p.ids.length} 題（${Math.round(ok/p.ids.length*100)}%）</strong></p>
+  <button class="btn primary" data-act="pset">再抽一回</button> <button class="btn" data-act="report">看錯題分析報告</button></div>`;
+  h+=`<section class="sheet"><div class="sheet-head"><span>抽考答案卡</span><span class="score">已作答 ${done}／${p.ids.length}　答對 ${ok} 題</span></div><div class="grid">`;
+  p.ids.forEach((x,j)=>{h+=gridCell(x,j+1,p.ans,j===p.i,"pgoto",j)});
+  h+=`</div>${legend}</section>${card(id,p.i+1,p.ans,true)}
+  <div class="nav"><button class="btn" data-act="prev" ${p.i===0?"disabled":""}>上一題</button>
+  <button class="btn primary" data-act="next" ${p.i===p.ids.length-1?"disabled":""}>下一題</button></div>`;
+  return h;
+}
+function vReport(){
+  const stat={};Object.keys(TAGS).forEach(k=>stat[k]={d:0,o:0,wr:[]});
+  let D=0,O=0;
+  Object.keys(QM).forEach(id=>{const a=st.ans[id];if(a===undefined)return;const {q}=QM[id];const s=stat[q.g];
+    s.d++;D++;if(a===q.a){s.o++;O++}else s.wr.push(id)});
+  let h=`<button class="back" data-act="home">回到目錄</button><h1>錯題分析報告</h1>`;
+  if(!D)return h+`<div class="panel" style="margin-top:16px"><p style="margin:0 0 12px">還沒有作答紀錄。先完成一份模擬測驗，報告就會列出各概念的答對率與補強建議。</p><button class="btn primary" data-act="open" data-ex="e1">開始模擬測驗 1</button></div>`;
+  h+=`<p class="sub">依目前所有模擬測驗的作答紀錄統計：共作答 ${D} 題，答對 ${O} 題（${Math.round(O/D*100)}%）。抽考的作答不列入統計。</p>
+  <h2>各概念答對率</h2><div class="panel">`;
+  const rows=Object.keys(TAGS).filter(k=>stat[k].d).sort((a,b)=>stat[a].o/stat[a].d-stat[b].o/stat[b].d);
+  rows.forEach(k=>{const s=stat[k],p=Math.round(s.o/s.d*100);
+    h+=`<div class="tagrow"><span>${TAGS[k].n}</span><div class="bar"><i class="${p<60?"lo":p<80?"mid":""}" style="width:${p}%"></i></div><span class="pct">${s.o}／${s.d}（${p}%）</span></div>`});
+  const untouched=Object.keys(TAGS).filter(k=>!stat[k].d);
+  h+=`</div>`;if(untouched.length)h+=`<p class="note">尚未作答到的概念：${untouched.map(k=>TAGS[k].n).join("、")}</p>`;
+  const weak=rows.filter(k=>stat[k].wr.length);
+  h+=`<h2>建議優先補強的概念</h2>`;
+  if(!weak.length)h+=`<div class="panel"><p style="margin:0">目前作答過的概念全部答對。可以繼續完成其他模擬測驗，讓報告涵蓋更多概念。</p></div>`;
+  weak.forEach(k=>{const s=stat[k],p=Math.round(s.o/s.d*100);
+    h+=`<section class="weak"><h3>${TAGS[k].n}</h3><p class="stat">答對率 ${p}%，錯 ${s.wr.length} 題${p<60?"，需要優先複習":p<80?"，建議加強":"，小幅複習即可"}</p>
+    <p><strong>補強建議：</strong>${TAGS[k].t}</p><p><strong>回頭看錯題：</strong></p><ul class="wlist">`;
+    s.wr.forEach(id=>{const {ex,i,q}=QM[id];h+=`<li><button class="link" data-act="jump" data-id="${id}">${ex.title}第 ${i+1} 題</button>：${esc(q.q.length>38?q.q.slice(0,38)+"……":q.q)}</li>`});
+    h+=`</ul></section>`});
+  const f=flagIds();
+  if(f.length){h+=`<h2>已標註的題目</h2><ul class="wlist">`;f.forEach(id=>{const {ex,i,q}=QM[id];h+=`<li><button class="link" data-act="jump" data-id="${id}">${ex.title}第 ${i+1} 題</button>（${TAGS[q.g].n}）</li>`});h+=`</ul>`}
+  if(weak.length||f.length)h+=`<div class="tools"><button class="btn" data-act="pset">用錯題與標註題隨機抽考</button></div>`;
+  return h;
+}
+function render(){
+  const v={home:vHome,exam:vExam,pset:vPset,prac:vPrac,report:vReport}[st.view]||vHome;
+  if(st.view==="prac"&&!(st.pr&&st.pr.ids.length))st.view="home";
+  app.innerHTML=(st.view==="prac"?vPrac:v)();
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function toTop(){window.scrollTo(0,0)}
+function qTop(){const p=app.querySelectorAll(".panel");const el=p[p.length-1];if(el)el.scrollIntoView({block:"start"})}
+app.addEventListener("click",e=>{
+  const t=e.target.closest("[data-act]");if(!t)return;const d=t.dataset,a=d.act;
+  const ex=EXAMS.find(x=>x.id===st.exam);let scroll=null;
+  switch(a){
+    case"home":st.view="home";scroll=toTop;break;
+    case"open":st.view="exam";st.exam=d.ex;scroll=toTop;break;
+    case"goto":st.cur[st.exam]=+d.i;break;
+    case"pgoto":st.pr.i=+d.i;break;
+    case"pick":if(st.view==="prac")st.pr.ans[d.id]=+d.k;else st.ans[d.id]=+d.k;break;
+    case"flag":if(st.flags[d.id])delete st.flags[d.id];else st.flags[d.id]=true;break;
+    case"prev":if(st.view==="prac")st.pr.i--;else st.cur[st.exam]=(st.cur[st.exam]||0)-1;scroll=qTop;break;
+    case"next":if(st.view==="prac")st.pr.i++;else st.cur[st.exam]=(st.cur[st.exam]||0)+1;scroll=qTop;break;
+    case"report":st.view="report";scroll=toTop;break;
+    case"pset":st.view="pset";scroll=toTop;break;
+    case"presume":st.view="prac";scroll=toTop;break;
+    case"pnum":{const inp=document.getElementById("pcount");inp.value=d.n==="999"?Object.keys(QM).length:d.n;return}
+    case"pstart":{
+      const pool=(app.querySelector('input[name="pool"]:checked')||{}).value;
+      const w=wrongIds(),f=flagIds();
+      const ids=pool==="wrong"?w:pool==="flag"?f:pool==="both"?[...new Set([...w,...f])]:Object.keys(QM);
+      const n=parseInt(document.getElementById("pcount").value,10);
+      if(!ids.length){document.getElementById("pmsg").textContent="這個範圍目前沒有題目，請改選其他範圍。";return}
+      if(!(n>0)){document.getElementById("pmsg").textContent="請輸入 1 以上的題數。";return}
+      st.pr={ids:shuffle([...ids]).slice(0,n),ans:{},i:0};st.view="prac";scroll=toTop;break}
+    case"jump":{const {ex:x,i}=QM[d.id];st.view="exam";st.exam=x.id;st.cur[x.id]=i;scroll=toTop;break}
+    case"nextWrong":{const c=st.cur[ex.id]||0,n=ex.qs.length;let f=-1;
+      for(let s=1;s<=n;s++){const i=(c+s)%n;if(isWrong(ex.id+"-"+i)){f=i;break}}
+      if(f<0){alert("本卷目前沒有錯題");return}st.cur[ex.id]=f;scroll=qTop;break}
+    case"retryWrong":{let f=-1;ex.qs.forEach((q,i)=>{const id=ex.id+"-"+i;if(isWrong(id)){delete st.ans[id];if(f<0)f=i}});
+      if(f<0){alert("本卷目前沒有錯題");return}st.cur[ex.id]=f;scroll=toTop;break}
+    case"resetExam":if(!confirm(`確定清除${ex.title}的作答紀錄？標註會保留。`))return;
+      ex.qs.forEach((q,i)=>delete st.ans[ex.id+"-"+i]);st.cur[ex.id]=0;scroll=toTop;break;
+  }
+  save();render();if(scroll)scroll();
+});
+load();render();
+</script>
+</body>
+</html>
