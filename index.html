@@ -3,322 +3,217 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>刷題學習系統｜巨量資料概論 & TOEIC</title>
-<meta name="theme-color" content="#F4F6F8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#12171D" media="(prefers-color-scheme: dark)">
+<title>刷題目錄｜巨量資料概論・TOEIC</title>
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0F0F" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="刷題系統">
+<meta name="apple-mobile-web-app-title" content="刷題目錄">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F4F6F8; --sheet:#FFFFFF; --ink:#1C2733; --muted:#5B6773;
-  --line:#D9DEE4; --card:#C0245C; --card-soft:#FBE7EE;
-  --toeic:#2563EB; --toeic-soft:#EFF6FF; --toeic-line:#BFDBFE; --toeic-dark:#1D4ED8;
-  --gold:#D97706; --gold-soft:#FEF3C7;
-  --ok:#23704F; --ok-soft:#E3F2EA; --bad:#A8322F; --bad-soft:#F8E5E4; --flag:#B7791F;
-  color-scheme:light; box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#FFFFFF; --ink:#111111; --muted:#6B6B6B; --faint:#A3A3A3; --line:#E7E7E7; --soft:#F6F6F6;
+  --red:#C0245C; --red-soft:#FBEFF3; --on-ink:#FFFFFF;
+  color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --paper:#12171D; --sheet:#1A2129; --ink:#E6EBF0; --muted:#9AA6B2;
-    --line:#2D3742; --card:#F06292; --card-soft:#3A2030;
-    --toeic:#60A5FA; --toeic-soft:#1E293B; --toeic-line:#334155; --toeic-dark:#93C5FD;
-    --gold:#FBBF24; --gold-soft:#382B12;
-    --ok:#6FCF9F; --ok-soft:#1A3328; --bad:#F08A85; --bad-soft:#3A2223; --flag:#E8B24A;
-    color-scheme:dark;
+    --bg:#0F0F0F; --ink:#F2F2F2; --muted:#A3A3A3; --faint:#666666; --line:#262626; --soft:#181818;
+    --red:#EF5B8A; --red-soft:#2A141D; --on-ink:#0F0F0F; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#12171D; --sheet:#1A2129; --ink:#E6EBF0; --muted:#9AA6B2;
-  --line:#2D3742; --card:#F06292; --card-soft:#3A2030;
-  --toeic:#60A5FA; --toeic-soft:#1E293B; --toeic-line:#334155; --toeic-dark:#93C5FD;
-  --gold:#FBBF24; --gold-soft:#382B12;
-  --ok:#6FCF9F; --ok-soft:#1A3328; --bad:#F08A85; --bad-soft:#3A2223; --flag:#E8B24A;
-  color-scheme:dark;
+  --bg:#0F0F0F; --ink:#F2F2F2; --muted:#A3A3A3; --faint:#666666; --line:#262626; --soft:#181818;
+  --red:#EF5B8A; --red-soft:#2A141D; --on-ink:#0F0F0F; color-scheme:dark;
 }
-*,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--paper);color:var(--ink);
-  font-family:"Inter","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.7}
-.wrap{max-width:760px;margin:0 auto;padding:24px 16px 64px}
-h1,h2{font-family:"Noto Serif TC","PMingLiU",serif;line-height:1.3}
-h1{font-size:1.6rem;margin:0 0 4px} h2{font-size:1.25rem;margin:28px 0 12px}
-.sub{margin:0;color:var(--muted);font-size:.92rem}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--toeic-soft);color:var(--toeic);border:1px solid var(--toeic-line);border-radius:999px;padding:3px 12px;font-size:.8rem;font-weight:700;margin-bottom:8px}
-.back{appearance:none;border:0;background:none;color:var(--toeic);font:500 .95rem inherit;font-family:inherit;padding:0;cursor:pointer;margin-bottom:12px;display:inline-flex;align-items:center;gap:4px}
-.back:hover{text-decoration:underline}
-.panel{background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.03)}
-.exams{display:grid;gap:10px}
-.exam{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--sheet);border:1px solid var(--line);border-left:4px solid var(--card);border-radius:6px;padding:14px 16px}
-.exam h3{margin:0;font-size:1.05rem}
-.exam p{margin:2px 0 0;font-size:.85rem;color:var(--muted)}
-.blocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:16px}
-.block{text-align:left;background:var(--sheet);border:1.5px solid var(--card);border-radius:6px;padding:20px;font:inherit;color:var(--ink);cursor:pointer;display:grid;gap:4px;transition:all .15s ease}
-.block:hover{background:var(--card-soft);transform:translateY(-1px)}
-.block strong{font-family:"Noto Serif TC","PMingLiU",serif;font-size:1.35rem;color:var(--card)}
-.block span{font-size:.9rem}
-.block .meta{color:var(--muted);font-size:.82rem}
-.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-.action{text-align:left;background:var(--sheet);border:1px solid var(--line);border-radius:6px;padding:14px 16px;font:inherit;color:var(--ink);cursor:pointer;transition:border-color .15s}
-.action:hover{border-color:var(--toeic)}
-.action strong{display:block;font-size:1rem;color:var(--ink)}
-.action span{font-size:.85rem;color:var(--muted)}
-.sheet{margin:16px 0;background:var(--sheet);border:1.5px solid var(--toeic);border-radius:8px;padding:16px 16px 14px}
-.sheet.card-theme{border-color:var(--card)}
-.sheet-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;color:var(--toeic);font-size:.9rem;font-weight:700;border-bottom:1px solid var(--toeic-line);padding-bottom:10px;margin-bottom:12px}
-.sheet.card-theme .sheet-head{color:var(--card);border-bottom-color:var(--card-soft)}
-.score{color:var(--ink);font-weight:500}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:8px}
-.cell{position:relative;appearance:none;border:1.5px solid var(--toeic);background:transparent;color:var(--toeic);height:40px;border-radius:999px;font:600 .85rem/1 inherit;font-family:inherit;cursor:pointer;transition:all .15s ease}
-.sheet.card-theme .cell{border-color:var(--card);color:var(--card)}
-.cell.ok{background:var(--ok);border-color:var(--ok);color:var(--sheet)}
-.cell.bad{background:var(--bad);border-color:var(--bad);color:var(--sheet)}
-.cell.cur{outline:3px solid var(--ink);outline-offset:2px}
-.cell.fl::after{content:"";position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:var(--flag);border:2px solid var(--sheet)}
-.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:.8rem;color:var(--muted)}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
-button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.qno{color:var(--toeic);font-weight:700;font-size:.95rem;display:flex;align-items:center}
-.card-theme .qno{color:var(--card)}
-.chip{display:inline-block;font-size:.76rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-left:8px;font-weight:500}
-.qactions{display:flex;gap:8px;align-items:center}
-.copybtn{appearance:none;border:1px solid var(--line);background:var(--sheet);color:var(--muted);border-radius:999px;padding:4px 12px;font:500 .85rem inherit;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .18s ease}
-.copybtn:hover{border-color:var(--toeic);color:var(--toeic);background:var(--toeic-soft)}
-.copybtn.copied{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
-.flagbtn{appearance:none;border:1px solid var(--line);background:var(--sheet);color:var(--muted);border-radius:999px;padding:4px 12px;font:500 .85rem inherit;font-family:inherit;cursor:pointer;transition:all .15s ease}
-.flagbtn:hover{border-color:var(--flag);color:var(--flag)}
-.flagbtn.on{border-color:var(--flag);background:var(--flag);color:var(--sheet)}
-.qtext{font-size:1.15rem;line-height:1.75;margin:6px 0 18px;font-weight:600;white-space:pre-line}
-.src{font-size:.82rem;color:var(--muted);margin:-8px 0 12px}
-.opts{display:grid;gap:10px}
-.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:6px;padding:12px 14px;font:inherit;cursor:pointer;transition:border-color .15s, background .15s}
-.opt:hover:not(:disabled){border-color:var(--toeic);background:var(--paper)}
-.opt:disabled{cursor:default}
-.bub{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--toeic);color:var(--toeic);display:grid;place-items:center;font-size:.82rem;font-weight:700}
-.card-theme .bub{border-color:var(--card);color:var(--card)}
-.opt.right{border-color:var(--ok);background:var(--ok-soft)}
-.opt.right .bub{background:var(--ok);border-color:var(--ok);color:var(--sheet)}
-.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
-.opt.wrong .bub{background:var(--bad);border-color:var(--bad);color:var(--sheet)}
-.hint{margin-top:14px} .hint summary{cursor:pointer;color:var(--muted);font-size:.9rem} .hint p{margin:6px 0 0;color:var(--muted);font-size:.92rem}
-.exp{margin-top:20px;border-left:4px solid var(--ok);padding:6px 0 6px 16px;background:var(--sheet)}
-.exp.isbad{border-left-color:var(--bad)}
-.verdict{font-weight:700;margin:0 0 10px;font-size:1.05rem}
-.exp.isbad .verdict{color:var(--bad)} .exp:not(.isbad) .verdict{color:var(--ok)}
-.qtrans{background:var(--paper);border-left:3px solid var(--toeic);padding:10px 14px;margin:10px 0 12px;border-radius:0 6px 6px 0;font-size:.95rem;line-height:1.6}
-.qtrans strong{color:var(--toeic)}
-.qexp-text{margin:0 0 10px;line-height:1.65}
-.qopt-breakdown{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:.9rem;line-height:1.65;color:var(--muted)}
-.qopt-breakdown strong{color:var(--ink)}
-.nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}
-.btn{border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:6px;padding:9px 18px;font:500 .95rem inherit;font-family:inherit;cursor:pointer;transition:all .15s ease}
-.btn:hover:not(:disabled){background:var(--paper)}
-.btn.primary{background:var(--toeic);border-color:var(--toeic);color:#fff}
-.btn.primary:hover:not(:disabled){background:var(--toeic-dark);border-color:var(--toeic-dark)}
-.btn.card-primary{background:var(--card);border-color:var(--card);color:#fff}
-.btn:disabled{opacity:.35;cursor:default}
-.tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;padding-top:16px;border-top:1px solid var(--line)}
-.tools .btn{font-size:.85rem;padding:7px 12px;border-color:var(--line);color:var(--muted)}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:64px}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);
+  font-family:"Inter","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.7;
+  -webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit}
+a{color:var(--ink);text-underline-offset:3px}
+svg{flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+button:focus-visible,input:focus-visible,summary:focus-visible,textarea:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding:28px 16px calc(80px + env(safe-area-inset-bottom,0px))}
+@media (min-width:768px){.wrap{padding:44px 32px 96px}}
+
+/* 頂列 */
+.topbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.topbar-in{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px}
+@media (min-width:768px){.topbar-in{padding:12px 32px}}
+.brand{appearance:none;border:0;background:none;padding:6px 0;cursor:pointer;display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:.98rem;letter-spacing:.02em}
+.brand::before{content:"";width:4px;height:16px;background:var(--red);border-radius:1px}
+.syncbtn{appearance:none;border:0;background:none;padding:6px 0;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);white-space:nowrap}
+.syncbtn:hover{color:var(--ink)}
+.syncdot{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--faint)}
+.syncbtn[data-s="ok"] .syncdot,.syncbtn[data-s="idle"] .syncdot{background:var(--ink);border-color:var(--ink)}
+.syncbtn[data-s="busy"] .syncdot,.syncbtn[data-s="pending"] .syncdot{background:var(--faint);border-color:var(--faint)}
+.syncbtn[data-s="err"]{color:var(--red)} .syncbtn[data-s="err"] .syncdot{background:var(--red);border-color:var(--red)}
+
+/* 標題 */
+h1{font-size:1.5rem;line-height:1.35;margin:0 0 6px;font-weight:700;letter-spacing:.01em}
+h2{font-size:1rem;margin:36px 0 12px;font-weight:700}
+.sub{margin:0;color:var(--muted);font-size:.9rem}
+.back{appearance:none;border:0;background:none;padding:0;margin:0 0 18px;cursor:pointer;color:var(--muted);font-size:.88rem;display:inline-flex;align-items:center;gap:4px}
+.back:hover{color:var(--ink)}
 .note{font-size:.85rem;color:var(--muted)}
-.result{border:1.5px solid var(--ok);background:var(--ok-soft);border-radius:8px;padding:16px 18px;margin-bottom:16px}
-.result p{margin:0 0 10px}
 
-/* TOEIC Section & Tabs */
-.section-toeic{margin-top:10px}
-.toeic-nav{display:flex;gap:8px;margin:16px 0 20px;border-bottom:2px solid var(--line);padding-bottom:12px;overflow-x:auto}
-.toeic-tab{appearance:none;border:1.5px solid var(--line);background:var(--sheet);color:var(--muted);border-radius:8px;padding:10px 18px;font:600 .95rem inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .18s ease;white-space:nowrap}
-.toeic-tab:hover{border-color:var(--toeic);color:var(--ink)}
-.toeic-tab.active{background:var(--toeic);border-color:var(--toeic);color:#fff;box-shadow:0 3px 10px rgba(37,99,235,0.25)}
-.toeic-tab .tab-badge{font-size:.72rem;padding:2px 7px;border-radius:999px;background:var(--paper);color:var(--muted);font-weight:600}
-.toeic-tab.active .tab-badge{background:rgba(255,255,255,0.25);color:#fff}
-.part5-stats{background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px}
-.part5-stats-text{font-size:.9rem;color:var(--muted)}
-.part5-stats-text strong{color:var(--ink);font-size:1.05rem}
-.category-chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
-.cat-chip{background:var(--toeic-soft);border:1px solid var(--toeic-line);color:var(--toeic);font-size:.8rem;font-weight:600;padding:4px 10px;border-radius:999px}
-.toeic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:12px}
-.toeic-block{text-align:left;background:var(--sheet);border:1.5px solid var(--toeic);border-radius:8px;padding:18px;font:inherit;color:var(--ink);cursor:pointer;display:grid;gap:6px;transition:all .18s ease}
-.toeic-block:hover{background:var(--toeic-soft);transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.06)}
-.toeic-block strong{font-size:1.15rem;color:var(--toeic);display:block}
-.toeic-block span{font-size:.88rem;line-height:1.5;color:var(--ink)}
-.toeic-block .meta{color:var(--muted);font-size:.82rem}
-.empty-panel{text-align:center;padding:46px 20px;background:var(--sheet);border:2px dashed var(--line);border-radius:8px;margin:16px 0}
-.empty-icon{font-size:2.8rem;margin-bottom:10px}
-.empty-title{font-size:1.25rem;font-weight:700;margin:0 0 6px}
-.empty-desc{color:var(--muted);font-size:.92rem;max-width:440px;margin:0 auto 16px;line-height:1.6}
-.badge-soon{display:inline-block;background:var(--gold-soft);color:var(--gold);font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid rgba(217,119,6,0.3)}
+/* 目錄樹 */
+.tree,.tree ul{list-style:none;margin:0;padding:0}
+.tree{margin-top:28px;border-top:1px solid var(--line)}
+.tree>li{border-bottom:1px solid var(--line)}
+.tree ul{margin:0 0 10px 9px;padding-left:18px;border-left:1px solid var(--line)}
+.folder>summary{list-style:none}
+.folder>summary::-webkit-details-marker{display:none}
+.row{appearance:none;border:0;background:none;width:100%;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;min-height:46px;padding:8px 6px;border-radius:6px}
+.row:hover{background:var(--soft)}
+.row .name{flex:1;min-width:0}
+.row .meta{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row .meta b{color:var(--ink);font-weight:600}
+.row .meta .bad{color:var(--red)}
+.row>svg{color:var(--muted)}
+.row .chev{width:16px;height:16px;color:var(--faint);transition:transform .2s ease}
+.folder[open]>summary .chev{transform:rotate(90deg)}
+.folder[open]>summary>svg:first-child{color:var(--red)}
+.tree>li>.folder>summary{min-height:60px;font-size:1.08rem;font-weight:700}
+.tree>li>.folder>summary>svg:first-child{width:22px;height:22px;color:var(--ink)}
+.tree>li>.folder[open]>summary>svg:first-child{color:var(--red)}
+.row.off{cursor:default;color:var(--faint)} .row.off:hover{background:none} .row.off svg{color:var(--faint)}
+.row.done .name::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ink);margin-left:8px;vertical-align:2px}
 
-/* Collapsible Archive for 國營聯招 */
-.archive-box{margin-top:42px;border:1.5px dashed var(--line);border-radius:8px;background:var(--sheet);overflow:hidden;transition:border-color .2s}
-.archive-box[open]{border-style:solid;border-color:var(--line)}
-.archive-summary{padding:16px 18px;cursor:pointer;user-select:none;list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--sheet);transition:background .15s}
-.archive-summary:hover{background:var(--paper)}
-.archive-summary::-webkit-details-marker{display:none}
-.archive-left{display:flex;align-items:center;gap:12px}
-.archive-icon{font-size:1.4rem}
-.archive-text strong{font-size:1.02rem;display:block;color:var(--ink)}
-.archive-text span{font-size:.84rem;color:var(--muted)}
-.archive-pill{display:inline-block;font-size:.76rem;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--card-soft);color:var(--card);margin-left:6px;vertical-align:middle}
-.archive-arrow{font-size:.9rem;color:var(--muted);transition:transform .2s ease}
-.archive-box[open] .archive-arrow{transform:rotate(180deg)}
-.archive-content{padding:14px 18px 24px;border-top:1px solid var(--line);background:var(--paper)}
+/* 答案卡 */
+.sheet{margin:22px 0 16px;border:1px solid var(--line);border-radius:10px;padding:0 16px}
+.sheet>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;font-size:.88rem}
+.sheet>summary::-webkit-details-marker{display:none}
+.sheet>summary .t{font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.sheet>summary .chev{width:14px;height:14px;color:var(--faint);transition:transform .2s ease}
+.sheet[open]>summary .chev{transform:rotate(90deg)}
+.sheet>summary .score{color:var(--muted);font-variant-numeric:tabular-nums}
+.sheet[open]{padding-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:6px;padding-top:12px;border-top:1px solid var(--line)}
+.cell{position:relative;appearance:none;height:38px;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:6px;font-size:.82rem;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
+.cell:not(.ok):not(.bad):hover{border-color:var(--ink);color:var(--ink)}
+.cell.ok{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.cell.bad{background:var(--red);border-color:var(--red);color:#fff}
+.cell.cur{outline:2px solid var(--ink);outline-offset:2px}
+.cell.fl::after{content:"";position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:var(--red);border:2px solid var(--bg)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:.76rem;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:0}
+
+/* 題目 */
+.panel{border:1px solid var(--line);border-radius:10px;padding:20px;scroll-margin-top:72px}
+@media (min-width:768px){.panel{padding:26px 28px}}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.qno{font-weight:700;font-size:.9rem;color:var(--red);display:flex;align-items:center;gap:10px}
+.chip{font-weight:400;font-size:.78rem;color:var(--muted)}
+.qactions{display:flex;gap:6px}
+.copybtn,.flagbtn{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:999px;padding:3px 12px;font-size:.78rem;cursor:pointer}
+.copybtn:hover,.flagbtn:hover{border-color:var(--ink);color:var(--ink)}
+.copybtn.copied{border-color:var(--ink);color:var(--ink)}
+.flagbtn.on{border-color:var(--red);color:var(--red)}
+.qtext{font-size:1.1rem;line-height:1.8;margin:0 0 20px;font-weight:600;white-space:pre-line}
+.src{font-size:.8rem;color:var(--muted);margin:-12px 0 16px}
+.opts{display:grid;gap:8px}
+.opt{appearance:none;display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:12px 14px;cursor:pointer;min-height:48px;transition:border-color .15s}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt:disabled{cursor:default}
+.bub{flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.78rem;font-weight:600;color:var(--muted);margin-top:1px}
+.opt.right{border-color:var(--ink)}
+.opt.right .bub{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.opt.wrong .bub{background:var(--red);border-color:var(--red);color:#fff}
+.opt:disabled:not(.right):not(.wrong){color:var(--muted)}
+.hint{margin-top:16px} .hint summary{cursor:pointer;color:var(--muted);font-size:.85rem} .hint p{margin:6px 0 0;color:var(--muted);font-size:.9rem}
+.exp{margin-top:22px;padding:2px 0 2px 16px;border-left:2px solid var(--ink)}
+.exp.isbad{border-left-color:var(--red)}
+.verdict{font-weight:700;margin:0 0 10px}
+.exp.isbad .verdict{color:var(--red)}
+.qtrans{background:var(--soft);padding:10px 14px;margin:10px 0 12px;border-radius:6px;font-size:.93rem;line-height:1.65}
+.qexp-text{margin:0 0 10px;line-height:1.75}
+.qopt-breakdown{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:.9rem;line-height:1.7;color:var(--muted)}
+.qopt-breakdown strong,.qtrans strong{color:var(--ink)}
+
+/* 按鈕 */
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+.btn{appearance:none;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 20px;font-size:.92rem;font-weight:500;cursor:pointer;min-height:44px}
+.btn:hover:not(:disabled){border-color:var(--ink)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.btn.primary:hover:not(:disabled){opacity:.85}
+.btn:disabled{opacity:.3;cursor:default}
+.tools{display:flex;gap:20px;flex-wrap:wrap;margin-top:28px;padding-top:16px;border-top:1px solid var(--line)}
+.linkbtn,.tools button{appearance:none;border:0;background:none;padding:4px 0;cursor:pointer;font-size:.84rem;color:var(--muted);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+.linkbtn:hover,.tools button:hover{color:var(--ink);text-decoration-color:var(--ink)}
+.row-btns{display:flex;gap:10px;flex-wrap:wrap}
+.result{border:1px solid var(--ink);border-radius:10px;padding:16px 18px;margin:20px 0 0}
+.result p{margin:0 0 12px}
+
+/* 表單 */
+fieldset{border:0;padding:0;margin:0 0 20px}
+legend{font-weight:700;margin-bottom:6px;font-size:.92rem}
+.radio{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.radio:last-child{border-bottom:0}
+.radio input{accent-color:var(--red);width:18px;height:18px}
+.count{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.count input,.field input,textarea.bk{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:16px}
+.count input{width:90px}
+.quick{appearance:none;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:5px 14px;font-size:.84rem;cursor:pointer}
+.quick:hover{border-color:var(--ink)}
+.field{display:grid;gap:6px;margin:0 0 14px}
+.field span{font-weight:600;font-size:.9rem}
+.field input,textarea.bk{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace}
+textarea.bk{min-height:90px;resize:vertical;margin-top:12px}
+.steps{margin:0 0 18px;padding-left:1.3em;font-size:.93rem} .steps li{margin:6px 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;background:var(--soft);border-radius:4px;padding:1px 5px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:0 0 16px;font-size:.92rem}
+.kv dt{color:var(--muted)} .kv dd{margin:0;word-break:break-all}
+.errbox{border-left:2px solid var(--red);color:var(--red);padding:4px 0 4px 12px;margin:0 0 16px;font-size:.9rem}
+
+/* 報告 */
+.tagrow{display:grid;grid-template-columns:minmax(120px,1.2fr) 2fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+.tagrow:last-child{border-bottom:0}
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ink)}
+.bar i.lo{background:var(--red)}
+.pct{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.82rem;white-space:nowrap}
+.weak{border-left:2px solid var(--red);padding:0 0 0 14px;margin:0 0 26px}
+.weak h3{margin:0 0 4px;font-size:1rem}
+.weak .stat{font-size:.82rem;color:var(--red);margin:0 0 8px}
+.weak p{margin:0 0 8px;font-size:.93rem}
+.wlist{margin:6px 0 0;padding:0;list-style:none;font-size:.9rem}
+.wlist li{margin:6px 0}
+.link{appearance:none;border:0;background:none;padding:0;cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--faint)}
+.link:hover{color:var(--red);text-decoration-color:var(--red)}
 
 /* Toast */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--sheet);padding:10px 22px;border-radius:999px;font-size:.9rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.25);opacity:0;transition:all .25s cubic-bezier(.16,1,.3,1);pointer-events:none;z-index:9999}
+.toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--on-ink);padding:9px 18px;border-radius:8px;font-size:.86rem;opacity:0;transition:all .2s ease;pointer-events:none;z-index:99;max-width:calc(100vw - 32px);text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Forms & Report */
-fieldset{border:0;padding:0;margin:0 0 18px}
-legend{font-weight:700;margin-bottom:8px}
-.radio{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
-.radio:last-child{border-bottom:0}
-.radio input{accent-color:var(--toeic);width:18px;height:18px}
-.count{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.count input{width:90px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--sheet);color:var(--ink);font:inherit}
-.quick{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 12px;font:500 .85rem inherit;font-family:inherit;cursor:pointer}
-.tagrow{display:grid;grid-template-columns:minmax(120px,1.2fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}
-.tagrow:last-child{border-bottom:0}
-.bar{height:10px;background:var(--line);border-radius:999px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--ok)}
-.bar i.lo{background:var(--bad)} .bar i.mid{background:var(--flag)}
-.pct{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem;white-space:nowrap}
-.weak{border-left:3px solid var(--bad);padding:2px 0 2px 14px;margin:0 0 22px}
-.weak h3{margin:0 0 4px;font-size:1.05rem}
-.weak .stat{font-size:.85rem;color:var(--bad);margin:0 0 8px}
-.weak p{margin:0 0 8px}
-.wlist{margin:6px 0 0;padding:0;list-style:none}
-.wlist li{margin:4px 0}
-.link{appearance:none;border:0;background:none;padding:0;color:var(--toeic);font:inherit;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-@media (prefers-reduced-motion:no-preference){.exp{animation:in .25s ease-out}@keyframes in{from{opacity:0;transform:translateY(4px)}}}
-
-/* ===== 跨裝置版面（手機・平板・電腦） ===== */
-:root{padding-top:0}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:72px}
-body{-webkit-tap-highlight-color:transparent;min-height:100vh}
-.wrap{max-width:820px;padding:20px 16px calc(72px + env(safe-area-inset-bottom,0px))}
-@media (min-width:768px){.wrap{padding-left:28px;padding-right:28px;padding-top:28px}}
-@media (min-width:1024px){.wrap{max-width:1040px}}
-.panel{scroll-margin-top:72px}
-a{color:var(--toeic)}
-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
-
-/* Top bar */
-.topbar{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
-@supports (backdrop-filter:blur(8px)) or (-webkit-backdrop-filter:blur(8px)){
-  .topbar{background:color-mix(in srgb,var(--paper) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px)}
-}
-.topbar-in{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px}
-@media (min-width:768px){.topbar-in{padding:10px 28px}}
-.brand{appearance:none;border:0;background:none;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:6px 0;font:700 1.02rem "Noto Serif TC","PMingLiU",serif;min-height:40px}
-.brand-ic{font-size:1.15rem}
-.syncbtn{appearance:none;border:1px solid var(--line);background:var(--sheet);color:var(--muted);border-radius:999px;padding:6px 12px;font:500 .8rem/1.2 inherit;font-family:inherit;display:inline-flex;align-items:center;gap:7px;min-height:36px;cursor:pointer;white-space:nowrap;max-width:60vw;overflow:hidden;text-overflow:ellipsis}
-.syncbtn:hover{border-color:var(--toeic);color:var(--ink)}
-.syncdot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--line);box-shadow:inset 0 0 0 1.5px var(--muted)}
-.syncbtn[data-s="ok"] .syncdot,.syncbtn[data-s="idle"] .syncdot{background:var(--ok);box-shadow:none}
-.syncbtn[data-s="busy"] .syncdot,.syncbtn[data-s="pending"] .syncdot{background:var(--gold);box-shadow:none}
-.syncbtn[data-s="err"] .syncdot{background:var(--bad);box-shadow:none}
-.syncbtn[data-s="err"]{color:var(--bad);border-color:var(--bad)}
-@media (prefers-reduced-motion:no-preference){.syncbtn[data-s="busy"] .syncdot{animation:pulse 1s ease-in-out infinite}@keyframes pulse{50%{opacity:.3}}}
-
-/* 首頁：兩大科目 */
-.home-head{margin-top:6px}
-.subjects{display:grid;gap:16px;grid-template-columns:1fr;margin-top:20px}
-@media (min-width:720px){.subjects{grid-template-columns:1fr 1fr;gap:20px}}
-.subject{--accent:var(--toeic);--accent-soft:var(--toeic-soft);text-align:left;font:inherit;color:var(--ink);background:var(--sheet);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:12px;padding:22px 20px 18px;cursor:pointer;display:flex;flex-direction:column;gap:12px;min-height:240px;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;width:100%}
-.subject.bd{--accent:var(--card);--accent-soft:var(--card-soft)}
-.s-head{display:flex;align-items:center;gap:14px}
-.s-ic{flex:none;width:52px;height:52px;border-radius:14px;background:var(--accent-soft);display:grid;place-items:center;font-size:1.6rem}
-.s-kicker{display:block;font-size:.78rem;font-weight:600;color:var(--muted);letter-spacing:.02em}
-.subject h2{margin:2px 0 0;font-size:1.45rem;color:var(--accent)}
-.s-desc{margin:0;color:var(--muted);font-size:.9rem;line-height:1.6}
-.s-tags{display:flex;flex-wrap:wrap;gap:6px}
-.s-tags span{font-size:.76rem;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
-.s-prog{margin-top:auto;display:grid;gap:8px;padding-top:6px}
-.s-row{display:flex;justify-content:space-between;gap:10px;font-size:.82rem;color:var(--muted)}
-.subject .bar i{background:var(--accent)}
-.s-go{font-weight:700;color:var(--accent)}
-.banner{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--toeic-soft);border:1px solid var(--toeic-line);border-radius:10px;padding:12px 16px;margin-top:20px;font-size:.9rem}
-.banner .btn{padding:7px 14px;font-size:.85rem}
-
-/* 答案卡可收合（手機） */
-details.sheet>summary{list-style:none;cursor:pointer}
-details.sheet>summary::-webkit-details-marker{display:none}
-details.sheet>summary .sh-arrow{display:inline-block;margin-left:6px;transition:transform .2s ease}
-details.sheet[open]>summary .sh-arrow{transform:rotate(180deg)}
-details.sheet:not([open]){padding-bottom:16px}
-details.sheet:not([open]) .sheet-head{border-bottom:0;margin-bottom:0;padding-bottom:0}
-
-/* 題目頁：大螢幕左右分欄 */
-@media (min-width:1024px){
-  .exam-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px;align-items:start;margin-top:16px}
-  .exam-layout .side{position:sticky;top:72px;max-height:calc(100vh - 88px);overflow:auto;border-radius:8px}
-  .exam-layout .side .sheet{margin:0}
-  .exam-layout .side details.sheet>summary{cursor:default;pointer-events:none}
-  .exam-layout .side .sh-arrow{display:none}
-  .exam-layout .side .grid{grid-template-columns:repeat(auto-fill,minmax(38px,1fr))}
-  .exam-layout .result{grid-column:1/-1}
-}
-
-/* 同步設定頁 */
-.steps{margin:0 0 16px;padding-left:1.3em}
-.steps li{margin:6px 0}
-.field{display:grid;gap:6px;margin:0 0 14px}
-.field span{font-weight:700;font-size:.92rem}
-.field input,textarea.bk{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--sheet);color:var(--ink);font:16px/1.4 ui-monospace,Menlo,Consolas,monospace}
-textarea.bk{min-height:96px;resize:vertical;margin-top:12px}
-.row-btns{display:flex;gap:10px;flex-wrap:wrap}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0 0 16px;font-size:.92rem}
-.kv dt{color:var(--muted)} .kv dd{margin:0;word-break:break-all}
-.errbox{border:1px solid var(--bad);background:var(--bad-soft);color:var(--bad);border-radius:6px;padding:10px 12px;margin:0 0 14px;font-size:.9rem}
-
-/* 觸控裝置：放大點擊區、取消黏住的 hover 效果 */
-.btn,.opt,.action,.block,.toeic-block{min-height:44px}
-@media (hover:hover){
-  .subject:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.08);border-color:var(--accent)}
-}
 @media (hover:none){
-  .block:hover,.toeic-block:hover{transform:none;box-shadow:none}
-  .opt:hover:not(:disabled){border-color:var(--line);background:var(--sheet)}
-  .action:hover{border-color:var(--line)}
-  .btn:hover:not(:disabled){background:transparent}
-  .btn.primary:hover:not(:disabled){background:var(--toeic);border-color:var(--toeic)}
+  .row:hover{background:none}
+  .opt:hover:not(:disabled){border-color:var(--line)}
+  .btn:not(.primary):hover:not(:disabled){border-color:var(--line)}
+  .cell:not(.ok):not(.bad):hover{border-color:var(--line);color:var(--muted)}
 }
-
-/* 手機 */
 @media (max-width:560px){
-  h1{font-size:1.38rem} h2{font-size:1.15rem}
+  h1{font-size:1.3rem}
   .panel{padding:16px 14px}
-  .qtext{font-size:1.06rem;margin-bottom:14px}
-  .qtop{align-items:flex-start}
-  .qactions{width:100%;justify-content:flex-end}
-  .opt{padding:11px 12px}
+  .qtext{font-size:1.04rem}
   .nav .btn{flex:1}
-  .tools .btn{flex:1 1 calc(50% - 10px)}
   .tagrow{grid-template-columns:1fr auto;row-gap:6px}
   .tagrow .bar{grid-column:1/-1;grid-row:2}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:7px}
-  .cell{height:38px}
-  .part5-stats>div:last-child{width:100%}
-  .part5-stats .btn{width:100%}
-  .toeic-tab{padding:8px 12px;font-size:.88rem}
-  .subject{min-height:0;padding:18px 16px 16px}
-  .subject h2{font-size:1.3rem}
-  .s-ic{width:46px;height:46px;font-size:1.4rem}
-  .brand-tx{font-size:.95rem}
-  .toast{bottom:calc(20px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 32px);text-align:center}
+  .tree ul{margin-left:8px;padding-left:12px}
+  .row{gap:10px;padding:8px 4px}
 }
-
+@media (prefers-reduced-motion:no-preference){.exp{animation:in .2s ease-out}@keyframes in{from{opacity:0}}}
 </style>
 </head>
 <body>
 <header class="topbar" id="topbar"></header>
 <main class="wrap" id="app"></main>
-<div id="toast" class="toast">✓ 題目與解析已複製到剪貼簿！</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
 const TAGS={
   t_grammar:{n:"Part 5 · 文法題",t:"掌握時態一致性、主被動語態、條件句省略if倒裝（Should you require...）、以及關係代名詞引導詞。"},
@@ -436,9 +331,9 @@ ALL.forEach(ex=>ex.qs.forEach((q,i)=>{QM[ex.id+"-"+i]={ex,i,q}}));
 const qNo=id=>{const {i,q}=QM[id];return q.n||i+1};
 const qLabel=id=>QM[id].ex.title+" 第 "+qNo(id)+" 題";
 const findEx=id=>ALL.find(e=>e.id===id)||ALL[0];
-const VIEWS=["home","toeic","bigdata","list","exam","pset","prac","report","sync"];
+const VIEWS=["home","exam","pset","prac","report","sync"];
 
-let st={view:"home", scope:"bigdata", exam:"toeic_p5_full", toeicPart:5, sheetOpen:false, cur:{}, ans:{}, flags:{}, pr:null, ansT:{}, flagT:{}, curT:{}};
+let st={view:"home", scope:"bigdata", exam:"toeic_p5_full", open:{}, sheetOpen:null, cur:{}, ans:{}, flags:{}, pr:null, ansT:{}, flagT:{}, curT:{}};
 
 function load(){
   try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.ans){st=Object.assign(st,s)}}catch(e){}
@@ -447,13 +342,11 @@ function load(){
       if(o&&o.ans){Object.keys(o.ans).forEach(k=>{if(st.ans["e1-"+k]===undefined)st.ans["e1-"+k]=o.ans[k]});if(st.cur.e1===undefined)st.cur.e1=o.cur||0}}catch(e){}
     st.migratedV1=true;
   }
-  ["ansT","flagT","curT"].forEach(k=>{if(!st[k]||typeof st[k]!=="object")st[k]={}});
-  // 舊紀錄沒有時間戳記，補上最小值，讓同步時能正確合併
+  ["ansT","flagT","curT","open"].forEach(k=>{if(!st[k]||typeof st[k]!=="object")st[k]={}});
   Object.keys(st.ans).forEach(k=>{if(!st.ansT[k])st.ansT[k]=1});
   Object.keys(st.flags).forEach(k=>{if(!st.flagT[k])st.flagT[k]=1});
   Object.keys(st.cur).forEach(k=>{if(!st.curT[k])st.curT[k]=1});
-  if(!VIEWS.includes(st.view))st.view="home";
-  if(st.view==="sync")st.view="home";
+  if(!VIEWS.includes(st.view)||st.view==="sync")st.view="home";
 }
 
 /* ---------- 本機儲存 ---------- */
@@ -480,7 +373,7 @@ const scopeTags=sc=>Object.keys(TAGS).filter(k=>k.startsWith("t_")===((sc||st.sc
 const scopeName=sc=>(sc||st.scope)==="toeic"?"TOEIC":"巨量資料概論";
 const app=document.getElementById("app");
 const topbar=document.getElementById("topbar");
-const isWide=()=>window.matchMedia("(min-width:1024px)").matches;
+const isWide=()=>window.matchMedia("(min-width:768px)").matches;
 
 /* ---------- 跨裝置同步（GitHub Gist） ---------- */
 const SYNC_KEY="quiz-sync-v1", GIST_FILE="quiz-progress.json", GIST_DESC="刷題學習系統｜作答紀錄同步（請勿刪除）";
@@ -580,6 +473,7 @@ const Sync={
   setState(s){this.state=s;renderTopbar()}
 };
 
+
 function fmtTime(t){
   if(!t)return "";const d=new Date(t),n=new Date(),p=x=>String(x).padStart(2,"0");
   const hm=p(d.getHours())+":"+p(d.getMinutes());
@@ -587,28 +481,37 @@ function fmtTime(t){
 }
 function syncLabel(){
   const s=Sync.on()?Sync.state:(Sync.state==="err"?"err":"off");
-  return [s,{off:"未啟用同步",idle:"已啟用同步",pending:"等待同步…",busy:"同步中…",ok:"已同步 "+fmtTime(Sync.cfg.last),err:"同步失敗"}[s]];
+  return [s,{off:"未同步",idle:"同步已啟用",pending:"等待同步",busy:"同步中",ok:"已同步 "+fmtTime(Sync.cfg.last),err:"同步失敗"}[s]];
 }
 function renderTopbar(){
   const [s,label]=syncLabel();
   topbar.innerHTML=`<div class="topbar-in">
-    <button class="brand" data-act="go" data-v="home" aria-label="回到科目選單"><span class="brand-ic">📚</span><span class="brand-tx">刷題學習系統</span></button>
-    <button class="syncbtn" data-act="go" data-v="sync" data-s="${s}" title="${esc(Sync.msg||"跨裝置同步設定")}"><i class="syncdot"></i><span>${label}</span></button>
+    <button class="brand" data-act="go" data-v="home">刷題目錄</button>
+    <button class="syncbtn" data-act="go" data-v="sync" data-s="${s}" title="${esc(Sync.msg||"跨裝置同步")}"><i class="syncdot"></i><span>${label}</span></button>
   </div>`;
 }
 
+/* ---------- 圖示 ---------- */
+const I={
+  folder:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>`,
+  file:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg>`,
+  chart:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>`,
+  shuffle:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3.5c4 0 5 10 9 10H20M4 17h3.5c1.6 0 2.7-1.6 3.6-3.5M13 10.5C14 8.6 15 7 16.5 7H20M17.5 4.5 20 7l-2.5 2.5M17.5 14.5 20 17l-2.5 2.5"/></svg>`,
+  chev:`<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`,
+  back:`<svg viewBox="0 0 24 24" aria-hidden="true" style="width:15px;height:15px"><path d="M15 6l-6 6 6 6"/></svg>`
+};
+
 /* ---------- 共用元件 ---------- */
 function examStats(ex){let d=0,o=0;ex.qs.forEach((q,i)=>{const a=st.ans[ex.id+"-"+i];if(a!==undefined){d++;if(a===q.a)o++}});return{d,o}}
-function scopeStats(sc){const ids=scopeIds(sc);let d=0,o=0,f=0;ids.forEach(id=>{const a=st.ans[id];if(a!==undefined){d++;if(a===QM[id].q.a)o++}if(st.flags[id])f++});return{n:ids.length,d,o,w:d-o,f}}
+function scopeStats(sc){const ids=scopeIds(sc);let d=0,o=0;ids.forEach(id=>{const a=st.ans[id];if(a!==undefined){d++;if(a===QM[id].q.a)o++}});return{n:ids.length,d,o}}
 
 function showToast(msg){
   let t=document.getElementById("toast");
   if(!t){t=document.createElement("div");t.id="toast";t.className="toast";document.body.appendChild(t)}
   t.textContent=msg;t.classList.add("show");
-  clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove("show"),2200);
+  clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove("show"),2000);
 }
-
-function fallbackCopy(text, cb){
+function fallbackCopy(text,cb){
   const ta=document.createElement("textarea");
   ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
   document.body.appendChild(ta);ta.focus();ta.select();
@@ -619,35 +522,29 @@ function copyText(text,cb){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(cb).catch(()=>fallbackCopy(text,cb));
   else fallbackCopy(text,cb);
 }
-
 function copyQuestion(id){
-  const item=QM[id];
-  if(!item)return;
-  const {ex,i,q}=item;
-  const tag=TAGS[q.g]?TAGS[q.g].n:"";
-  let text=`【${ex.title} 第 ${qNo(id)} 題】${tag?`[${tag}]`:""}\n`;
-  text+=`${q.q}\n\n`;
+  const item=QM[id];if(!item)return;
+  const {ex,q}=item,tag=TAGS[q.g]?TAGS[q.g].n:"";
+  let text=`【${ex.title} 第 ${qNo(id)} 題】${tag?`[${tag}]`:""}\n${q.q}\n\n`;
   q.o.forEach((opt,idx)=>{text+=`(${L[idx]}) ${opt}\n`});
   text+=`\n【正解】(${L[q.a]})\n`;
-  if(q.trans) text+=`【中文翻譯】${q.trans}\n`;
-  if(q.e) text+=`【考點詳解】${q.e}\n`;
-  if(q.w) text+=`【其他選項解析】${q.w}\n`;
+  if(q.trans)text+=`【中文翻譯】${q.trans}\n`;
+  if(q.e)text+=`【考點詳解】${q.e}\n`;
+  if(q.w)text+=`【其他選項解析】${q.w}\n`;
   copyText(text,()=>{
-    showToast("✓ 題目與解析已複製到剪貼簿！");
+    showToast("已複製題目與解析");
     const btn=document.querySelector(`.copybtn[data-id="${id}"]`);
-    if(btn){const o=btn.innerHTML;btn.innerHTML=`✓ 已複製！`;btn.classList.add("copied");
-      setTimeout(()=>{btn.innerHTML=o;btn.classList.remove("copied")},2000)}
+    if(btn){btn.textContent="已複製";btn.classList.add("copied");setTimeout(()=>{btn.textContent="複製";btn.classList.remove("copied")},1800)}
   });
 }
 
 function card(id,num,ansMap,showSrc){
-  const {ex,i,q}=QM[id],a=ansMap[id],done=a!==undefined,fl=!!st.flags[id];
-  const isCardTheme=ex.kind!=="toeic";
-  let h=`<div class="panel ${isCardTheme?"card-theme":""}"><div class="qtop">
+  const {ex,q}=QM[id],a=ansMap[id],done=a!==undefined,fl=!!st.flags[id];
+  let h=`<div class="panel"><div class="qtop">
   <span class="qno">第 ${num} 題<span class="chip">${TAGS[q.g]?TAGS[q.g].n:""}</span></span>
   <div class="qactions">
-    <button class="copybtn" data-act="copy" data-id="${id}" title="複製此題、選項與解析到剪貼簿">📋 複製題目</button>
-    <button class="flagbtn ${fl?"on":""}" data-act="flag" data-id="${id}" aria-pressed="${fl}">${fl?"已標註":"標註此題"}</button>
+    <button class="copybtn" data-act="copy" data-id="${id}" title="複製此題、選項與解析">複製</button>
+    <button class="flagbtn ${fl?"on":""}" data-act="flag" data-id="${id}" aria-pressed="${fl}">${fl?"已標註":"標註"}</button>
   </div></div>
   <p class="qtext">${esc(q.q)}</p>`;
   if(showSrc)h+=`<p class="src">出自${qLabel(id)}</p>`;
@@ -655,16 +552,16 @@ function card(id,num,ansMap,showSrc){
   q.o.forEach((t,k)=>{let c="opt";if(done){if(k===q.a)c+=" right";else if(k===a)c+=" wrong"}
     h+=`<button class="${c}" data-act="pick" data-id="${id}" data-k="${k}" ${done?"disabled":""}><span class="bub">${L[k]}</span><span>${esc(t)}</span></button>`});
   h+=`</div>`;
-  if(!done&&q.h)h+=`<details class="hint"><summary>看提示</summary><p>${esc(q.h)}</p></details>`;
+  if(!done&&q.h)h+=`<details class="hint"><summary>提示</summary><p>${esc(q.h)}</p></details>`;
   else if(done){
     const g=a===q.a;
     h+=`<div class="exp ${g?"":"isbad"}">
-    <p class="verdict">${g?"✓ 答對了！":"✗ 答錯了，你選 ("+L[a]+")"}，正解為 (${L[q.a]})</p>
-    ${q.trans?`<div class="qtrans"><strong>中文翻譯：</strong>${esc(q.trans)}</div>`:""}
-    ${q.e?`<p class="qexp-text"><strong>${ex.unofficial?"參考解析":"詳解"}：</strong>${esc(q.e)}</p>`:`<p class="note">此題目前收錄${ex.kind==="past"?"官方公布答案":"答案"}，尚未建立詳解。</p>`}
-    ${q.w?`<div class="qopt-breakdown"><strong>其他選項解析：</strong>${esc(q.w)}</div>`:""}
-    ${ex.unofficial?`<p class="note">本年度答案為參考解答，並非官方公布答案。</p>`:""}
-    </div>`
+    <p class="verdict">${g?"答對":"答錯．你選 ("+L[a]+")"}，正解 (${L[q.a]})</p>
+    ${q.trans?`<div class="qtrans"><strong>中文翻譯　</strong>${esc(q.trans)}</div>`:""}
+    ${q.e?`<p class="qexp-text"><strong>${ex.unofficial?"參考解析":"詳解"}　</strong>${esc(q.e)}</p>`:`<p class="note">此題目前僅收錄${ex.kind==="past"?"官方公布答案":"答案"}。</p>`}
+    ${q.w?`<div class="qopt-breakdown"><strong>其他選項　</strong>${esc(q.w)}</div>`:""}
+    ${ex.unofficial?`<p class="note">本年度為參考解答，非官方公布答案。</p>`:""}
+    </div>`;
   }
   return h+`</div>`;
 }
@@ -674,183 +571,89 @@ function gridCell(id,label,ansMap,cur,act,idx){
   if(a!==undefined)c+=a===q.a?" ok":" bad";if(cur)c+=" cur";if(st.flags[id])c+=" fl";
   return `<button class="${c}" data-act="${act}" data-i="${idx}" aria-label="第 ${label} 題">${label}</button>`;
 }
-const legend=`<div class="legend"><span><i style="background:var(--ok)"></i>答對</span><span><i style="background:var(--bad)"></i>答錯</span><span><i style="border:1.5px solid var(--toeic)"></i>未作答</span><span><i style="background:var(--flag)"></i>已標註</span></div>`;
-
-// 答案卡：大螢幕固定在左側並展開；手機可收合（記住偏好）
-function sheetBlock(theme,title,score,cells){
-  const open=isWide()||st.sheetOpen;
-  return `<details class="sheet ${theme}" ${open?"open":""}>
-  <summary><div class="sheet-head"><span>${title}<span class="sh-arrow" aria-hidden="true">▾</span></span><span class="score">${score}</span></div></summary>
+const legend=`<div class="legend"><span><i style="background:var(--ink)"></i>答對</span><span><i style="background:var(--red)"></i>答錯</span><span><i style="border:1px solid var(--faint)"></i>未作答</span><span><i style="background:var(--red);border-radius:50%"></i>標註</span></div>`;
+function sheetBlock(title,score,cells){
+  const open=st.sheetOpen===null||st.sheetOpen===undefined?isWide():st.sheetOpen;
+  return `<details class="sheet" ${open?"open":""}><summary><span class="t">${I.chev}${title}</span><span class="score">${score}</span></summary>
   <div class="grid">${cells}</div>${legend}</details>`;
 }
 
-function examRow(ex){const s=examStats(ex);
-  return `<div class="exam"><div><h3>${ex.title}</h3><p>已作答 ${s.d}／${ex.qs.length}．答對 ${s.o} 題${s.d?`（${Math.round(s.o/s.d*100)}%）`:""}</p></div>
-  <button class="btn ${s.d?"":"card-primary"}" data-act="open" data-ex="${ex.id}">${s.d===0?"開始作答":s.d<ex.qs.length?"繼續作答":"檢視結果"}</button></div>`}
-function kindStats(k){let d=0,o=0,n=0;ALL.filter(e=>e.kind===k).forEach(e=>{const s=examStats(e);d+=s.d;o+=s.o;n+=e.qs.length});return{d,o,n}}
-
-function getToeicP5Stats(){
-  const fullEx=findEx("toeic_p5_full");
-  let d=0,o=0,fl=0,wr=0;
-  fullEx.qs.forEach((q,i)=>{const id="toeic_p5_full-"+i,a=st.ans[id];
-    if(a!==undefined){d++;if(a===q.a)o++;else wr++}if(st.flags[id])fl++});
-  return {d,o,fl,wr,total:fullEx.qs.length};
+/* ---------- 首頁：目錄 ---------- */
+function examLeaf(ex){
+  const s=examStats(ex),n=ex.qs.length,w=s.d-s.o;
+  const meta=s.d?`<b>${s.d}</b>/${n}${w?`<span class="bad">．錯 ${w}</span>`:""}`:`${n} 題`;
+  return `<li><button class="row ${s.d===n?"done":""}" data-act="open" data-ex="${ex.id}">${I.file}<span class="name">${esc(ex.title)}</span><span class="meta">${meta}</span></button></li>`;
 }
-function exMeta(id){const ex=findEx(id),s=examStats(ex);return `已作答 ${s.d}／${ex.qs.length} 題${s.d?` · 正確率 ${Math.round(s.o/s.d*100)}%`:""}`}
-
-/* ---------- 首頁：兩大科目入口 ---------- */
+function folder(key,name,meta,inner){
+  return `<details class="folder" data-key="${key}" ${st.open[key]?"open":""}>
+    <summary class="row">${I.folder}<span class="name">${name}</span><span class="meta">${meta}</span>${I.chev}</summary>
+    <ul>${inner}</ul></details>`;
+}
+function toolLeaf(icon,label,act,sc,meta,extra=""){
+  return `<li><button class="row" data-act="${act}" data-scope="${sc}" ${extra}>${icon}<span class="name">${label}</span><span class="meta">${meta||""}</span></button></li>`;
+}
+function progMeta(s){return s.d?`<b>${s.d}</b>/${s.n}．${Math.round(s.o/s.d*100)}%`:`${s.n} 題`}
 function vHome(){
   const B=scopeStats("bigdata"),T=scopeStats("toeic");
-  const subj=(cls,v,ic,kicker,title,desc,tags,s)=>`<button class="subject ${cls}" data-act="go" data-v="${v}">
-    <div class="s-head"><span class="s-ic" aria-hidden="true">${ic}</span><div><span class="s-kicker">${kicker}</span><h2>${title}</h2></div></div>
-    <p class="s-desc">${desc}</p>
-    <div class="s-tags">${tags.map(t=>`<span>${t}</span>`).join("")}</div>
-    <div class="s-prog">
-      <div class="s-row"><span>已作答 ${s.d}／${s.n} 題</span><span>${s.d?`正確率 ${Math.round(s.o/s.d*100)}%`:"尚未開始"}</span></div>
-      <div class="bar"><i style="width:${s.n?(s.d/s.n*100).toFixed(1):0}%"></i></div>
-      <div class="s-row"><span>${[s.w?`錯題 ${s.w}`:"",s.f?`標註 ${s.f}`:""].filter(Boolean).join(" · ")||"&nbsp;"}</span><span class="s-go">進入練習 →</span></div>
-    </div></button>`;
-  let h=`<header class="home-head"><h1>今天想練哪一科？</h1>
-    <p class="sub">選擇科目開始刷題。作答紀錄會自動保存${Sync.on()?"，並同步到你的手機、平板與電腦":""}。</p></header>
-  <div class="subjects">
-    ${subj("bd","bigdata","📊","國營聯招・統計資訊類","巨量資料概論","104–113 年歷屆考古題與原創模擬考，附詳解與錯題分析報告。",
-      [`考古題 ${PAST.length} 個年度`,`模擬考 ${EXAMS.length} 卷`,"錯題分析"],B)}
-    ${subj("te","toeic","🎯","多益閱讀特訓","TOEIC","Part 5 單句填空專項突破：文法、商務單字、詞性、連接詞與介系詞。",
-      ["Part 5 單句填空","Part 6・7 籌備中","即時詳解"],T)}
-  </div>`;
-  if(!Sync.on())h+=`<div class="banner"><span>☁ 想在手機、平板、電腦之間接續刷題？設定一次 GitHub 同步即可。</span><button class="btn primary" data-act="go" data-v="sync">設定同步</button></div>`;
-  return h;
+  const past=[...PAST].reverse(),toeicP5=TOEIC_EXAMS.filter(e=>(e.part||5)===5);
+  const bw=wrongIds("bigdata").length,bf=flagIds("bigdata").length,tw=wrongIds("toeic").length,tf=flagIds("toeic").length;
+  const wf=(w,f)=>[w?`錯 ${w}`:"",f?`標註 ${f}`:""].filter(Boolean).join("．");
+  const bigdata=folder("bigdata","巨量資料概論",progMeta(B),
+      `<li>${folder("past","考古題",`${PAST.length} 份`,past.map(examLeaf).join(""))}</li>`+
+      `<li>${folder("mock","模擬考",`${EXAMS.length} 份`,EXAMS.map(examLeaf).join(""))}</li>`+
+      toolLeaf(I.chart,"錯題分析","report","bigdata")+
+      toolLeaf(I.shuffle,"錯題抽考","pset","bigdata",wf(bw,bf)));
+  const toeic=folder("toeic","TOEIC",progMeta(T),
+      `<li>${folder("p5","Part 5　單句填空",`${toeicP5.length} 份`,toeicP5.map(examLeaf).join(""))}</li>`+
+      `<li><div class="row off">${I.folder}<span class="name">Part 6　段落填空</span><span class="meta">準備中</span></div></li>`+
+      `<li><div class="row off">${I.folder}<span class="name">Part 7　閱讀測驗</span><span class="meta">準備中</span></div></li>`+
+      toolLeaf(I.chart,"錯題分析","report","toeic")+
+      toolLeaf(I.shuffle,"錯題抽考","pset","toeic",wf(tw,tf))+
+      toolLeaf(I.shuffle,"隨機 10 題","toeicQuick","toeic",""));
+  return `<h1>目錄</h1><p class="sub">選擇資料夾開始練習</p>
+  <ul class="tree"><li>${bigdata}</li><li>${toeic}</li></ul>`;
 }
 
-/* ---------- TOEIC ---------- */
-function vToeic(){
-  const tStats=getToeicP5Stats(), tPart=st.toeicPart||5;
-  const w=wrongIds("toeic").length,f=flagIds("toeic").length;
-  let h=`<button class="back" data-act="go" data-v="home">← 回到科目選單</button>
-  <header>
-    <div class="hero-badge">🎯 多益金色證書特訓中心</div>
-    <h1>TOEIC 英語測驗 & 題庫</h1>
-    <p class="sub">專注多益 Part 5 單句填空突破，Part 6、Part 7 陸續加入。</p>
-  </header>
-  <section class="section-toeic">
-    <div class="toeic-nav">
-      <button class="toeic-tab ${tPart===5?"active":""}" data-act="toeicTab" data-part="5"><span>Part 5</span><span class="tab-label">單句填空</span><span class="tab-badge">開放中</span></button>
-      <button class="toeic-tab ${tPart===6?"active":""}" data-act="toeicTab" data-part="6"><span>Part 6</span><span class="tab-label">段落填空</span><span class="tab-badge">籌備中</span></button>
-      <button class="toeic-tab ${tPart===7?"active":""}" data-act="toeicTab" data-part="7"><span>Part 7</span><span class="tab-label">閱讀測驗</span><span class="tab-badge">籌備中</span></button>
-    </div>`;
-  if(tPart===5){
-    h+=`<div class="part5-stats">
-      <div class="part5-stats-text">
-        Part 5 綜合進度：<strong>${tStats.d}</strong> / ${tStats.total} 題作答
-        ${tStats.d?` · 正確率 <strong>${Math.round(tStats.o/tStats.d*100)}%</strong>`:""}
-        ${tStats.fl?` · 標註 <strong>${tStats.fl}</strong> 題`:""}
-        ${tStats.wr?` · 錯題 <strong>${tStats.wr}</strong> 題`:""}
-      </div>
-      <div><button class="btn primary" style="font-size:.85rem;padding:6px 14px" data-act="open" data-ex="toeic_p5_full">${tStats.d===0?"開始綜合測驗":tStats.d<tStats.total?"繼續綜合測驗":"檢視綜合結果"}</button></div>
-    </div>
-    <div class="category-chips">
-      <span class="cat-chip">文法題 (8 題)</span><span class="cat-chip">商務單字 (8 題)</span><span class="cat-chip">詞性判斷 (6 題)</span>
-      <span class="cat-chip">介系詞與連接詞 (8 題)</span><span class="cat-chip">每題即時詳解</span><span class="cat-chip">支援一鍵複製題目</span>
-    </div>
-    <div class="toeic-grid">
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_full"><strong>📝 Part 5 綜合實戰模擬測驗</strong><span>30 題仿真綜合測驗，全方位檢測文法、單字與詞性實力</span><span class="meta">${exMeta("toeic_p5_full")}</span></button>
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_grammar"><strong>🔤 Part 5 文法題專項特訓</strong><span>精選時態、主被動語態、假設倒裝（Should you...）、關係詞</span><span class="meta">${exMeta("toeic_p5_grammar")}</span></button>
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_vocab"><strong>📖 Part 5 商務核心單字特訓</strong><span>商務高頻搭配詞（meet deadline、comply with、address concerns）</span><span class="meta">${exMeta("toeic_p5_vocab")}</span></button>
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_pos"><strong>🧩 Part 5 詞性與字尾辨析</strong><span>3秒解題技巧：名詞/形容詞/副詞/動詞快速定位秒殺</span><span class="meta">${exMeta("toeic_p5_pos")}</span></button>
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_conn"><strong>⚡ Part 5 連接詞與介系詞</strong><span>秒殺題型：Although vs Despite、Because vs Due to、While vs During</span><span class="meta">${exMeta("toeic_p5_conn")}</span></button>
-    </div>
-    <h2>Part 5 複習與抽考</h2>
-    <div class="actions">
-      <button class="action" data-act="toeicQuickPset" data-mode="wrong"><strong>🎯 Part 5 錯題隨機重練</strong><span>目前 Part 5 錯題 ${tStats.wr} 題 · 點擊立即重練抽測</span></button>
-      <button class="action" data-act="toeicQuickPset" data-mode="random"><strong>🎲 Part 5 隨機抽題 10 題</strong><span>快速模擬 10 題抽考，考驗綜合即時反應速度</span></button>
-      <button class="action" data-act="report"><strong>📈 錯題分析報告</strong><span>依文法、單字、詞性、連接詞統計答對率與補強建議</span></button>
-      <button class="action" data-act="pset"><strong>🔁 自訂錯題抽考</strong><span>錯題 ${w} 題．已標註 ${f} 題，可自選範圍與題數</span></button>
-    </div>`;
-  }else{
-    const P={6:["📝","Part 6: Text Completion（段落填空）","在完整商務長篇文章（如公告、商業信件、備忘錄）中填入最適當的單字、片語或整句。"],
-             7:["📰","Part 7: Reading Comprehension（閱讀測驗）","包含單篇閱讀（廣告、商業電郵、行程表）與多篇閱讀（雙篇、三篇交叉比對題）。"]}[tPart];
-    h+=`<div class="empty-panel"><div class="empty-icon">${P[0]}</div><div class="empty-title">${P[1]}</div>
-      <span class="badge-soon">🚧 敬請期待・籌備中</span>
-      <p class="empty-desc">題型說明：${P[2]}<br>目前系統先專注於 <strong>Part 5 單句題型特訓</strong>，Part ${tPart} 題目將於後續階段為您更新加入！</p>
-      <button class="btn primary" data-act="toeicTab" data-part="5">切換回 Part 5 刷題</button></div>`;
-  }
-  return h+`</section>`;
-}
-
-/* ---------- 巨量資料概論 ---------- */
-function vBigdata(){
-  const w=wrongIds("bigdata").length,f=flagIds("bigdata").length,P=kindStats("past"),M=kindStats("mock");
-  return `<button class="back" data-act="go" data-v="home">← 回到科目選單</button>
-  <header>
-    <div class="hero-badge" style="background:var(--card-soft);color:var(--card);border-color:var(--card-soft)">📊 國營聯招・統計資訊類</div>
-    <h1>巨量資料概論</h1>
-    <p class="sub">經濟部所屬事業機構新進職員甄試．歷屆考古題、原創模擬考與錯題分析。</p>
-  </header>
-  <div class="blocks">
-    <button class="block" data-act="list" data-kind="past"><strong>考古題</strong><span>104–113 年．共 ${PAST.length} 個年度、${P.n} 題</span><span class="meta">已作答 ${P.d} 題．答對 ${P.o} 題</span></button>
-    <button class="block" data-act="list" data-kind="mock"><strong>模擬考</strong><span>原創模擬試題．共 ${EXAMS.length} 卷、${M.n} 題，附完整詳解</span><span class="meta">已作答 ${M.d} 題．答對 ${M.o} 題</span></button>
-  </div>
-  <h2>複習工具</h2>
-  <div class="actions">
-    <button class="action" data-act="report"><strong>產出錯題分析報告</strong><span>找出不熟的概念，並提供補強建議</span></button>
-    <button class="action" data-act="pset"><strong>錯題隨機抽考</strong><span>目前錯題 ${w} 題．已標註 ${f} 題</span></button>
-  </div>`;
-}
-
-function vList(){
-  const k=st.kind==="past"?"past":"mock",list=ALL.filter(e=>e.kind===k);
-  let h=`<button class="back" data-act="go" data-v="bigdata">← 回到巨量資料概論</button><h1>${k==="past"?"考古題":"模擬考"}</h1>
-  <p class="sub">${k==="past"?"經濟部所屬事業機構新進職員甄試．統計資訊類「巨量資料概論」歷屆試題。104–112 年為官方答案，113 年為參考解答。":"依國營聯招題型設計的原創試題，每題附詳解與其他選項的錯誤原因。"}</p>
-  <div class="exams" style="margin-top:18px">`;
-  (k==="past"?[...list].reverse():list).forEach(ex=>{h+=examRow(ex)});
-  return h+`</div>`;
-}
-
+/* ---------- 作答 ---------- */
+const backHome=`<button class="back" data-act="go" data-v="home">${I.back}目錄</button>`;
 function vExam(){
   const ex=findEx(st.exam),cur=st.cur[ex.id]||0,s=examStats(ex),id=ex.id+"-"+cur;
-  const isToeic=ex.kind==="toeic";
-  let h=isToeic
-    ? `<button class="back" data-act="go" data-v="toeic">← 回到 TOEIC 目錄</button><h1>${ex.title}</h1>`
-    : `<button class="back" data-act="list" data-kind="${ex.kind}">← 回到${ex.kind==="past"?"考古題":"模擬考"}目錄</button><h1>${ex.title}</h1>`;
-  if(ex.sub) h+=`<p class="sub">${ex.sub}</p>`;
+  let h=`${backHome}<h1>${esc(ex.title)}</h1>`;
+  if(ex.sub)h+=`<p class="sub">${esc(ex.sub)}</p>`;
   let cells="";ex.qs.forEach((q,i)=>{cells+=gridCell(ex.id+"-"+i,q.n||i+1,st.ans,i===cur,"goto",i)});
-  h+=`<div class="exam-layout"><aside class="side">${sheetBlock(isToeic?"":"card-theme","答案卡（點題號可跳題）",
-      `已作答 ${s.d}／${ex.qs.length}　答對 ${s.o} 題${s.d?`（${Math.round(s.o/s.d*100)}%）`:""}`,cells)}</aside>
-  <div class="main">${card(id,qNo(id),st.ans,false)}
+  h+=sheetBlock("答案卡",`${s.d}/${ex.qs.length}．答對 ${s.o}`,cells);
+  h+=`${card(id,qNo(id),st.ans,false)}
   <div class="nav"><button class="btn" data-act="prev" ${cur===0?"disabled":""}>上一題</button>
-  <button class="btn ${isToeic?"primary":"card-primary"}" data-act="next" ${cur===ex.qs.length-1?"disabled":""}>下一題</button></div>
-  <div class="tools"><button class="btn" data-act="nextWrong">跳到下一題錯題</button><button class="btn" data-act="retryWrong">清除本卷錯題重做</button><button class="btn" data-act="resetExam">清除本卷紀錄</button></div>
-  </div></div>`;
+  <button class="btn primary" data-act="next" ${cur===ex.qs.length-1?"disabled":""}>下一題</button></div>
+  <div class="tools"><button data-act="nextWrong">下一個錯題</button><button data-act="retryWrong">錯題重做</button><button data-act="resetExam">清除本卷紀錄</button></div>`;
   return h;
 }
 
 function vPset(){
   const w=wrongIds(),f=flagIds(),u=[...new Set([...w,...f])],all=scopeIds();
-  const pools=[["wrong","錯題",w.length],["flag","已標註的題目",f.length],["both","錯題＋已標註",u.length],["all","全部題目",all.length]];
+  const pools=[["wrong","錯題",w.length],["flag","標註",f.length],["both","錯題＋標註",u.length],["all","全部題目",all.length]];
   const first=pools.findIndex(p=>p[2]>0);
-  let h=`<button class="back" data-act="go" data-v="${st.scope}">← 回到${scopeName()}</button><h1>錯題隨機抽考</h1><p class="sub">${scopeName()}題庫．從選定範圍隨機抽題，抽考作答不會覆蓋原本試卷的紀錄。</p>
-  <div class="panel" style="margin-top:18px"><fieldset><legend>出題範圍</legend>`;
+  let h=`${backHome}<h1>錯題抽考</h1><p class="sub">${scopeName()}．抽考作答不會覆蓋原本試卷的紀錄</p>
+  <div class="panel" style="margin-top:22px"><fieldset><legend>範圍</legend>`;
   pools.forEach(([k,n,c],j)=>{h+=`<label class="radio"><input type="radio" name="pool" value="${k}" ${j===first?"checked":""} ${c?"":"disabled"}> ${n}（${c} 題）</label>`});
   h+=`</fieldset><fieldset><legend>題數</legend><div class="count"><input id="pcount" type="number" min="1" value="10" inputmode="numeric" aria-label="題數">
-  <button class="quick" data-act="pnum" data-n="5">5 題</button><button class="quick" data-act="pnum" data-n="10">10 題</button><button class="quick" data-act="pnum" data-n="20">20 題</button><button class="quick" data-act="pnum" data-n="999">全部</button></div>
-  <p class="note">題數超過範圍內的題數時，會出完範圍內全部題目。</p></fieldset>
-  <button class="btn primary" data-act="pstart">開始抽考</button><p class="note" id="pmsg"></p></div>`;
-  if(st.pr&&st.pr.ids.length&&(st.pr.scope||"toeic")===st.scope)h+=`<p class="note" style="margin-top:14px">上一回抽考尚未清除：<button class="link" data-act="presume">繼續上一回抽考</button></p>`;
+  <button class="quick" data-act="pnum" data-n="5">5</button><button class="quick" data-act="pnum" data-n="10">10</button><button class="quick" data-act="pnum" data-n="20">20</button><button class="quick" data-act="pnum" data-n="999">全部</button></div></fieldset>
+  <button class="btn primary" data-act="pstart">開始</button><p class="note" id="pmsg"></p></div>`;
+  if(st.pr&&st.pr.ids.length&&(st.pr.scope||"toeic")===st.scope)h+=`<p class="note" style="margin-top:16px"><button class="linkbtn" data-act="presume">繼續上一回抽考</button></p>`;
   return h;
 }
 
 function vPrac(){
   const p=st.pr,id=p.ids[p.i];let ok=0,done=0;
-  const sc=p.scope||"toeic";
   p.ids.forEach(x=>{if(p.ans[x]!==undefined){done++;if(p.ans[x]===QM[x].q.a)ok++}});
-  let h=`<button class="back" data-act="go" data-v="${sc}">← 回到${scopeName(sc)}</button><h1>隨機抽考</h1>`;
-  if(done===p.ids.length)h+=`<div class="result"><p><strong>本回抽考完成：答對 ${ok}／${p.ids.length} 題（${Math.round(ok/p.ids.length*100)}%）</strong></p>
-  <div class="row-btns"><button class="btn primary" data-act="pstartAgain">再抽一回</button><button class="btn" data-act="go" data-v="${sc}">回到目錄</button></div></div>`;
+  let h=`${backHome}<h1>隨機抽考</h1><p class="sub">${scopeName(p.scope||"toeic")}</p>`;
+  if(done===p.ids.length)h+=`<div class="result"><p><strong>完成：答對 ${ok}／${p.ids.length}（${Math.round(ok/p.ids.length*100)}%）</strong></p>
+  <div class="row-btns"><button class="btn primary" data-act="pstartAgain">再抽一回</button><button class="btn" data-act="go" data-v="home">回目錄</button></div></div>`;
   let cells="";p.ids.forEach((x,j)=>{cells+=gridCell(x,j+1,p.ans,j===p.i,"pgoto",j)});
-  h+=`<div class="exam-layout"><aside class="side">${sheetBlock("","抽考答案卡",`已作答 ${done}／${p.ids.length}　答對 ${ok} 題`,cells)}</aside>
-  <div class="main">${card(id,p.i+1,p.ans,true)}
+  h+=sheetBlock("答案卡",`${done}/${p.ids.length}．答對 ${ok}`,cells);
+  h+=`${card(id,p.i+1,p.ans,true)}
   <div class="nav"><button class="btn" data-act="prev" ${p.i===0?"disabled":""}>上一題</button>
-  <button class="btn primary" data-act="next" ${p.i===p.ids.length-1?"disabled":""}>下一題</button></div></div></div>`;
+  <button class="btn primary" data-act="next" ${p.i===p.ids.length-1?"disabled":""}>下一題</button></div>`;
   return h;
 }
 
@@ -859,70 +662,65 @@ function vReport(){
   let D=0,O=0;
   scopeIds().forEach(id=>{const a=st.ans[id];if(a===undefined)return;const {q}=QM[id];const s=stat[q.g];
     if(s){s.d++;D++;if(a===q.a){s.o++;O++}else s.wr.push(id)}});
-  let h=`<button class="back" data-act="go" data-v="${st.scope}">← 回到${scopeName()}</button><h1>錯題分析報告</h1><p class="sub">${scopeName()}</p>`;
-  if(!D)return h+`<div class="panel" style="margin-top:16px"><p style="margin:0 0 12px">還沒有作答紀錄。先完成一份測驗，報告就會列出各概念的答對率與補強建議。</p>${
-    st.scope==="toeic"?`<button class="btn primary" data-act="open" data-ex="toeic_p5_full">開始 TOEIC Part 5 模擬測驗</button>`:`<button class="btn card-primary" data-act="list" data-kind="mock">前往模擬考</button>`}</div>`;
-  h+=`<p class="sub">依目前作答紀錄統計：共作答 ${D} 題，答對 ${O} 題（${Math.round(O/D*100)}%）。抽考的作答不列入統計。</p>
-  <h2>各概念答對率</h2><div class="panel">`;
+  let h=`${backHome}<h1>錯題分析</h1>`;
+  if(!D)return h+`<p class="sub">${scopeName()}</p><p style="margin-top:22px">還沒有作答紀錄。完成一份試卷後，這裡會列出各概念的答對率與補強建議。</p>`;
+  h+=`<p class="sub">${scopeName()}．作答 ${D} 題，答對 ${O} 題（${Math.round(O/D*100)}%）．不含抽考</p><h2>各概念答對率</h2><div>`;
   const rows=tags.filter(k=>stat[k].d).sort((a,b)=>stat[a].o/stat[a].d-stat[b].o/stat[b].d);
   rows.forEach(k=>{const s=stat[k],p=Math.round(s.o/s.d*100);
-    h+=`<div class="tagrow"><span>${TAGS[k].n}</span><div class="bar"><i class="${p<60?"lo":p<80?"mid":""}" style="width:${p}%"></i></div><span class="pct">${s.o}／${s.d}（${p}%）</span></div>`});
+    h+=`<div class="tagrow"><span>${TAGS[k].n}</span><div class="bar"><i class="${p<60?"lo":""}" style="width:${p}%"></i></div><span class="pct">${s.o}/${s.d}．${p}%</span></div>`});
+  h+=`</div>`;
   const untouched=tags.filter(k=>!stat[k].d);
-  h+=`</div>`;if(untouched.length)h+=`<p class="note">尚未作答到的概念：${untouched.map(k=>TAGS[k].n).join("、")}</p>`;
+  if(untouched.length)h+=`<p class="note">尚未作答：${untouched.map(k=>TAGS[k].n).join("、")}</p>`;
   const weak=rows.filter(k=>stat[k].wr.length);
-  h+=`<h2>建議優先補強的概念</h2>`;
-  if(!weak.length)h+=`<div class="panel"><p style="margin:0">目前作答過的概念全部答對。可以繼續完成其他測驗，讓報告涵蓋更多題型。</p></div>`;
-  weak.forEach(k=>{const s=stat[k],p=Math.round(s.o/s.d*100);
-    h+=`<section class="weak"><h3>${TAGS[k].n}</h3><p class="stat">答對率 ${p}%，錯 ${s.wr.length} 題${p<60?"，需要優先複習":p<80?"，建議加強":"，小幅複習即可"}</p>
-    <p><strong>補強建議：</strong>${TAGS[k].t}</p><p><strong>回頭看錯題：</strong></p><ul class="wlist">`;
-    s.wr.forEach(id=>{const {q}=QM[id];h+=`<li><button class="link" data-act="jump" data-id="${id}">${qLabel(id)}</button>：${esc(q.q.length>45?q.q.slice(0,45)+"……":q.q)}</li>`});
-    h+=`</ul></section>`});
+  if(weak.length){h+=`<h2>建議補強</h2>`;
+    weak.forEach(k=>{const s=stat[k],p=Math.round(s.o/s.d*100);
+      h+=`<section class="weak"><h3>${TAGS[k].n}</h3><p class="stat">答對率 ${p}%．錯 ${s.wr.length} 題</p><p>${TAGS[k].t}</p><ul class="wlist">`;
+      s.wr.forEach(id=>{const {q}=QM[id];h+=`<li><button class="link" data-act="jump" data-id="${id}">${qLabel(id)}</button>　<span class="note">${esc(q.q.length>40?q.q.slice(0,40)+"…":q.q)}</span></li>`});
+      h+=`</ul></section>`});
+  }
   const f=flagIds();
-  if(f.length){h+=`<h2>已標註的題目</h2><ul class="wlist">`;f.forEach(id=>{const {q}=QM[id];h+=`<li><button class="link" data-act="jump" data-id="${id}">${qLabel(id)}</button>（${TAGS[q.g]?TAGS[q.g].n:""}）</li>`});h+=`</ul>`}
-  if(weak.length||f.length)h+=`<div class="tools"><button class="btn" data-act="pset">用錯題與標註題隨機抽考</button></div>`;
+  if(f.length){h+=`<h2>標註的題目</h2><ul class="wlist">`;f.forEach(id=>{h+=`<li><button class="link" data-act="jump" data-id="${id}">${qLabel(id)}</button></li>`});h+=`</ul>`}
+  if(weak.length||f.length)h+=`<div class="tools"><button data-act="pset" data-scope="${st.scope}">用錯題與標註題抽考</button></div>`;
   return h;
 }
 
-/* ---------- 同步設定頁 ---------- */
+/* ---------- 同步設定 ---------- */
 function vSync(){
   const on=Sync.on(),[s,label]=syncLabel();
-  let h=`<button class="back" data-act="go" data-v="home">← 回到科目選單</button><h1>跨裝置同步</h1>
-  <p class="sub">把作答紀錄、標註與作答進度存到你自己 GitHub 帳號的私人 Gist。手機、平板、電腦輸入同一組 Token，就能接續刷題。</p>
-  <div class="panel" style="margin-top:18px">`;
-  if(s==="err"&&Sync.msg)h+=`<div class="errbox">⚠ ${esc(Sync.msg)}</div>`;
+  let h=`${backHome}<h1>跨裝置同步</h1>
+  <p class="sub">作答紀錄存到你 GitHub 帳號的私人 Gist，手機、平板、電腦使用同一組 Token 即可接續。</p>
+  <div class="panel" style="margin-top:22px">`;
+  if(s==="err"&&Sync.msg)h+=`<div class="errbox">${esc(Sync.msg)}</div>`;
   if(on){
-    h+=`<dl class="kv"><dt>狀態</dt><dd>${label}</dd>
-      <dt>上次同步</dt><dd>${Sync.cfg.last?fmtTime(Sync.cfg.last):"尚未完成"}</dd>
-      ${Sync.cfg.gistId?`<dt>存放位置</dt><dd><a href="https://gist.github.com/${esc(Sync.cfg.gistId)}" target="_blank" rel="noopener">私人 Gist（${esc(Sync.cfg.gistId.slice(0,8))}…）</a></dd>`:""}</dl>
-      <p class="note" style="margin-top:0">每次作答後幾秒內會自動上傳；切回這個分頁或重新開啟網頁時會自動下載其他裝置的紀錄並合併。</p>
-      <div class="row-btns"><button class="btn primary" data-act="syncNow">立即同步</button><button class="btn" data-act="syncOff">停用此裝置的同步</button></div>`;
+    h+=`<dl class="kv"><dt>狀態</dt><dd>${label}</dd><dt>上次同步</dt><dd>${Sync.cfg.last?fmtTime(Sync.cfg.last):"—"}</dd>
+      ${Sync.cfg.gistId?`<dt>位置</dt><dd><a href="https://gist.github.com/${esc(Sync.cfg.gistId)}" target="_blank" rel="noopener">私人 Gist</a></dd>`:""}</dl>
+      <div class="row-btns"><button class="btn primary" data-act="syncNow">立即同步</button><button class="btn" data-act="syncOff">停用此裝置</button></div>`;
   }else{
     h+=`<ol class="steps">
-      <li>到 GitHub <a href="https://github.com/settings/tokens/new?scopes=gist&description=%E5%88%B7%E9%A1%8C%E5%AD%B8%E7%BF%92%E7%B3%BB%E7%B5%B1%E5%90%8C%E6%AD%A5" target="_blank" rel="noopener">建立 Personal access token（classic）</a>，權限只勾 <code>gist</code>；Expiration 建議選較長期限。</li>
-      <li>按 <strong>Generate token</strong>，複製 <code>ghp_</code> 開頭的字串。</li>
-      <li>貼到下方並按「連線並同步」。其他裝置重複這一步，貼上同一組 Token 即可。</li></ol>
-      <label class="field"><span>GitHub Token</span><input id="tok" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ghp_xxxxxxxxxxxxxxxx"></label>
+      <li><a href="https://github.com/settings/tokens/new?scopes=gist&description=%E5%88%B7%E9%A1%8C%E7%9B%AE%E9%8C%84%E5%90%8C%E6%AD%A5" target="_blank" rel="noopener">建立 GitHub Token（classic）</a>，權限只勾 <code>gist</code>。</li>
+      <li>複製 <code>ghp_</code> 開頭的字串，貼到下方。</li>
+      <li>其他裝置貼上同一組 Token。</li></ol>
+      <label class="field"><span>GitHub Token</span><input id="tok" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ghp_…"></label>
       <button class="btn primary" data-act="syncConnect">連線並同步</button>`;
   }
-  h+=`<p class="note" style="margin-bottom:0">Token 只保存在這台裝置的瀏覽器裡，且只具備 Gist 權限。公用電腦請勿啟用；遺失時可到 GitHub 撤銷該 Token。</p></div>
-  <h2>手動備份／搬移</h2>
-  <div class="panel"><p class="note" style="margin-top:0">不想用 GitHub 時，也可以複製備份碼，在另一台裝置貼上匯入（會與現有紀錄合併，不會覆蓋較新的作答）。</p>
-    <div class="row-btns"><button class="btn" data-act="exportData">複製備份碼</button><button class="btn" data-act="importData">匯入下方備份碼</button></div>
-    <textarea id="bk" class="bk" placeholder="匯入時，把備份碼貼在這裡" spellcheck="false"></textarea>
-    <p class="note" id="bkmsg" style="margin-bottom:0"></p></div>`;
+  h+=`</div><p class="note">Token 只存在這台裝置的瀏覽器，且只有 Gist 權限。請勿在公用電腦啟用。</p>
+  <h2>手動備份</h2>
+  <div class="row-btns"><button class="btn" data-act="exportData">複製備份碼</button><button class="btn" data-act="importData">匯入備份碼</button></div>
+  <textarea id="bk" class="bk" placeholder="匯入時，把備份碼貼在這裡" spellcheck="false"></textarea>
+  <p class="note" id="bkmsg"></p>`;
   return h;
 }
 
 function render(){
   if(st.view==="prac"&&!(st.pr&&st.pr.ids.length))st.view="home";
-  const v={home:vHome,toeic:vToeic,bigdata:vBigdata,list:vList,exam:vExam,pset:vPset,prac:vPrac,report:vReport,sync:vSync}[st.view]||vHome;
+  const v={home:vHome,exam:vExam,pset:vPset,prac:vPrac,report:vReport,sync:vSync}[st.view]||vHome;
   app.innerHTML=v();
   renderTopbar();
 }
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function toTop(){window.scrollTo(0,0)}
-function qTop(){const p=app.querySelectorAll(".panel");const el=p[p.length-1];if(!el)return;
+function qTop(){const el=app.querySelector(".panel");if(!el)return;
   const r=el.getBoundingClientRect();if(r.top<64||r.top>window.innerHeight*0.6)el.scrollIntoView({block:"start"})}
 const toeicIds=()=>findEx("toeic_p5_full").qs.map((q,i)=>"toeic_p5_full-"+i);
 function poolIds(pool){const w=wrongIds(),f=flagIds();
@@ -931,29 +729,24 @@ function poolIds(pool){const w=wrongIds(),f=flagIds();
 document.addEventListener("click",e=>{
   const t=e.target.closest("[data-act]");if(!t||!(app.contains(t)||topbar.contains(t)))return;
   const d=t.dataset,a=d.act;
+  if(d.scope)st.scope=d.scope;
   const ex=findEx(st.exam);let scroll=null;
   switch(a){
-    case"go":st.view=d.v;if(d.v==="toeic"||d.v==="bigdata")st.scope=d.v;scroll=toTop;break;
-    case"list":st.view="list";st.kind=d.kind;st.scope="bigdata";scroll=toTop;break;
-    case"open":st.view="exam";st.exam=d.ex;st.kind=findEx(d.ex).kind;st.scope=st.kind==="toeic"?"toeic":"bigdata";scroll=toTop;break;
+    case"go":st.view=d.v;scroll=toTop;break;
+    case"open":st.view="exam";st.exam=d.ex;st.scope=findEx(d.ex).kind==="toeic"?"toeic":"bigdata";scroll=toTop;break;
     case"goto":st.cur[st.exam]=+d.i;scroll=qTop;break;
     case"pgoto":st.pr.i=+d.i;scroll=qTop;break;
     case"pick":if(st.view==="prac")st.pr.ans[d.id]=+d.k;else setAns(d.id,+d.k);break;
     case"flag":toggleFlag(d.id);break;
     case"copy":copyQuestion(d.id);return;
-    case"toeicTab":st.toeicPart=+d.part;break;
-    case"toeicQuickPset":{
-      let ids=d.mode==="wrong"?toeicIds().filter(isWrong):shuffle(toeicIds()).slice(0,10);
-      if(!ids.length){showToast("太棒了！目前 Part 5 還沒有錯題紀錄。");return}
-      if(d.mode==="wrong")ids=shuffle(ids);
-      st.pr={ids,ans:{},i:0,src:"toeicQuick",lastMode:d.mode,scope:"toeic"};
+    case"toeicQuick":
+      st.pr={ids:shuffle(toeicIds()).slice(0,10),ans:{},i:0,src:"toeicQuick",scope:"toeic"};
       st.view="prac";scroll=toTop;break;
-    }
     case"pstartAgain":{
       const p=st.pr||{};let ids=[];
       if(p.src==="pset"){st.scope=p.scope;ids=shuffle([...poolIds(p.pool)]).slice(0,p.n);
         if(!ids.length){st.view="pset";scroll=toTop;break}}
-      else{ids=p.lastMode==="wrong"?shuffle(toeicIds().filter(isWrong)):[];if(!ids.length)ids=shuffle(toeicIds()).slice(0,10)}
+      else ids=shuffle(toeicIds()).slice(0,10);
       st.pr={...p,ids,ans:{},i:0};st.view="prac";scroll=toTop;break;
     }
     case"prev":if(st.view==="prac")st.pr.i--;else st.cur[st.exam]=(st.cur[st.exam]||0)-1;scroll=qTop;break;
@@ -964,57 +757,57 @@ document.addEventListener("click",e=>{
     case"pnum":{const inp=document.getElementById("pcount");inp.value=d.n==="999"?scopeIds().length:d.n;return}
     case"pstart":{
       const pool=(app.querySelector('input[name="pool"]:checked')||{}).value;
-      const ids=poolIds(pool);
+      const ids=pool?poolIds(pool):[];
       const n=parseInt(document.getElementById("pcount").value,10);
-      if(!ids.length){document.getElementById("pmsg").textContent="這個範圍目前沒有題目，請改選其他範圍。";return}
+      if(!ids.length){document.getElementById("pmsg").textContent="這個範圍目前沒有題目。";return}
       if(!(n>0)){document.getElementById("pmsg").textContent="請輸入 1 以上的題數。";return}
       st.pr={ids:shuffle([...ids]).slice(0,n),ans:{},i:0,src:"pset",pool,n,scope:st.scope};st.view="prac";scroll=toTop;break}
-    case"jump":{const {ex:x,i}=QM[d.id];st.view="exam";st.exam=x.id;st.kind=x.kind;st.cur[x.id]=i;scroll=toTop;break}
+    case"jump":{const {ex:x,i}=QM[d.id];st.view="exam";st.exam=x.id;st.cur[x.id]=i;scroll=toTop;break}
     case"nextWrong":{const c=st.cur[ex.id]||0,n=ex.qs.length;let f=-1;
       for(let s=1;s<=n;s++){const i=(c+s)%n;if(isWrong(ex.id+"-"+i)){f=i;break}}
-      if(f<0){showToast("本卷目前沒有錯題");return}st.cur[ex.id]=f;scroll=qTop;break}
+      if(f<0){showToast("本卷沒有錯題");return}st.cur[ex.id]=f;scroll=qTop;break}
     case"retryWrong":{let f=-1;ex.qs.forEach((q,i)=>{const id=ex.id+"-"+i;if(isWrong(id)){delAns(id);if(f<0)f=i}});
-      if(f<0){showToast("本卷目前沒有錯題");return}st.cur[ex.id]=f;scroll=toTop;break}
-    case"resetExam":if(!confirm(`確定清除${ex.title}的作答紀錄？標註會保留。`))return;
+      if(f<0){showToast("本卷沒有錯題");return}st.cur[ex.id]=f;scroll=toTop;break}
+    case"resetExam":if(!confirm(`確定清除「${ex.title}」的作答紀錄？標註會保留。`))return;
       ex.qs.forEach((q,i)=>delAns(ex.id+"-"+i));st.cur[ex.id]=0;scroll=toTop;break;
     case"syncConnect":{
       const v=((document.getElementById("tok")||{}).value||"").trim();
-      if(!v){showToast("請先貼上 GitHub Token");return}
+      if(!v){showToast("請先貼上 Token");return}
       Sync.cfg={token:v,gistId:"",last:0};Sync.saveCfg();Sync.msg="";
       render();
-      Sync.run().then(()=>{if(Sync.state==="ok")showToast("✓ 已連線，紀錄同步完成！")});
+      Sync.run().then(()=>{if(Sync.state==="ok")showToast("已連線並完成同步")});
       return;
     }
-    case"syncNow":Sync.run().then(()=>{if(Sync.state==="ok")showToast("✓ 同步完成")});return;
-    case"syncOff":if(!confirm("停用這台裝置的同步？本機紀錄與雲端 Gist 都會保留，之後可隨時重新連線。"))return;
+    case"syncNow":Sync.run().then(()=>{if(Sync.state==="ok")showToast("同步完成")});return;
+    case"syncOff":if(!confirm("停用這台裝置的同步？本機與雲端紀錄都會保留。"))return;
       clearTimeout(Sync.timer);Sync.timer=null;Sync.cfg={token:"",gistId:"",last:0};Sync.saveCfg();Sync.state="off";Sync.msg="";break;
     case"exportData":{
       const code=JSON.stringify(payload());
       const ta=document.getElementById("bk");if(ta)ta.value=code;
-      copyText(code,()=>showToast("✓ 備份碼已複製"));
-      document.getElementById("bkmsg").textContent=`備份碼共 ${Object.keys(st.ans).length} 筆作答紀錄，已放在下方文字框並複製到剪貼簿。`;
+      copyText(code,()=>showToast("備份碼已複製"));
+      document.getElementById("bkmsg").textContent=`共 ${Object.keys(st.ans).length} 筆作答紀錄。`;
       return;
     }
     case"importData":{
       const msg=document.getElementById("bkmsg");
-      let o;try{o=JSON.parse((document.getElementById("bk").value||"").trim())}catch(err){msg.textContent="備份碼格式不正確，請確認是否完整貼上。";return}
+      let o;try{o=JSON.parse((document.getElementById("bk").value||"").trim())}catch(err){msg.textContent="備份碼格式不正確。";return}
       if(!o||typeof o.ans!=="object"){msg.textContent="這不是本系統的備份碼。";return}
       const before=Object.keys(st.ans).length;
       mergeRemote(o);persist();Sync.schedule(500);
-      showToast(`✓ 匯入完成（作答紀錄 ${before} → ${Object.keys(st.ans).length} 筆）`);
+      showToast(`匯入完成（${before} → ${Object.keys(st.ans).length} 筆）`);
       render();return;
     }
   }
   save();render();if(scroll)scroll();
 });
 
-// 手機上記住答案卡展開／收合
+// 記住資料夾與答案卡的展開狀態
 document.addEventListener("toggle",e=>{
-  const el=e.target;
-  if(el&&el.classList&&el.classList.contains("sheet")&&!isWide()){st.sheetOpen=el.open;persist()}
+  const el=e.target;if(!el||!el.classList)return;
+  if(el.classList.contains("folder")){st.open[el.dataset.key]=el.open;persist()}
+  else if(el.classList.contains("sheet")){st.sheetOpen=el.open;persist()}
 },true);
 
-// 切換分頁／回到前景時同步，離開時先送出尚未上傳的變更
 document.addEventListener("visibilitychange",()=>{
   if(!Sync.on())return;
   if(document.visibilityState==="visible")Sync.run();else Sync.flush();
