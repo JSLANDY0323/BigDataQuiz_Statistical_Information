@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>TOEIC 多益刷題系統</title>
+<title>刷題學習系統｜巨量資料概論 & TOEIC</title>
+<meta name="theme-color" content="#F4F6F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12171D" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="刷題系統">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -190,10 +195,129 @@ legend{font-weight:700;margin-bottom:8px}
 .wlist li{margin:4px 0}
 .link{appearance:none;border:0;background:none;padding:0;color:var(--toeic);font:inherit;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 @media (prefers-reduced-motion:no-preference){.exp{animation:in .25s ease-out}@keyframes in{from{opacity:0;transform:translateY(4px)}}}
+
+/* ===== 跨裝置版面（手機・平板・電腦） ===== */
+:root{padding-top:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:72px}
+body{-webkit-tap-highlight-color:transparent;min-height:100vh}
+.wrap{max-width:820px;padding:20px 16px calc(72px + env(safe-area-inset-bottom,0px))}
+@media (min-width:768px){.wrap{padding-left:28px;padding-right:28px;padding-top:28px}}
+@media (min-width:1024px){.wrap{max-width:1040px}}
+.panel{scroll-margin-top:72px}
+a{color:var(--toeic)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+@supports (backdrop-filter:blur(8px)) or (-webkit-backdrop-filter:blur(8px)){
+  .topbar{background:color-mix(in srgb,var(--paper) 86%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px)}
+}
+.topbar-in{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px}
+@media (min-width:768px){.topbar-in{padding:10px 28px}}
+.brand{appearance:none;border:0;background:none;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:6px 0;font:700 1.02rem "Noto Serif TC","PMingLiU",serif;min-height:40px}
+.brand-ic{font-size:1.15rem}
+.syncbtn{appearance:none;border:1px solid var(--line);background:var(--sheet);color:var(--muted);border-radius:999px;padding:6px 12px;font:500 .8rem/1.2 inherit;font-family:inherit;display:inline-flex;align-items:center;gap:7px;min-height:36px;cursor:pointer;white-space:nowrap;max-width:60vw;overflow:hidden;text-overflow:ellipsis}
+.syncbtn:hover{border-color:var(--toeic);color:var(--ink)}
+.syncdot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--line);box-shadow:inset 0 0 0 1.5px var(--muted)}
+.syncbtn[data-s="ok"] .syncdot,.syncbtn[data-s="idle"] .syncdot{background:var(--ok);box-shadow:none}
+.syncbtn[data-s="busy"] .syncdot,.syncbtn[data-s="pending"] .syncdot{background:var(--gold);box-shadow:none}
+.syncbtn[data-s="err"] .syncdot{background:var(--bad);box-shadow:none}
+.syncbtn[data-s="err"]{color:var(--bad);border-color:var(--bad)}
+@media (prefers-reduced-motion:no-preference){.syncbtn[data-s="busy"] .syncdot{animation:pulse 1s ease-in-out infinite}@keyframes pulse{50%{opacity:.3}}}
+
+/* 首頁：兩大科目 */
+.home-head{margin-top:6px}
+.subjects{display:grid;gap:16px;grid-template-columns:1fr;margin-top:20px}
+@media (min-width:720px){.subjects{grid-template-columns:1fr 1fr;gap:20px}}
+.subject{--accent:var(--toeic);--accent-soft:var(--toeic-soft);text-align:left;font:inherit;color:var(--ink);background:var(--sheet);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:12px;padding:22px 20px 18px;cursor:pointer;display:flex;flex-direction:column;gap:12px;min-height:240px;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;width:100%}
+.subject.bd{--accent:var(--card);--accent-soft:var(--card-soft)}
+.s-head{display:flex;align-items:center;gap:14px}
+.s-ic{flex:none;width:52px;height:52px;border-radius:14px;background:var(--accent-soft);display:grid;place-items:center;font-size:1.6rem}
+.s-kicker{display:block;font-size:.78rem;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.subject h2{margin:2px 0 0;font-size:1.45rem;color:var(--accent)}
+.s-desc{margin:0;color:var(--muted);font-size:.9rem;line-height:1.6}
+.s-tags{display:flex;flex-wrap:wrap;gap:6px}
+.s-tags span{font-size:.76rem;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.s-prog{margin-top:auto;display:grid;gap:8px;padding-top:6px}
+.s-row{display:flex;justify-content:space-between;gap:10px;font-size:.82rem;color:var(--muted)}
+.subject .bar i{background:var(--accent)}
+.s-go{font-weight:700;color:var(--accent)}
+.banner{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--toeic-soft);border:1px solid var(--toeic-line);border-radius:10px;padding:12px 16px;margin-top:20px;font-size:.9rem}
+.banner .btn{padding:7px 14px;font-size:.85rem}
+
+/* 答案卡可收合（手機） */
+details.sheet>summary{list-style:none;cursor:pointer}
+details.sheet>summary::-webkit-details-marker{display:none}
+details.sheet>summary .sh-arrow{display:inline-block;margin-left:6px;transition:transform .2s ease}
+details.sheet[open]>summary .sh-arrow{transform:rotate(180deg)}
+details.sheet:not([open]){padding-bottom:16px}
+details.sheet:not([open]) .sheet-head{border-bottom:0;margin-bottom:0;padding-bottom:0}
+
+/* 題目頁：大螢幕左右分欄 */
+@media (min-width:1024px){
+  .exam-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px;align-items:start;margin-top:16px}
+  .exam-layout .side{position:sticky;top:72px;max-height:calc(100vh - 88px);overflow:auto;border-radius:8px}
+  .exam-layout .side .sheet{margin:0}
+  .exam-layout .side details.sheet>summary{cursor:default;pointer-events:none}
+  .exam-layout .side .sh-arrow{display:none}
+  .exam-layout .side .grid{grid-template-columns:repeat(auto-fill,minmax(38px,1fr))}
+  .exam-layout .result{grid-column:1/-1}
+}
+
+/* 同步設定頁 */
+.steps{margin:0 0 16px;padding-left:1.3em}
+.steps li{margin:6px 0}
+.field{display:grid;gap:6px;margin:0 0 14px}
+.field span{font-weight:700;font-size:.92rem}
+.field input,textarea.bk{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--sheet);color:var(--ink);font:16px/1.4 ui-monospace,Menlo,Consolas,monospace}
+textarea.bk{min-height:96px;resize:vertical;margin-top:12px}
+.row-btns{display:flex;gap:10px;flex-wrap:wrap}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0 0 16px;font-size:.92rem}
+.kv dt{color:var(--muted)} .kv dd{margin:0;word-break:break-all}
+.errbox{border:1px solid var(--bad);background:var(--bad-soft);color:var(--bad);border-radius:6px;padding:10px 12px;margin:0 0 14px;font-size:.9rem}
+
+/* 觸控裝置：放大點擊區、取消黏住的 hover 效果 */
+.btn,.opt,.action,.block,.toeic-block{min-height:44px}
+@media (hover:hover){
+  .subject:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.08);border-color:var(--accent)}
+}
+@media (hover:none){
+  .block:hover,.toeic-block:hover{transform:none;box-shadow:none}
+  .opt:hover:not(:disabled){border-color:var(--line);background:var(--sheet)}
+  .action:hover{border-color:var(--line)}
+  .btn:hover:not(:disabled){background:transparent}
+  .btn.primary:hover:not(:disabled){background:var(--toeic);border-color:var(--toeic)}
+}
+
+/* 手機 */
+@media (max-width:560px){
+  h1{font-size:1.38rem} h2{font-size:1.15rem}
+  .panel{padding:16px 14px}
+  .qtext{font-size:1.06rem;margin-bottom:14px}
+  .qtop{align-items:flex-start}
+  .qactions{width:100%;justify-content:flex-end}
+  .opt{padding:11px 12px}
+  .nav .btn{flex:1}
+  .tools .btn{flex:1 1 calc(50% - 10px)}
+  .tagrow{grid-template-columns:1fr auto;row-gap:6px}
+  .tagrow .bar{grid-column:1/-1;grid-row:2}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:7px}
+  .cell{height:38px}
+  .part5-stats>div:last-child{width:100%}
+  .part5-stats .btn{width:100%}
+  .toeic-tab{padding:8px 12px;font-size:.88rem}
+  .subject{min-height:0;padding:18px 16px 16px}
+  .subject h2{font-size:1.3rem}
+  .s-ic{width:46px;height:46px;font-size:1.4rem}
+  .brand-tx{font-size:.95rem}
+  .toast{bottom:calc(20px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 32px);text-align:center}
+}
+
 </style>
 </head>
 <body>
-<div class="wrap" id="app"></div>
+<header class="topbar" id="topbar"></header>
+<main class="wrap" id="app"></main>
 <div id="toast" class="toast">✓ 題目與解析已複製到剪貼簿！</div>
 <script>
 const TAGS={
@@ -312,52 +436,188 @@ ALL.forEach(ex=>ex.qs.forEach((q,i)=>{QM[ex.id+"-"+i]={ex,i,q}}));
 const qNo=id=>{const {i,q}=QM[id];return q.n||i+1};
 const qLabel=id=>QM[id].ex.title+" 第 "+qNo(id)+" 題";
 const findEx=id=>ALL.find(e=>e.id===id)||ALL[0];
+const VIEWS=["home","toeic","bigdata","list","exam","pset","prac","report","sync"];
 
-let st={view:"home", exam:"toeic_p5_full", toeicPart:5, archiveOpen:false, cur:{}, ans:{}, flags:{}, pr:null};
+let st={view:"home", scope:"bigdata", exam:"toeic_p5_full", toeicPart:5, sheetOpen:false, cur:{}, ans:{}, flags:{}, pr:null, ansT:{}, flagT:{}, curT:{}};
 
 function load(){
   try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.ans){st=Object.assign(st,s)}}catch(e){}
-  try{const o=JSON.parse(localStorage.getItem("bigdata-quiz-v1")||"null");
-    if(o&&o.ans){Object.keys(o.ans).forEach(k=>{st.ans["e1-"+k]=o.ans[k]});st.cur.e1=o.cur||0}}catch(e){}
+  if(!st.migratedV1){
+    try{const o=JSON.parse(localStorage.getItem("bigdata-quiz-v1")||"null");
+      if(o&&o.ans){Object.keys(o.ans).forEach(k=>{if(st.ans["e1-"+k]===undefined)st.ans["e1-"+k]=o.ans[k]});if(st.cur.e1===undefined)st.cur.e1=o.cur||0}}catch(e){}
+    st.migratedV1=true;
+  }
+  ["ansT","flagT","curT"].forEach(k=>{if(!st[k]||typeof st[k]!=="object")st[k]={}});
+  // 舊紀錄沒有時間戳記，補上最小值，讓同步時能正確合併
+  Object.keys(st.ans).forEach(k=>{if(!st.ansT[k])st.ansT[k]=1});
+  Object.keys(st.flags).forEach(k=>{if(!st.flagT[k])st.flagT[k]=1});
+  Object.keys(st.cur).forEach(k=>{if(!st.curT[k])st.curT[k]=1});
+  if(!VIEWS.includes(st.view))st.view="home";
+  if(st.view==="sync")st.view="home";
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+
+/* ---------- 本機儲存 ---------- */
+let dirty=false, prevCur={};
+const now=()=>Date.now();
+function setAns(id,k){st.ans[id]=k;st.ansT[id]=now();dirty=true}
+function delAns(id){if(st.ans[id]!==undefined){delete st.ans[id];st.ansT[id]=now();dirty=true}}
+function toggleFlag(id){if(st.flags[id])delete st.flags[id];else st.flags[id]=true;st.flagT[id]=now();dirty=true}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+function save(){
+  Object.keys(st.cur).forEach(k=>{if(prevCur[k]!==st.cur[k]){st.curT[k]=now();dirty=true}});
+  prevCur={...st.cur};
+  persist();
+  if(dirty){dirty=false;Sync.schedule()}
+}
+
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const isWrong=id=>st.ans[id]!==undefined&&st.ans[id]!==QM[id].q.a;
-const wrongIds=()=>Object.keys(QM).filter(isWrong);
-const flagIds=()=>Object.keys(QM).filter(id=>st.flags[id]);
+const inScope=(id,sc)=>(QM[id].ex.kind==="toeic")===((sc||st.scope)==="toeic");
+const scopeIds=sc=>Object.keys(QM).filter(id=>inScope(id,sc));
+const wrongIds=sc=>scopeIds(sc).filter(isWrong);
+const flagIds=sc=>scopeIds(sc).filter(id=>st.flags[id]);
+const scopeTags=sc=>Object.keys(TAGS).filter(k=>k.startsWith("t_")===((sc||st.scope)==="toeic"));
+const scopeName=sc=>(sc||st.scope)==="toeic"?"TOEIC":"巨量資料概論";
 const app=document.getElementById("app");
+const topbar=document.getElementById("topbar");
+const isWide=()=>window.matchMedia("(min-width:1024px)").matches;
 
+/* ---------- 跨裝置同步（GitHub Gist） ---------- */
+const SYNC_KEY="quiz-sync-v1", GIST_FILE="quiz-progress.json", GIST_DESC="刷題學習系統｜作答紀錄同步（請勿刪除）";
+function payload(){return {app:"quiz-sync",v:1,updatedAt:now(),ans:st.ans,ansT:st.ansT,flags:st.flags,flagT:st.flagT,cur:st.cur,curT:st.curT}}
+function stable(o){if(o===null||typeof o!=="object")return JSON.stringify(o);if(Array.isArray(o))return "["+o.map(stable).join(",")+"]";
+  return "{"+Object.keys(o).sort().map(k=>JSON.stringify(k)+":"+stable(o[k])).join(",")+"}"}
+const dataKey=o=>stable({ans:o.ans||{},ansT:o.ansT||{},flags:o.flags||{},flagT:o.flagT||{},cur:o.cur||{},curT:o.curT||{}});
+function mergeMap(lv,lt,rv,rt){
+  let ch=false;rv=rv||{};rt=rt||{};
+  new Set([...Object.keys(lt),...Object.keys(rt),...Object.keys(lv),...Object.keys(rv)]).forEach(k=>{
+    const a=lt[k]||0,b=rt[k]||0;
+    if(b>a||(b===a&&lv[k]===undefined&&rv[k]!==undefined)){
+      if(rv[k]===undefined){if(lv[k]!==undefined){delete lv[k];ch=true}}
+      else if(lv[k]!==rv[k]){lv[k]=rv[k];ch=true}
+      if(b)lt[k]=b;
+    }
+  });
+  return ch;
+}
+function mergeRemote(r){
+  if(!r||typeof r!=="object")return false;
+  let ch=mergeMap(st.ans,st.ansT,r.ans,r.ansT);
+  ch=mergeMap(st.flags,st.flagT,r.flags,r.flagT)||ch;
+  ch=mergeMap(st.cur,st.curT,r.cur,r.curT)||ch;
+  prevCur={...st.cur};
+  return ch;
+}
+
+const Sync={
+  cfg:{token:"",gistId:"",last:0}, state:"off", msg:"", busy:false, again:false, timer:null,
+  loadCfg(){try{Object.assign(this.cfg,JSON.parse(localStorage.getItem(SYNC_KEY)||"{}"))}catch(e){}this.state=this.cfg.token?"idle":"off"},
+  saveCfg(){try{localStorage.setItem(SYNC_KEY,JSON.stringify(this.cfg))}catch(e){}},
+  on(){return !!this.cfg.token},
+  async api(path,opt={}){
+    let r;
+    try{
+      r=await fetch("https://api.github.com"+path,{...opt,cache:"no-store",headers:{
+        "Accept":"application/vnd.github+json","Authorization":"Bearer "+this.cfg.token,
+        ...(opt.body?{"Content-Type":"application/json"}:{})}});
+    }catch(e){throw new Error("無法連線到 GitHub，請確認網路")}
+    if(r.status===401){const e=new Error("Token 無效或已過期，請重新設定");e.code=401;throw e}
+    if(r.status===404){const e=new Error("找不到同步用的 Gist");e.code=404;throw e}
+    if(r.status===403||r.status===429)throw new Error("GitHub 拒絕請求：Token 需要 gist 權限，或暫時超過使用額度");
+    if(!r.ok)throw new Error("GitHub 回應錯誤（"+r.status+"）");
+    return r.status===204?null:r.json();
+  },
+  async findOrCreate(){
+    for(let page=1;page<=10;page++){
+      const list=await this.api(`/gists?per_page=100&page=${page}`);
+      const g=(list||[]).find(g=>g.files&&g.files[GIST_FILE]);
+      if(g)return g.id;
+      if(!list||list.length<100)break;
+    }
+    const g=await this.api("/gists",{method:"POST",body:JSON.stringify({description:GIST_DESC,public:false,files:{[GIST_FILE]:{content:JSON.stringify(payload())}}})});
+    return g.id;
+  },
+  async pull(){
+    const g=await this.api("/gists/"+this.cfg.gistId);
+    const f=g&&g.files&&g.files[GIST_FILE];
+    if(!f)return null;
+    let txt=f.content;
+    if(f.truncated&&f.raw_url){const r=await fetch(f.raw_url,{cache:"no-store"});txt=await r.text()}
+    try{return JSON.parse(txt)}catch(e){return null}
+  },
+  async push(){
+    await this.api("/gists/"+this.cfg.gistId,{method:"PATCH",body:JSON.stringify({files:{[GIST_FILE]:{content:JSON.stringify(payload())}}})});
+  },
+  schedule(delay=2500){
+    if(!this.on())return;
+    clearTimeout(this.timer);
+    this.timer=setTimeout(()=>{this.timer=null;this.run()},delay);
+    if(!this.busy)this.setState("pending");
+  },
+  flush(){if(this.timer){clearTimeout(this.timer);this.timer=null;this.run()}},
+  async run(){
+    if(!this.on())return;
+    if(this.busy){this.again=true;return}
+    this.busy=true;this.setState("busy");
+    let changed=false;
+    try{
+      if(!this.cfg.gistId){this.cfg.gistId=await this.findOrCreate();this.saveCfg()}
+      let remote;
+      try{remote=await this.pull()}
+      catch(e){if(e.code!==404)throw e;this.cfg.gistId=await this.findOrCreate();this.saveCfg();remote=await this.pull()}
+      changed=mergeRemote(remote);
+      if(!remote||dataKey(remote)!==dataKey(st))await this.push();
+      this.cfg.last=now();this.saveCfg();persist();
+      this.msg="";this.state="ok";
+    }catch(e){
+      this.msg=e.message||String(e);this.state="err";
+      if(e.code===401){this.cfg={token:"",gistId:"",last:0};this.saveCfg()}
+    }
+    this.busy=false;
+    if(changed||st.view==="sync")render();else renderTopbar();
+    if(this.again){this.again=false;this.run()}
+  },
+  setState(s){this.state=s;renderTopbar()}
+};
+
+function fmtTime(t){
+  if(!t)return "";const d=new Date(t),n=new Date(),p=x=>String(x).padStart(2,"0");
+  const hm=p(d.getHours())+":"+p(d.getMinutes());
+  return d.toDateString()===n.toDateString()?hm:(d.getMonth()+1)+"/"+d.getDate()+" "+hm;
+}
+function syncLabel(){
+  const s=Sync.on()?Sync.state:(Sync.state==="err"?"err":"off");
+  return [s,{off:"未啟用同步",idle:"已啟用同步",pending:"等待同步…",busy:"同步中…",ok:"已同步 "+fmtTime(Sync.cfg.last),err:"同步失敗"}[s]];
+}
+function renderTopbar(){
+  const [s,label]=syncLabel();
+  topbar.innerHTML=`<div class="topbar-in">
+    <button class="brand" data-act="go" data-v="home" aria-label="回到科目選單"><span class="brand-ic">📚</span><span class="brand-tx">刷題學習系統</span></button>
+    <button class="syncbtn" data-act="go" data-v="sync" data-s="${s}" title="${esc(Sync.msg||"跨裝置同步設定")}"><i class="syncdot"></i><span>${label}</span></button>
+  </div>`;
+}
+
+/* ---------- 共用元件 ---------- */
 function examStats(ex){let d=0,o=0;ex.qs.forEach((q,i)=>{const a=st.ans[ex.id+"-"+i];if(a!==undefined){d++;if(a===q.a)o++}});return{d,o}}
+function scopeStats(sc){const ids=scopeIds(sc);let d=0,o=0,f=0;ids.forEach(id=>{const a=st.ans[id];if(a!==undefined){d++;if(a===QM[id].q.a)o++}if(st.flags[id])f++});return{n:ids.length,d,o,w:d-o,f}}
 
 function showToast(msg){
   let t=document.getElementById("toast");
-  if(!t){
-    t=document.createElement("div");
-    t.id="toast";
-    t.className="toast";
-    document.body.appendChild(t);
-  }
-  t.textContent=msg;
-  t.classList.add("show");
-  clearTimeout(t._tm);
-  t._tm=setTimeout(()=>t.classList.remove("show"),2200);
+  if(!t){t=document.createElement("div");t.id="toast";t.className="toast";document.body.appendChild(t)}
+  t.textContent=msg;t.classList.add("show");
+  clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove("show"),2200);
 }
 
 function fallbackCopy(text, cb){
   const ta=document.createElement("textarea");
-  ta.value=text;
-  ta.style.position="fixed";
-  ta.style.opacity="0";
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  try{
-    document.execCommand("copy");
-    if(cb) cb();
-  }catch(e){
-    alert("複製失敗，請手動複製");
-  }
+  ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand("copy");if(cb)cb()}catch(e){alert("複製失敗，請手動複製")}
   document.body.removeChild(ta);
+}
+function copyText(text,cb){
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(cb).catch(()=>fallbackCopy(text,cb));
+  else fallbackCopy(text,cb);
 }
 
 function copyQuestion(id){
@@ -367,33 +627,17 @@ function copyQuestion(id){
   const tag=TAGS[q.g]?TAGS[q.g].n:"";
   let text=`【${ex.title} 第 ${qNo(id)} 題】${tag?`[${tag}]`:""}\n`;
   text+=`${q.q}\n\n`;
-  q.o.forEach((opt,idx)=>{
-    text+=`(${L[idx]}) ${opt}\n`;
-  });
+  q.o.forEach((opt,idx)=>{text+=`(${L[idx]}) ${opt}\n`});
   text+=`\n【正解】(${L[q.a]})\n`;
   if(q.trans) text+=`【中文翻譯】${q.trans}\n`;
   if(q.e) text+=`【考點詳解】${q.e}\n`;
   if(q.w) text+=`【其他選項解析】${q.w}\n`;
-
-  const afterCopy=()=>{
+  copyText(text,()=>{
     showToast("✓ 題目與解析已複製到剪貼簿！");
     const btn=document.querySelector(`.copybtn[data-id="${id}"]`);
-    if(btn){
-      const origText=btn.innerHTML;
-      btn.innerHTML=`✓ 已複製！`;
-      btn.classList.add("copied");
-      setTimeout(()=>{
-        btn.innerHTML=origText;
-        btn.classList.remove("copied");
-      },2000);
-    }
-  };
-
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(afterCopy).catch(()=>fallbackCopy(text,afterCopy));
-  }else{
-    fallbackCopy(text,afterCopy);
-  }
+    if(btn){const o=btn.innerHTML;btn.innerHTML=`✓ 已複製！`;btn.classList.add("copied");
+      setTimeout(()=>{btn.innerHTML=o;btn.classList.remove("copied")},2000)}
+  });
 }
 
 function card(id,num,ansMap,showSrc){
@@ -432,181 +676,130 @@ function gridCell(id,label,ansMap,cur,act,idx){
 }
 const legend=`<div class="legend"><span><i style="background:var(--ok)"></i>答對</span><span><i style="background:var(--bad)"></i>答錯</span><span><i style="border:1.5px solid var(--toeic)"></i>未作答</span><span><i style="background:var(--flag)"></i>已標註</span></div>`;
 
+// 答案卡：大螢幕固定在左側並展開；手機可收合（記住偏好）
+function sheetBlock(theme,title,score,cells){
+  const open=isWide()||st.sheetOpen;
+  return `<details class="sheet ${theme}" ${open?"open":""}>
+  <summary><div class="sheet-head"><span>${title}<span class="sh-arrow" aria-hidden="true">▾</span></span><span class="score">${score}</span></div></summary>
+  <div class="grid">${cells}</div>${legend}</details>`;
+}
+
 function examRow(ex){const s=examStats(ex);
   return `<div class="exam"><div><h3>${ex.title}</h3><p>已作答 ${s.d}／${ex.qs.length}．答對 ${s.o} 題${s.d?`（${Math.round(s.o/s.d*100)}%）`:""}</p></div>
   <button class="btn ${s.d?"":"card-primary"}" data-act="open" data-ex="${ex.id}">${s.d===0?"開始作答":s.d<ex.qs.length?"繼續作答":"檢視結果"}</button></div>`}
 function kindStats(k){let d=0,o=0,n=0;ALL.filter(e=>e.kind===k).forEach(e=>{const s=examStats(e);d+=s.d;o+=s.o;n+=e.qs.length});return{d,o,n}}
 
 function getToeicP5Stats(){
-  const fullEx = findEx("toeic_p5_full");
-  let d=0, o=0, fl=0, wr=0;
-  fullEx.qs.forEach((q,i)=>{
-    const id = "toeic_p5_full-" + i;
-    const a = st.ans[id];
-    if(a!==undefined){
-      d++;
-      if(a===q.a) o++;
-      else wr++;
-    }
-    if(st.flags[id]) fl++;
-  });
-  return {d, o, fl, wr, total: fullEx.qs.length};
+  const fullEx=findEx("toeic_p5_full");
+  let d=0,o=0,fl=0,wr=0;
+  fullEx.qs.forEach((q,i)=>{const id="toeic_p5_full-"+i,a=st.ans[id];
+    if(a!==undefined){d++;if(a===q.a)o++;else wr++}if(st.flags[id])fl++});
+  return {d,o,fl,wr,total:fullEx.qs.length};
+}
+function exMeta(id){const ex=findEx(id),s=examStats(ex);return `已作答 ${s.d}／${ex.qs.length} 題${s.d?` · 正確率 ${Math.round(s.o/s.d*100)}%`:""}`}
+
+/* ---------- 首頁：兩大科目入口 ---------- */
+function vHome(){
+  const B=scopeStats("bigdata"),T=scopeStats("toeic");
+  const subj=(cls,v,ic,kicker,title,desc,tags,s)=>`<button class="subject ${cls}" data-act="go" data-v="${v}">
+    <div class="s-head"><span class="s-ic" aria-hidden="true">${ic}</span><div><span class="s-kicker">${kicker}</span><h2>${title}</h2></div></div>
+    <p class="s-desc">${desc}</p>
+    <div class="s-tags">${tags.map(t=>`<span>${t}</span>`).join("")}</div>
+    <div class="s-prog">
+      <div class="s-row"><span>已作答 ${s.d}／${s.n} 題</span><span>${s.d?`正確率 ${Math.round(s.o/s.d*100)}%`:"尚未開始"}</span></div>
+      <div class="bar"><i style="width:${s.n?(s.d/s.n*100).toFixed(1):0}%"></i></div>
+      <div class="s-row"><span>${[s.w?`錯題 ${s.w}`:"",s.f?`標註 ${s.f}`:""].filter(Boolean).join(" · ")||"&nbsp;"}</span><span class="s-go">進入練習 →</span></div>
+    </div></button>`;
+  let h=`<header class="home-head"><h1>今天想練哪一科？</h1>
+    <p class="sub">選擇科目開始刷題。作答紀錄會自動保存${Sync.on()?"，並同步到你的手機、平板與電腦":""}。</p></header>
+  <div class="subjects">
+    ${subj("bd","bigdata","📊","國營聯招・統計資訊類","巨量資料概論","104–113 年歷屆考古題與原創模擬考，附詳解與錯題分析報告。",
+      [`考古題 ${PAST.length} 個年度`,`模擬考 ${EXAMS.length} 卷`,"錯題分析"],B)}
+    ${subj("te","toeic","🎯","多益閱讀特訓","TOEIC","Part 5 單句填空專項突破：文法、商務單字、詞性、連接詞與介系詞。",
+      ["Part 5 單句填空","Part 6・7 籌備中","即時詳解"],T)}
+  </div>`;
+  if(!Sync.on())h+=`<div class="banner"><span>☁ 想在手機、平板、電腦之間接續刷題？設定一次 GitHub 同步即可。</span><button class="btn primary" data-act="go" data-v="sync">設定同步</button></div>`;
+  return h;
 }
 
-function vHome(){
-  const w=wrongIds().length, f=flagIds().length, P=kindStats("past"), M=kindStats("mock");
-  const tStats = getToeicP5Stats();
-  const tPart = st.toeicPart || 5;
-
-  let h = `<header>
+/* ---------- TOEIC ---------- */
+function vToeic(){
+  const tStats=getToeicP5Stats(), tPart=st.toeicPart||5;
+  const w=wrongIds("toeic").length,f=flagIds("toeic").length;
+  let h=`<button class="back" data-act="go" data-v="home">← 回到科目選單</button>
+  <header>
     <div class="hero-badge">🎯 多益金色證書特訓中心</div>
     <h1>TOEIC 英語測驗 & 題庫</h1>
-    <p class="sub">專注多益 Part 5 單句填空突破・國營聯招歷屆試題庫（已考完・收合封存）</p>
+    <p class="sub">專注多益 Part 5 單句填空突破，Part 6、Part 7 陸續加入。</p>
   </header>
-
   <section class="section-toeic">
     <div class="toeic-nav">
-      <button class="toeic-tab ${tPart===5?"active":""}" data-act="toeicTab" data-part="5">
-        <span>Part 5</span><span class="tab-label">單句填空</span><span class="tab-badge">開放中</span>
-      </button>
-      <button class="toeic-tab ${tPart===6?"active":""}" data-act="toeicTab" data-part="6">
-        <span>Part 6</span><span class="tab-label">段落填空</span><span class="tab-badge">籌備中</span>
-      </button>
-      <button class="toeic-tab ${tPart===7?"active":""}" data-act="toeicTab" data-part="7">
-        <span>Part 7</span><span class="tab-label">閱讀測驗</span><span class="tab-badge">籌備中</span>
-      </button>
+      <button class="toeic-tab ${tPart===5?"active":""}" data-act="toeicTab" data-part="5"><span>Part 5</span><span class="tab-label">單句填空</span><span class="tab-badge">開放中</span></button>
+      <button class="toeic-tab ${tPart===6?"active":""}" data-act="toeicTab" data-part="6"><span>Part 6</span><span class="tab-label">段落填空</span><span class="tab-badge">籌備中</span></button>
+      <button class="toeic-tab ${tPart===7?"active":""}" data-act="toeicTab" data-part="7"><span>Part 7</span><span class="tab-label">閱讀測驗</span><span class="tab-badge">籌備中</span></button>
     </div>`;
-
-  if(tPart === 5){
-    h += `<div class="part5-stats">
+  if(tPart===5){
+    h+=`<div class="part5-stats">
       <div class="part5-stats-text">
         Part 5 綜合進度：<strong>${tStats.d}</strong> / ${tStats.total} 題作答
-        ${tStats.d ? ` · 正確率 <strong>${Math.round(tStats.o/tStats.d*100)}%</strong>` : ""}
-        ${tStats.fl ? ` · 標註 <strong>${tStats.fl}</strong> 題` : ""}
-        ${tStats.wr ? ` · 錯題 <strong>${tStats.wr}</strong> 題` : ""}
+        ${tStats.d?` · 正確率 <strong>${Math.round(tStats.o/tStats.d*100)}%</strong>`:""}
+        ${tStats.fl?` · 標註 <strong>${tStats.fl}</strong> 題`:""}
+        ${tStats.wr?` · 錯題 <strong>${tStats.wr}</strong> 題`:""}
       </div>
-      <div>
-        <button class="btn primary" style="font-size:.85rem;padding:6px 14px" data-act="open" data-ex="toeic_p5_full">${tStats.d===0?"開始綜合測驗":tStats.d<tStats.total?"繼續綜合測驗":"檢視綜合結果"}</button>
-      </div>
+      <div><button class="btn primary" style="font-size:.85rem;padding:6px 14px" data-act="open" data-ex="toeic_p5_full">${tStats.d===0?"開始綜合測驗":tStats.d<tStats.total?"繼續綜合測驗":"檢視綜合結果"}</button></div>
     </div>
-
     <div class="category-chips">
-      <span class="cat-chip">文法題 (8 題)</span>
-      <span class="cat-chip">商務單字 (8 題)</span>
-      <span class="cat-chip">詞性判斷 (6 題)</span>
-      <span class="cat-chip">介系詞與連接詞 (8 題)</span>
-      <span class="cat-chip">每題即時詳解</span>
-      <span class="cat-chip">支援一鍵複製題目</span>
+      <span class="cat-chip">文法題 (8 題)</span><span class="cat-chip">商務單字 (8 題)</span><span class="cat-chip">詞性判斷 (6 題)</span>
+      <span class="cat-chip">介系詞與連接詞 (8 題)</span><span class="cat-chip">每題即時詳解</span><span class="cat-chip">支援一鍵複製題目</span>
     </div>
-
     <div class="toeic-grid">
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_full">
-        <strong>📝 Part 5 綜合實戰模擬測驗</strong>
-        <span>30 題仿真綜合測驗，全方位檢測文法、單字與詞性實力</span>
-        <span class="meta">${(()=>{const s=examStats(findEx("toeic_p5_full"));return `已作答 ${s.d}／30 題${s.d?` · 正確率 ${Math.round(s.o/s.d*100)}%`:""}`})()}</span>
-      </button>
-
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_grammar">
-        <strong>🔤 Part 5 文法題專項特訓</strong>
-        <span>精選時態、主被動語態、假設倒裝（Should you...）、關係詞</span>
-        <span class="meta">${(()=>{const s=examStats(findEx("toeic_p5_grammar"));return `已作答 ${s.d}／8 題${s.d?` · 正確率 ${Math.round(s.o/s.d*100)}%`:""}`})()}</span>
-      </button>
-
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_vocab">
-        <strong>📖 Part 5 商務核心單字特訓</strong>
-        <span>商務高頻搭配詞（meet deadline、comply with、address concerns）</span>
-        <span class="meta">${(()=>{const s=examStats(findEx("toeic_p5_vocab"));return `已作答 ${s.d}／8 題${s.d?` · 正確率 ${Math.round(s.o/s.d*100)}%`:""}`})()}</span>
-      </button>
-
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_pos">
-        <strong>🧩 Part 5 詞性與字尾辨析</strong>
-        <span>3秒解題技巧：名詞/形容詞/副詞/動詞快速定位秒殺</span>
-        <span class="meta">${(()=>{const s=examStats(findEx("toeic_p5_pos"));return `已作答 ${s.d}／6 題${s.d?` · 正確率 ${Math.round(s.o/s.d*100)}%`:""}`})()}</span>
-      </button>
-
-      <button class="toeic-block" data-act="open" data-ex="toeic_p5_conn">
-        <strong>⚡ Part 5 連接詞與介系詞</strong>
-        <span>秒殺題型：Although vs Despite、Because vs Due to、While vs During</span>
-        <span class="meta">${(()=>{const s=examStats(findEx("toeic_p5_conn"));return `已作答 ${s.d}／8 題${s.d?` · 正確率 ${Math.round(s.o/s.d*100)}%`:""}`})()}</span>
-      </button>
+      <button class="toeic-block" data-act="open" data-ex="toeic_p5_full"><strong>📝 Part 5 綜合實戰模擬測驗</strong><span>30 題仿真綜合測驗，全方位檢測文法、單字與詞性實力</span><span class="meta">${exMeta("toeic_p5_full")}</span></button>
+      <button class="toeic-block" data-act="open" data-ex="toeic_p5_grammar"><strong>🔤 Part 5 文法題專項特訓</strong><span>精選時態、主被動語態、假設倒裝（Should you...）、關係詞</span><span class="meta">${exMeta("toeic_p5_grammar")}</span></button>
+      <button class="toeic-block" data-act="open" data-ex="toeic_p5_vocab"><strong>📖 Part 5 商務核心單字特訓</strong><span>商務高頻搭配詞（meet deadline、comply with、address concerns）</span><span class="meta">${exMeta("toeic_p5_vocab")}</span></button>
+      <button class="toeic-block" data-act="open" data-ex="toeic_p5_pos"><strong>🧩 Part 5 詞性與字尾辨析</strong><span>3秒解題技巧：名詞/形容詞/副詞/動詞快速定位秒殺</span><span class="meta">${exMeta("toeic_p5_pos")}</span></button>
+      <button class="toeic-block" data-act="open" data-ex="toeic_p5_conn"><strong>⚡ Part 5 連接詞與介系詞</strong><span>秒殺題型：Although vs Despite、Because vs Due to、While vs During</span><span class="meta">${exMeta("toeic_p5_conn")}</span></button>
     </div>
-
     <h2>Part 5 複習與抽考</h2>
     <div class="actions">
-      <button class="action" data-act="toeicQuickPset" data-mode="wrong">
-        <strong>🎯 Part 5 錯題隨機重練</strong>
-        <span>目前 Part 5 錯題 ${tStats.wr} 題 · 點擊立即重練抽測</span>
-      </button>
-      <button class="action" data-act="toeicQuickPset" data-mode="random">
-        <strong>🎲 Part 5 隨機抽題 10 題</strong>
-        <span>快速模擬 10 題抽考，考驗綜合即時反應速度</span>
-      </button>
+      <button class="action" data-act="toeicQuickPset" data-mode="wrong"><strong>🎯 Part 5 錯題隨機重練</strong><span>目前 Part 5 錯題 ${tStats.wr} 題 · 點擊立即重練抽測</span></button>
+      <button class="action" data-act="toeicQuickPset" data-mode="random"><strong>🎲 Part 5 隨機抽題 10 題</strong><span>快速模擬 10 題抽考，考驗綜合即時反應速度</span></button>
+      <button class="action" data-act="report"><strong>📈 錯題分析報告</strong><span>依文法、單字、詞性、連接詞統計答對率與補強建議</span></button>
+      <button class="action" data-act="pset"><strong>🔁 自訂錯題抽考</strong><span>錯題 ${w} 題．已標註 ${f} 題，可自選範圍與題數</span></button>
     </div>`;
-  } else if(tPart === 6){
-    h += `<div class="empty-panel">
-      <div class="empty-icon">📝</div>
-      <div class="empty-title">Part 6: Text Completion（段落填空）</div>
+  }else{
+    const P={6:["📝","Part 6: Text Completion（段落填空）","在完整商務長篇文章（如公告、商業信件、備忘錄）中填入最適當的單字、片語或整句。"],
+             7:["📰","Part 7: Reading Comprehension（閱讀測驗）","包含單篇閱讀（廣告、商業電郵、行程表）與多篇閱讀（雙篇、三篇交叉比對題）。"]}[tPart];
+    h+=`<div class="empty-panel"><div class="empty-icon">${P[0]}</div><div class="empty-title">${P[1]}</div>
       <span class="badge-soon">🚧 敬請期待・籌備中</span>
-      <p class="empty-desc">題型說明：在完整商務長篇文章（如公告、商業信件、備忘錄）中填入最適當的單字、片語或整句。<br>目前系統先專注於 <strong>Part 5 單句題型特訓</strong>，Part 6 題目將於後續階段為您更新加入！</p>
-      <button class="btn primary" data-act="toeicTab" data-part="5">切換回 Part 5 刷題</button>
-    </div>`;
-  } else if(tPart === 7){
-    h += `<div class="empty-panel">
-      <div class="empty-icon">📰</div>
-      <div class="empty-title">Part 7: Reading Comprehension（閱讀測驗）</div>
-      <span class="badge-soon">🚧 敬請期待・籌備中</span>
-      <p class="empty-desc">題型說明：包含單篇閱讀（廣告、商業電郵、行程表）與多篇閱讀（雙篇、三篇交叉比對題）。<br>目前系統先專注於 <strong>Part 5 單句題型特訓</strong>，Part 7 題目將於後續階段為您更新加入！</p>
-      <button class="btn primary" data-act="toeicTab" data-part="5">切換回 Part 5 刷題</button>
-    </div>`;
+      <p class="empty-desc">題型說明：${P[2]}<br>目前系統先專注於 <strong>Part 5 單句題型特訓</strong>，Part ${tPart} 題目將於後續階段為您更新加入！</p>
+      <button class="btn primary" data-act="toeicTab" data-part="5">切換回 Part 5 刷題</button></div>`;
   }
+  return h+`</section>`;
+}
 
-  h += `</section>
-
-  <!-- Collapsible Section for 國營聯招 -->
-  <details class="archive-box" id="archiveDetails" ${st.archiveOpen ? "open" : ""}>
-    <summary class="archive-summary">
-      <div class="archive-left">
-        <span class="archive-icon">📁</span>
-        <div class="archive-text">
-          <strong>國營聯招 統計資訊類・巨量資料概論 <span class="archive-pill">已考完・收合封存</span></strong>
-          <span>點擊展開 104–113 考古題、模擬考與錯題分析報告</span>
-        </div>
-      </div>
-      <span class="archive-arrow">▾</span>
-    </summary>
-    <div class="archive-content">
-      <div class="blocks">
-        <button class="block" data-act="list" data-kind="past">
-          <strong>考古題</strong>
-          <span>104–113 年．共 ${PAST.length} 個年度、${P.n} 題</span>
-          <span class="meta">已作答 ${P.d} 題．答對 ${P.o} 題</span>
-        </button>
-        <button class="block" data-act="list" data-kind="mock">
-          <strong>模擬考</strong>
-          <span>原創模擬試題．共 ${EXAMS.length} 卷、${M.n} 題，附完整詳解</span>
-          <span class="meta">已作答 ${M.d} 題．答對 ${M.o} 題</span>
-        </button>
-      </div>
-      <h2 style="font-size:1.15rem;margin:22px 0 10px">複習工具</h2>
-      <div class="actions">
-        <button class="action" data-act="report">
-          <strong>產出錯題分析報告</strong>
-          <span>找出不熟的概念，並提供補強建議</span>
-        </button>
-        <button class="action" data-act="pset">
-          <strong>錯題隨機抽考</strong>
-          <span>目前錯題 ${w} 題．已標註 ${f} 題</span>
-        </button>
-      </div>
-    </div>
-  </details>`;
-
-  return h;
+/* ---------- 巨量資料概論 ---------- */
+function vBigdata(){
+  const w=wrongIds("bigdata").length,f=flagIds("bigdata").length,P=kindStats("past"),M=kindStats("mock");
+  return `<button class="back" data-act="go" data-v="home">← 回到科目選單</button>
+  <header>
+    <div class="hero-badge" style="background:var(--card-soft);color:var(--card);border-color:var(--card-soft)">📊 國營聯招・統計資訊類</div>
+    <h1>巨量資料概論</h1>
+    <p class="sub">經濟部所屬事業機構新進職員甄試．歷屆考古題、原創模擬考與錯題分析。</p>
+  </header>
+  <div class="blocks">
+    <button class="block" data-act="list" data-kind="past"><strong>考古題</strong><span>104–113 年．共 ${PAST.length} 個年度、${P.n} 題</span><span class="meta">已作答 ${P.d} 題．答對 ${P.o} 題</span></button>
+    <button class="block" data-act="list" data-kind="mock"><strong>模擬考</strong><span>原創模擬試題．共 ${EXAMS.length} 卷、${M.n} 題，附完整詳解</span><span class="meta">已作答 ${M.d} 題．答對 ${M.o} 題</span></button>
+  </div>
+  <h2>複習工具</h2>
+  <div class="actions">
+    <button class="action" data-act="report"><strong>產出錯題分析報告</strong><span>找出不熟的概念，並提供補強建議</span></button>
+    <button class="action" data-act="pset"><strong>錯題隨機抽考</strong><span>目前錯題 ${w} 題．已標註 ${f} 題</span></button>
+  </div>`;
 }
 
 function vList(){
   const k=st.kind==="past"?"past":"mock",list=ALL.filter(e=>e.kind===k);
-  let h=`<button class="back" data-act="home">← 回到測驗首頁</button><h1>${k==="past"?"考古題":"模擬考"}</h1>
+  let h=`<button class="back" data-act="go" data-v="bigdata">← 回到巨量資料概論</button><h1>${k==="past"?"考古題":"模擬考"}</h1>
   <p class="sub">${k==="past"?"經濟部所屬事業機構新進職員甄試．統計資訊類「巨量資料概論」歷屆試題。104–112 年為官方答案，113 年為參考解答。":"依國營聯招題型設計的原創試題，每題附詳解與其他選項的錯誤原因。"}</p>
   <div class="exams" style="margin-top:18px">`;
   (k==="past"?[...list].reverse():list).forEach(ex=>{h+=examRow(ex)});
@@ -617,163 +810,224 @@ function vExam(){
   const ex=findEx(st.exam),cur=st.cur[ex.id]||0,s=examStats(ex),id=ex.id+"-"+cur;
   const isToeic=ex.kind==="toeic";
   let h=isToeic
-    ? `<button class="back" data-act="home">← 回到 TOEIC 目錄</button><h1>${ex.title}</h1>`
+    ? `<button class="back" data-act="go" data-v="toeic">← 回到 TOEIC 目錄</button><h1>${ex.title}</h1>`
     : `<button class="back" data-act="list" data-kind="${ex.kind}">← 回到${ex.kind==="past"?"考古題":"模擬考"}目錄</button><h1>${ex.title}</h1>`;
   if(ex.sub) h+=`<p class="sub">${ex.sub}</p>`;
-  h+=`<section class="sheet ${isToeic?"":"card-theme"}" aria-label="答案卡">
-  <div class="sheet-head"><span>答案卡（點題號可跳題）</span><span class="score">已作答 ${s.d}／${ex.qs.length}　答對 ${s.o} 題${s.d?`（${Math.round(s.o/s.d*100)}%）`:""}</span></div>
-  <div class="grid">`;
-  ex.qs.forEach((q,i)=>{h+=gridCell(ex.id+"-"+i,q.n||i+1,st.ans,i===cur,"goto",i)});
-  h+=`</div>${legend}</section>${card(id,qNo(id),st.ans,false)}
+  let cells="";ex.qs.forEach((q,i)=>{cells+=gridCell(ex.id+"-"+i,q.n||i+1,st.ans,i===cur,"goto",i)});
+  h+=`<div class="exam-layout"><aside class="side">${sheetBlock(isToeic?"":"card-theme","答案卡（點題號可跳題）",
+      `已作答 ${s.d}／${ex.qs.length}　答對 ${s.o} 題${s.d?`（${Math.round(s.o/s.d*100)}%）`:""}`,cells)}</aside>
+  <div class="main">${card(id,qNo(id),st.ans,false)}
   <div class="nav"><button class="btn" data-act="prev" ${cur===0?"disabled":""}>上一題</button>
   <button class="btn ${isToeic?"primary":"card-primary"}" data-act="next" ${cur===ex.qs.length-1?"disabled":""}>下一題</button></div>
-  <div class="tools"><button class="btn" data-act="nextWrong">跳到下一題錯題</button><button class="btn" data-act="retryWrong">清除本卷錯題重做</button><button class="btn" data-act="resetExam">清除本卷紀錄</button></div>`;
+  <div class="tools"><button class="btn" data-act="nextWrong">跳到下一題錯題</button><button class="btn" data-act="retryWrong">清除本卷錯題重做</button><button class="btn" data-act="resetExam">清除本卷紀錄</button></div>
+  </div></div>`;
   return h;
 }
 
 function vPset(){
-  const w=wrongIds(),f=flagIds(),u=[...new Set([...w,...f])];
-  const pools=[["wrong","錯題",w.length],["flag","已標註的題目",f.length],["both","錯題＋已標註",u.length],["all","全部題目",Object.keys(QM).length]];
-  let h=`<button class="back" data-act="home">← 回到測驗首頁</button><h1>錯題隨機抽考</h1><p class="sub">從選定的題庫隨機抽題，抽考作答不會覆蓋原本試卷的紀錄。</p>
+  const w=wrongIds(),f=flagIds(),u=[...new Set([...w,...f])],all=scopeIds();
+  const pools=[["wrong","錯題",w.length],["flag","已標註的題目",f.length],["both","錯題＋已標註",u.length],["all","全部題目",all.length]];
+  const first=pools.findIndex(p=>p[2]>0);
+  let h=`<button class="back" data-act="go" data-v="${st.scope}">← 回到${scopeName()}</button><h1>錯題隨機抽考</h1><p class="sub">${scopeName()}題庫．從選定範圍隨機抽題，抽考作答不會覆蓋原本試卷的紀錄。</p>
   <div class="panel" style="margin-top:18px"><fieldset><legend>出題範圍</legend>`;
-  pools.forEach(([k,n,c],j)=>{h+=`<label class="radio"><input type="radio" name="pool" value="${k}" ${j===0?"checked":""} ${c?"":"disabled"}> ${n}（${c} 題）</label>`});
+  pools.forEach(([k,n,c],j)=>{h+=`<label class="radio"><input type="radio" name="pool" value="${k}" ${j===first?"checked":""} ${c?"":"disabled"}> ${n}（${c} 題）</label>`});
   h+=`</fieldset><fieldset><legend>題數</legend><div class="count"><input id="pcount" type="number" min="1" value="10" inputmode="numeric" aria-label="題數">
   <button class="quick" data-act="pnum" data-n="5">5 題</button><button class="quick" data-act="pnum" data-n="10">10 題</button><button class="quick" data-act="pnum" data-n="20">20 題</button><button class="quick" data-act="pnum" data-n="999">全部</button></div>
   <p class="note">題數超過範圍內的題數時，會出完範圍內全部題目。</p></fieldset>
   <button class="btn primary" data-act="pstart">開始抽考</button><p class="note" id="pmsg"></p></div>`;
-  if(st.pr&&st.pr.ids.length)h+=`<p class="note" style="margin-top:14px">上一回抽考尚未清除：<button class="link" data-act="presume">繼續上一回抽考</button></p>`;
+  if(st.pr&&st.pr.ids.length&&(st.pr.scope||"toeic")===st.scope)h+=`<p class="note" style="margin-top:14px">上一回抽考尚未清除：<button class="link" data-act="presume">繼續上一回抽考</button></p>`;
   return h;
 }
 
 function vPrac(){
   const p=st.pr,id=p.ids[p.i];let ok=0,done=0;
+  const sc=p.scope||"toeic";
   p.ids.forEach(x=>{if(p.ans[x]!==undefined){done++;if(p.ans[x]===QM[x].q.a)ok++}});
-  let h=`<button class="back" data-act="home">← 回到測驗首頁</button><h1>隨機抽考</h1>`;
+  let h=`<button class="back" data-act="go" data-v="${sc}">← 回到${scopeName(sc)}</button><h1>隨機抽考</h1>`;
   if(done===p.ids.length)h+=`<div class="result"><p><strong>本回抽考完成：答對 ${ok}／${p.ids.length} 題（${Math.round(ok/p.ids.length*100)}%）</strong></p>
-  <button class="btn primary" data-act="pstartAgain">再抽一回</button> <button class="btn" data-act="home">回首頁</button></div>`;
-  h+=`<section class="sheet"><div class="sheet-head"><span>抽考答案卡</span><span class="score">已作答 ${done}／${p.ids.length}　答對 ${ok} 題</span></div><div class="grid">`;
-  p.ids.forEach((x,j)=>{h+=gridCell(x,j+1,p.ans,j===p.i,"pgoto",j)});
-  h+=`</div>${legend}</section>${card(id,p.i+1,p.ans,true)}
+  <div class="row-btns"><button class="btn primary" data-act="pstartAgain">再抽一回</button><button class="btn" data-act="go" data-v="${sc}">回到目錄</button></div></div>`;
+  let cells="";p.ids.forEach((x,j)=>{cells+=gridCell(x,j+1,p.ans,j===p.i,"pgoto",j)});
+  h+=`<div class="exam-layout"><aside class="side">${sheetBlock("","抽考答案卡",`已作答 ${done}／${p.ids.length}　答對 ${ok} 題`,cells)}</aside>
+  <div class="main">${card(id,p.i+1,p.ans,true)}
   <div class="nav"><button class="btn" data-act="prev" ${p.i===0?"disabled":""}>上一題</button>
-  <button class="btn primary" data-act="next" ${p.i===p.ids.length-1?"disabled":""}>下一題</button></div>`;
+  <button class="btn primary" data-act="next" ${p.i===p.ids.length-1?"disabled":""}>下一題</button></div></div></div>`;
   return h;
 }
 
 function vReport(){
-  const stat={};Object.keys(TAGS).forEach(k=>stat[k]={d:0,o:0,wr:[]});
+  const tags=scopeTags(),stat={};tags.forEach(k=>stat[k]={d:0,o:0,wr:[]});
   let D=0,O=0;
-  Object.keys(QM).forEach(id=>{const a=st.ans[id];if(a===undefined)return;const {q}=QM[id];const s=stat[q.g];
+  scopeIds().forEach(id=>{const a=st.ans[id];if(a===undefined)return;const {q}=QM[id];const s=stat[q.g];
     if(s){s.d++;D++;if(a===q.a){s.o++;O++}else s.wr.push(id)}});
-  let h=`<button class="back" data-act="home">← 回到測驗首頁</button><h1>錯題分析報告</h1>`;
-  if(!D)return h+`<div class="panel" style="margin-top:16px"><p style="margin:0 0 12px">還沒有作答紀錄。先完成一份模擬測驗，報告就會列出各概念的答對率與補強建議。</p><button class="btn primary" data-act="open" data-ex="toeic_p5_full">開始 TOEIC Part 5 模擬測驗</button></div>`;
-  h+=`<p class="sub">依目前所有作答紀錄統計：共作答 ${D} 題，答對 ${O} 題（${Math.round(O/D*100)}%）。抽考的作答不列入統計。</p>
+  let h=`<button class="back" data-act="go" data-v="${st.scope}">← 回到${scopeName()}</button><h1>錯題分析報告</h1><p class="sub">${scopeName()}</p>`;
+  if(!D)return h+`<div class="panel" style="margin-top:16px"><p style="margin:0 0 12px">還沒有作答紀錄。先完成一份測驗，報告就會列出各概念的答對率與補強建議。</p>${
+    st.scope==="toeic"?`<button class="btn primary" data-act="open" data-ex="toeic_p5_full">開始 TOEIC Part 5 模擬測驗</button>`:`<button class="btn card-primary" data-act="list" data-kind="mock">前往模擬考</button>`}</div>`;
+  h+=`<p class="sub">依目前作答紀錄統計：共作答 ${D} 題，答對 ${O} 題（${Math.round(O/D*100)}%）。抽考的作答不列入統計。</p>
   <h2>各概念答對率</h2><div class="panel">`;
-  const rows=Object.keys(TAGS).filter(k=>stat[k].d).sort((a,b)=>stat[a].o/stat[a].d-stat[b].o/stat[b].d);
+  const rows=tags.filter(k=>stat[k].d).sort((a,b)=>stat[a].o/stat[a].d-stat[b].o/stat[b].d);
   rows.forEach(k=>{const s=stat[k],p=Math.round(s.o/s.d*100);
     h+=`<div class="tagrow"><span>${TAGS[k].n}</span><div class="bar"><i class="${p<60?"lo":p<80?"mid":""}" style="width:${p}%"></i></div><span class="pct">${s.o}／${s.d}（${p}%）</span></div>`});
-  const untouched=Object.keys(TAGS).filter(k=>!stat[k].d);
+  const untouched=tags.filter(k=>!stat[k].d);
   h+=`</div>`;if(untouched.length)h+=`<p class="note">尚未作答到的概念：${untouched.map(k=>TAGS[k].n).join("、")}</p>`;
   const weak=rows.filter(k=>stat[k].wr.length);
   h+=`<h2>建議優先補強的概念</h2>`;
-  if(!weak.length)h+=`<div class="panel"><p style="margin:0">目前作答過的概念全部答對。可以繼續完成其他模擬測驗，讓報告涵蓋更多題型。</p></div>`;
+  if(!weak.length)h+=`<div class="panel"><p style="margin:0">目前作答過的概念全部答對。可以繼續完成其他測驗，讓報告涵蓋更多題型。</p></div>`;
   weak.forEach(k=>{const s=stat[k],p=Math.round(s.o/s.d*100);
     h+=`<section class="weak"><h3>${TAGS[k].n}</h3><p class="stat">答對率 ${p}%，錯 ${s.wr.length} 題${p<60?"，需要優先複習":p<80?"，建議加強":"，小幅複習即可"}</p>
     <p><strong>補強建議：</strong>${TAGS[k].t}</p><p><strong>回頭看錯題：</strong></p><ul class="wlist">`;
-    s.wr.forEach(id=>{const {ex,i,q}=QM[id];h+=`<li><button class="link" data-act="jump" data-id="${id}">${qLabel(id)}</button>：${esc(q.q.length>45?q.q.slice(0,45)+"……":q.q)}</li>`});
+    s.wr.forEach(id=>{const {q}=QM[id];h+=`<li><button class="link" data-act="jump" data-id="${id}">${qLabel(id)}</button>：${esc(q.q.length>45?q.q.slice(0,45)+"……":q.q)}</li>`});
     h+=`</ul></section>`});
   const f=flagIds();
-  if(f.length){h+=`<h2>已標註的題目</h2><ul class="wlist">`;f.forEach(id=>{const {ex,i,q}=QM[id];h+=`<li><button class="link" data-act="jump" data-id="${id}">${qLabel(id)}</button>（${TAGS[q.g]?TAGS[q.g].n:""}）</li>`});h+=`</ul>`}
+  if(f.length){h+=`<h2>已標註的題目</h2><ul class="wlist">`;f.forEach(id=>{const {q}=QM[id];h+=`<li><button class="link" data-act="jump" data-id="${id}">${qLabel(id)}</button>（${TAGS[q.g]?TAGS[q.g].n:""}）</li>`});h+=`</ul>`}
   if(weak.length||f.length)h+=`<div class="tools"><button class="btn" data-act="pset">用錯題與標註題隨機抽考</button></div>`;
   return h;
 }
 
+/* ---------- 同步設定頁 ---------- */
+function vSync(){
+  const on=Sync.on(),[s,label]=syncLabel();
+  let h=`<button class="back" data-act="go" data-v="home">← 回到科目選單</button><h1>跨裝置同步</h1>
+  <p class="sub">把作答紀錄、標註與作答進度存到你自己 GitHub 帳號的私人 Gist。手機、平板、電腦輸入同一組 Token，就能接續刷題。</p>
+  <div class="panel" style="margin-top:18px">`;
+  if(s==="err"&&Sync.msg)h+=`<div class="errbox">⚠ ${esc(Sync.msg)}</div>`;
+  if(on){
+    h+=`<dl class="kv"><dt>狀態</dt><dd>${label}</dd>
+      <dt>上次同步</dt><dd>${Sync.cfg.last?fmtTime(Sync.cfg.last):"尚未完成"}</dd>
+      ${Sync.cfg.gistId?`<dt>存放位置</dt><dd><a href="https://gist.github.com/${esc(Sync.cfg.gistId)}" target="_blank" rel="noopener">私人 Gist（${esc(Sync.cfg.gistId.slice(0,8))}…）</a></dd>`:""}</dl>
+      <p class="note" style="margin-top:0">每次作答後幾秒內會自動上傳；切回這個分頁或重新開啟網頁時會自動下載其他裝置的紀錄並合併。</p>
+      <div class="row-btns"><button class="btn primary" data-act="syncNow">立即同步</button><button class="btn" data-act="syncOff">停用此裝置的同步</button></div>`;
+  }else{
+    h+=`<ol class="steps">
+      <li>到 GitHub <a href="https://github.com/settings/tokens/new?scopes=gist&description=%E5%88%B7%E9%A1%8C%E5%AD%B8%E7%BF%92%E7%B3%BB%E7%B5%B1%E5%90%8C%E6%AD%A5" target="_blank" rel="noopener">建立 Personal access token（classic）</a>，權限只勾 <code>gist</code>；Expiration 建議選較長期限。</li>
+      <li>按 <strong>Generate token</strong>，複製 <code>ghp_</code> 開頭的字串。</li>
+      <li>貼到下方並按「連線並同步」。其他裝置重複這一步，貼上同一組 Token 即可。</li></ol>
+      <label class="field"><span>GitHub Token</span><input id="tok" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ghp_xxxxxxxxxxxxxxxx"></label>
+      <button class="btn primary" data-act="syncConnect">連線並同步</button>`;
+  }
+  h+=`<p class="note" style="margin-bottom:0">Token 只保存在這台裝置的瀏覽器裡，且只具備 Gist 權限。公用電腦請勿啟用；遺失時可到 GitHub 撤銷該 Token。</p></div>
+  <h2>手動備份／搬移</h2>
+  <div class="panel"><p class="note" style="margin-top:0">不想用 GitHub 時，也可以複製備份碼，在另一台裝置貼上匯入（會與現有紀錄合併，不會覆蓋較新的作答）。</p>
+    <div class="row-btns"><button class="btn" data-act="exportData">複製備份碼</button><button class="btn" data-act="importData">匯入下方備份碼</button></div>
+    <textarea id="bk" class="bk" placeholder="匯入時，把備份碼貼在這裡" spellcheck="false"></textarea>
+    <p class="note" id="bkmsg" style="margin-bottom:0"></p></div>`;
+  return h;
+}
+
 function render(){
-  const v={home:vHome,list:vList,exam:vExam,pset:vPset,prac:vPrac,report:vReport}[st.view]||vHome;
   if(st.view==="prac"&&!(st.pr&&st.pr.ids.length))st.view="home";
-  app.innerHTML=(st.view==="prac"?vPrac:v)();
+  const v={home:vHome,toeic:vToeic,bigdata:vBigdata,list:vList,exam:vExam,pset:vPset,prac:vPrac,report:vReport,sync:vSync}[st.view]||vHome;
+  app.innerHTML=v();
+  renderTopbar();
 }
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function toTop(){window.scrollTo(0,0)}
-function qTop(){const p=app.querySelectorAll(".panel");const el=p[p.length-1];if(el)el.scrollIntoView({block:"start"})}
+function qTop(){const p=app.querySelectorAll(".panel");const el=p[p.length-1];if(!el)return;
+  const r=el.getBoundingClientRect();if(r.top<64||r.top>window.innerHeight*0.6)el.scrollIntoView({block:"start"})}
+const toeicIds=()=>findEx("toeic_p5_full").qs.map((q,i)=>"toeic_p5_full-"+i);
+function poolIds(pool){const w=wrongIds(),f=flagIds();
+  return pool==="wrong"?w:pool==="flag"?f:pool==="both"?[...new Set([...w,...f])]:scopeIds()}
 
-app.addEventListener("click",e=>{
-  const t=e.target.closest("[data-act]");if(!t)return;const d=t.dataset,a=d.act;
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-act]");if(!t||!(app.contains(t)||topbar.contains(t)))return;
+  const d=t.dataset,a=d.act;
   const ex=findEx(st.exam);let scroll=null;
   switch(a){
-    case"home":st.view="home";scroll=toTop;break;
-    case"list":st.view="list";st.kind=d.kind;scroll=toTop;break;
-    case"open":st.view="exam";st.exam=d.ex;st.kind=findEx(d.ex).kind;scroll=toTop;break;
-    case"goto":st.cur[st.exam]=+d.i;break;
-    case"pgoto":st.pr.i=+d.i;break;
-    case"pick":if(st.view==="prac")st.pr.ans[d.id]=+d.k;else st.ans[d.id]=+d.k;break;
-    case"flag":if(st.flags[d.id])delete st.flags[d.id];else st.flags[d.id]=true;break;
+    case"go":st.view=d.v;if(d.v==="toeic"||d.v==="bigdata")st.scope=d.v;scroll=toTop;break;
+    case"list":st.view="list";st.kind=d.kind;st.scope="bigdata";scroll=toTop;break;
+    case"open":st.view="exam";st.exam=d.ex;st.kind=findEx(d.ex).kind;st.scope=st.kind==="toeic"?"toeic":"bigdata";scroll=toTop;break;
+    case"goto":st.cur[st.exam]=+d.i;scroll=qTop;break;
+    case"pgoto":st.pr.i=+d.i;scroll=qTop;break;
+    case"pick":if(st.view==="prac")st.pr.ans[d.id]=+d.k;else setAns(d.id,+d.k);break;
+    case"flag":toggleFlag(d.id);break;
     case"copy":copyQuestion(d.id);return;
-    case"toeicTab":st.toeicPart=+d.part;render();return;
+    case"toeicTab":st.toeicPart=+d.part;break;
     case"toeicQuickPset":{
-      const fullEx=findEx("toeic_p5_full");
-      let ids=[];
-      if(d.mode==="wrong"){
-        ids=fullEx.qs.map((q,i)=>"toeic_p5_full-"+i).filter(isWrong);
-        if(!ids.length){alert("太棒了！目前 Part 5 還沒有錯題紀錄。");return}
-      }else{
-        ids=shuffle(fullEx.qs.map((q,i)=>"toeic_p5_full-"+i)).slice(0,10);
-      }
-      st.pr={ids,ans:{},i:0,lastMode:d.mode};
-      st.view="prac";
-      scroll=toTop;
-      break;
+      let ids=d.mode==="wrong"?toeicIds().filter(isWrong):shuffle(toeicIds()).slice(0,10);
+      if(!ids.length){showToast("太棒了！目前 Part 5 還沒有錯題紀錄。");return}
+      if(d.mode==="wrong")ids=shuffle(ids);
+      st.pr={ids,ans:{},i:0,src:"toeicQuick",lastMode:d.mode,scope:"toeic"};
+      st.view="prac";scroll=toTop;break;
     }
     case"pstartAgain":{
-      const fullEx=findEx("toeic_p5_full");
-      const mode=st.pr&&st.pr.lastMode==="wrong"?"wrong":"random";
-      let ids=[];
-      if(mode==="wrong"){
-        ids=fullEx.qs.map((q,i)=>"toeic_p5_full-"+i).filter(isWrong);
-        if(!ids.length)ids=shuffle(fullEx.qs.map((q,i)=>"toeic_p5_full-"+i)).slice(0,10);
-      }else{
-        ids=shuffle(fullEx.qs.map((q,i)=>"toeic_p5_full-"+i)).slice(0,10);
-      }
-      st.pr={ids,ans:{},i:0,lastMode:mode};
-      st.view="prac";
-      scroll=toTop;
-      break;
+      const p=st.pr||{};let ids=[];
+      if(p.src==="pset"){st.scope=p.scope;ids=shuffle([...poolIds(p.pool)]).slice(0,p.n);
+        if(!ids.length){st.view="pset";scroll=toTop;break}}
+      else{ids=p.lastMode==="wrong"?shuffle(toeicIds().filter(isWrong)):[];if(!ids.length)ids=shuffle(toeicIds()).slice(0,10)}
+      st.pr={...p,ids,ans:{},i:0};st.view="prac";scroll=toTop;break;
     }
     case"prev":if(st.view==="prac")st.pr.i--;else st.cur[st.exam]=(st.cur[st.exam]||0)-1;scroll=qTop;break;
     case"next":if(st.view==="prac")st.pr.i++;else st.cur[st.exam]=(st.cur[st.exam]||0)+1;scroll=qTop;break;
     case"report":st.view="report";scroll=toTop;break;
     case"pset":st.view="pset";scroll=toTop;break;
     case"presume":st.view="prac";scroll=toTop;break;
-    case"pnum":{const inp=document.getElementById("pcount");inp.value=d.n==="999"?Object.keys(QM).length:d.n;return}
+    case"pnum":{const inp=document.getElementById("pcount");inp.value=d.n==="999"?scopeIds().length:d.n;return}
     case"pstart":{
       const pool=(app.querySelector('input[name="pool"]:checked')||{}).value;
-      const w=wrongIds(),f=flagIds();
-      const ids=pool==="wrong"?w:pool==="flag"?f:pool==="both"?[...new Set([...w,...f])]:Object.keys(QM);
+      const ids=poolIds(pool);
       const n=parseInt(document.getElementById("pcount").value,10);
       if(!ids.length){document.getElementById("pmsg").textContent="這個範圍目前沒有題目，請改選其他範圍。";return}
       if(!(n>0)){document.getElementById("pmsg").textContent="請輸入 1 以上的題數。";return}
-      st.pr={ids:shuffle([...ids]).slice(0,n),ans:{},i:0};st.view="prac";scroll=toTop;break}
-    case"jump":{const {ex:x,i}=QM[d.id];st.view="exam";st.exam=x.id;st.cur[x.id]=i;scroll=toTop;break}
+      st.pr={ids:shuffle([...ids]).slice(0,n),ans:{},i:0,src:"pset",pool,n,scope:st.scope};st.view="prac";scroll=toTop;break}
+    case"jump":{const {ex:x,i}=QM[d.id];st.view="exam";st.exam=x.id;st.kind=x.kind;st.cur[x.id]=i;scroll=toTop;break}
     case"nextWrong":{const c=st.cur[ex.id]||0,n=ex.qs.length;let f=-1;
       for(let s=1;s<=n;s++){const i=(c+s)%n;if(isWrong(ex.id+"-"+i)){f=i;break}}
-      if(f<0){alert("本卷目前沒有錯題");return}st.cur[ex.id]=f;scroll=qTop;break}
-    case"retryWrong":{let f=-1;ex.qs.forEach((q,i)=>{const id=ex.id+"-"+i;if(isWrong(id)){delete st.ans[id];if(f<0)f=i}});
-      if(f<0){alert("本卷目前沒有錯題");return}st.cur[ex.id]=f;scroll=toTop;break}
+      if(f<0){showToast("本卷目前沒有錯題");return}st.cur[ex.id]=f;scroll=qTop;break}
+    case"retryWrong":{let f=-1;ex.qs.forEach((q,i)=>{const id=ex.id+"-"+i;if(isWrong(id)){delAns(id);if(f<0)f=i}});
+      if(f<0){showToast("本卷目前沒有錯題");return}st.cur[ex.id]=f;scroll=toTop;break}
     case"resetExam":if(!confirm(`確定清除${ex.title}的作答紀錄？標註會保留。`))return;
-      ex.qs.forEach((q,i)=>delete st.ans[ex.id+"-"+i]);st.cur[ex.id]=0;scroll=toTop;break;
+      ex.qs.forEach((q,i)=>delAns(ex.id+"-"+i));st.cur[ex.id]=0;scroll=toTop;break;
+    case"syncConnect":{
+      const v=((document.getElementById("tok")||{}).value||"").trim();
+      if(!v){showToast("請先貼上 GitHub Token");return}
+      Sync.cfg={token:v,gistId:"",last:0};Sync.saveCfg();Sync.msg="";
+      render();
+      Sync.run().then(()=>{if(Sync.state==="ok")showToast("✓ 已連線，紀錄同步完成！")});
+      return;
+    }
+    case"syncNow":Sync.run().then(()=>{if(Sync.state==="ok")showToast("✓ 同步完成")});return;
+    case"syncOff":if(!confirm("停用這台裝置的同步？本機紀錄與雲端 Gist 都會保留，之後可隨時重新連線。"))return;
+      clearTimeout(Sync.timer);Sync.timer=null;Sync.cfg={token:"",gistId:"",last:0};Sync.saveCfg();Sync.state="off";Sync.msg="";break;
+    case"exportData":{
+      const code=JSON.stringify(payload());
+      const ta=document.getElementById("bk");if(ta)ta.value=code;
+      copyText(code,()=>showToast("✓ 備份碼已複製"));
+      document.getElementById("bkmsg").textContent=`備份碼共 ${Object.keys(st.ans).length} 筆作答紀錄，已放在下方文字框並複製到剪貼簿。`;
+      return;
+    }
+    case"importData":{
+      const msg=document.getElementById("bkmsg");
+      let o;try{o=JSON.parse((document.getElementById("bk").value||"").trim())}catch(err){msg.textContent="備份碼格式不正確，請確認是否完整貼上。";return}
+      if(!o||typeof o.ans!=="object"){msg.textContent="這不是本系統的備份碼。";return}
+      const before=Object.keys(st.ans).length;
+      mergeRemote(o);persist();Sync.schedule(500);
+      showToast(`✓ 匯入完成（作答紀錄 ${before} → ${Object.keys(st.ans).length} 筆）`);
+      render();return;
+    }
   }
   save();render();if(scroll)scroll();
 });
 
-// Listen for archive details toggle to save preference
-document.addEventListener("toggle", e => {
-  if(e.target && e.target.id === "archiveDetails"){
-    st.archiveOpen = e.target.open;
-    save();
-  }
-}, true);
+// 手機上記住答案卡展開／收合
+document.addEventListener("toggle",e=>{
+  const el=e.target;
+  if(el&&el.classList&&el.classList.contains("sheet")&&!isWide()){st.sheetOpen=el.open;persist()}
+},true);
 
-load();render();
+// 切換分頁／回到前景時同步，離開時先送出尚未上傳的變更
+document.addEventListener("visibilitychange",()=>{
+  if(!Sync.on())return;
+  if(document.visibilityState==="visible")Sync.run();else Sync.flush();
+});
+window.addEventListener("pagehide",()=>Sync.flush());
+window.addEventListener("online",()=>{if(Sync.on())Sync.run()});
+setInterval(()=>{if(Sync.on()&&document.visibilityState==="visible"&&!Sync.timer&&!Sync.busy)Sync.run()},120000);
+
+Sync.loadCfg();
+load();prevCur={...st.cur};
+render();
+if(Sync.on())Sync.run();
+
 </script>
 </body>
 </html>
