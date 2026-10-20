@@ -1,0 +1,15 @@
+{
+ "about":"題庫目錄。網頁依 files 的順序載入；新增檔案時加在這裡。v 是內容雜湊（python tools/update_manifest.py 會自動更新）。",
+ "files":[
+  {"path":"tags.json","title":"所有考點標籤（錯題分析依這裡的順序顯示）","v":"5e189a74","exams":[]},
+  {"path":"toeic_p5_mock.json","title":"TOEIC Part 5 綜合模擬與早期專項特訓","v":"50b14b5a","exams":["toeic_p5_full","toeic_p5_grammar","toeic_p5_vocab","toeic_p5_pos","toeic_p5_conn"]},
+  {"path":"toeic_p5_s1.json","title":"TOEIC Part 5 第一階段：保底秒殺題","v":"1a3976c4","exams":["p5_pos","p5_conj","p5_pron"]},
+  {"path":"toeic_p5_s2.json","title":"TOEIC Part 5 第二階段：動詞檢查","v":"60d3607b","exams":["p5_fin","p5_voice","p5_tense"]},
+  {"path":"toeic_p5_s3.json","title":"TOEIC Part 5 第三階段：搭配與語意","v":"a88f0911","exams":["p5_chunk","p5_vocab"]},
+  {"path":"toeic_p5_adv.json","title":"TOEIC Part 5 進階考點（stage 4–6）","v":"f7216ca5","exams":["p5_qty","p5_det","p5_indef","p5_noun","p5_agree","p5_rel","p5_ncl","p5_cadv","p5_corr","p5_inv","p5_subj","p5_comp","p5_deg","p5_prep","p5_adv","p5_part","p5_ger","p5_caus"]},
+  {"path":"toeic_p6.json","title":"TOEIC Part 6 段落填空","v":"ddb92849","exams":["p6_1","p6_2","p6_3"]},
+  {"path":"toeic_part7.json","title":"TOEIC Part 7 閱讀測驗","v":"242d2bb6","exams":["p7_t1","p7_x2","p7_5"]},
+  {"path":"bigdata_past.json","title":"巨量資料概論 考古題","v":"081dd947","exams":["p104","p105","p106","p107","p108","p109","p110","p111","p112","p113"]},
+  {"path":"bigdata_mock.json","title":"巨量資料概論 模擬考","v":"7bfeff20","exams":["e1","e2","e3"]}
+ ]
+}
