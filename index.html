@@ -76,6 +76,13 @@ body.readmode .topbar-in{max-width:1320px}
 .rq:last-of-type{border-bottom:0}
 .rq-text{font-size:1rem;margin:0 0 12px}
 .opt.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.pane-l .blank{cursor:pointer}
+.pane-l .blank.pick,.pane-l .blank.done{display:inline;padding:0 2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.pane-l .blank.pick{min-width:0;color:var(--ink);font-size:.9em;border-bottom:2px solid var(--ink);text-align:left}
+.pane-l .blank.done{min-width:0;font-size:.92em;border-bottom:2px solid var(--ink);color:var(--ink);text-align:left}
+.pane-l .blank.done.miss{border-bottom-style:dashed}
+.pane-l .blank.flash{background:var(--ink);color:var(--on-ink)}
+.qlocate{font-weight:700;color:var(--ink);font-size:.9rem;text-decoration-color:var(--faint)}
 .opt.sel .bub{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
 .submitbar{position:sticky;bottom:-16px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0 4px;border-top:1px solid var(--line);margin-top:4px}
 .pane-r .result{margin:0 0 4px}
@@ -775,15 +782,23 @@ function vReading(){
   const qn=i=>ex.qs[i].n||i+1;
   const nav=sets.map((s,k)=>{const t=p7Status(ex,s);
     return `<button class="setchip ${k===si?"cur":""} ${t.done?"done":""}" data-act="p7set" data-i="${s.idx[0]}">${qn(s.idx[0])}–${qn(s.idx[s.idx.length-1])}${t.done?`<small>${t.ok}/${t.n}</small>`:""}</button>`}).join("");
+  const isP6=ex.part===6;
+  const blanks=t=>esc(t||"").replace(/\{\{(\d+)\}\}/g,(m0,n)=>{n=+n;
+    const qi=ex.qs.findIndex(x=>x.n===n);if(qi<0)return `(${n})`;
+    const id=ex.id+"-"+qi,qq=ex.qs[qi],a=st.ans[id],dv=st.p7d[id];
+    if(review)return `<span class="blank done ${a===qq.a?"":"miss"}" id="blank-${n}" data-act="jumpq" data-n="${n}">(${n}) ${esc(qq.o[qq.a])}</span>`;
+    const v=a!==undefined?a:dv;
+    if(v!==undefined)return `<span class="blank pick" id="blank-${n}" data-act="jumpq" data-n="${n}">(${n}) ${esc(qq.o[v])}</span>`;
+    return `<span class="blank" id="blank-${n}" data-act="jumpq" data-n="${n}">(${n})</span>`});
   const docs=(P.docs&&P.docs.length?P.docs:[{kind:"",head:P.head,text:P.text}]).map(d=>
-    `<div class="doc">${d.kind?`<p class="p-kind">${esc(d.kind)}</p>`:""}${d.head?`<p class="p-head">${esc(d.head)}</p>`:""}<div class="p-body">${esc(d.text||"")}</div></div>`).join("");
+    `<div class="doc">${d.kind?`<p class="p-kind">${esc(d.kind)}</p>`:""}${d.head?`<p class="p-head">${esc(d.head)}</p>`:""}<div class="p-body">${isP6?blanks(d.text):esc(d.text||"")}</div></div>`).join("");
   let h=`<div class="rhead">${backHome}<h1>${esc(ex.title)}</h1><div class="setnav">${nav}</div></div>
   <div class="reading"><div class="pane-l" id="paneL" data-key="${ex.id}:${si}"><p class="pane-title">${esc(P.kind||"")}</p>${docs}
   ${review&&P.trans?`<details class="ptrans"><summary>全文翻譯</summary><p>${esc(P.trans)}</p></details>`:""}</div>
   <div class="pane-r" id="paneR">`;
   set.idx.forEach(i=>{
     const id=ex.id+"-"+i,q=ex.qs[i],a=st.ans[id],locked=a!==undefined,sel=locked?a:st.p7d[id],fl=!!st.flags[id];
-    h+=`<div class="rq"><div class="qtop"><span class="qno">${qn(i)}.${review?`<span class="chip">${TAGS[q.g]?TAGS[q.g].n:""}</span>`:""}</span>
+    h+=`<div class="rq" id="rq-${qn(i)}"><div class="qtop"><span class="qno">${isP6?`<button class="linkbtn qlocate" data-act="jumpblank" data-n="${qn(i)}" title="在文章中找到這個空格">${qn(i)}. 看空格</button>`:`${qn(i)}.`}${review?`<span class="chip">${TAGS[q.g]?TAGS[q.g].n:""}</span>`:""}</span>
       <div class="qactions"><button class="flagbtn ${fl?"on":""}" data-act="flag" data-id="${id}" aria-pressed="${fl}">${fl?"已標註":"標註"}</button></div></div>
       <p class="qtext rq-text">${esc(q.q)}</p><div class="opts">`;
     q.o.forEach((t,k)=>{let c="opt";
@@ -792,7 +807,7 @@ function vReading(){
     h+=`</div>`;
     if(review){const g=a===q.a;
       h+=`<div class="exp ${g?"":"isbad"}"><p class="verdict">${g?"答對":"答錯．你選 ("+L[a]+")"}，正解 (${L[q.a]})</p>
-        ${q.trans?`<div class="qtrans"><strong>題目翻譯　</strong>${esc(q.trans)}</div>`:""}
+        ${q.trans?`<div class="qtrans"><strong>${isP6?"句子翻譯":"題目翻譯"}　</strong>${esc(q.trans)}</div>`:""}
         ${q.e?`<p class="qexp-text"><strong>詳解　</strong>${esc(q.e)}</p>`:""}
         ${q.w?`<div class="qopt-breakdown"><strong>其他選項　</strong>${esc(q.w)}</div>`:""}</div>`}
     else if(q.h)h+=`<details class="hint"><summary>提示</summary><p>${esc(q.h)}</p></details>`;
@@ -904,7 +919,7 @@ function vSync(){
 
 function render(){
   if(st.view==="prac"&&!(st.pr&&st.pr.ids.length))st.view="home";
-  const isRead=st.view==="exam"&&findEx(st.exam).part===7;
+  const isRead=st.view==="exam"&&(findEx(st.exam).part===7||findEx(st.exam).part===6);
   const v=isRead?vReading:({home:vHome,exam:vExam,pset:vPset,prac:vPrac,report:vReport,sync:vSync}[st.view]||vHome);
   const pl=document.getElementById("paneL"),pr=document.getElementById("paneR");
   const keep=pl&&pr?{k:pl.dataset.key,l:pl.scrollTop,r:pr.scrollTop}:null;
@@ -981,6 +996,10 @@ document.addEventListener("click",e=>{
     case"retryWrong":{let f=-1;ex.qs.forEach((q,i)=>{const id=ex.id+"-"+i;if(isWrong(id)){delAns(id);if(f<0)f=i}});
       if(f<0){showToast("本卷沒有錯題");return}st.cur[ex.id]=f;scroll=toTop;break}
     case"theme":applyTheme(d.v);renderTopbar();return;
+    case"jumpblank":{const el=document.getElementById("blank-"+d.n),pl=document.getElementById("paneL");
+      if(el&&pl){pl.scrollTop+=el.getBoundingClientRect().top-pl.getBoundingClientRect().top-pl.clientHeight/3;el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1200)}return}
+    case"jumpq":{const el=document.getElementById("rq-"+d.n),pr=document.getElementById("paneR");
+      if(el&&pr){pr.scrollTop+=el.getBoundingClientRect().top-pr.getBoundingClientRect().top-8}return}
     case"p7pick":if(!st.p7d||typeof st.p7d!=="object")st.p7d={};st.p7d[d.id]=+d.k;persist();render();return;
     case"p7set":{if(+d.i<0)return;st.cur[st.exam]=+d.i;save();render();window.scrollTo(0,0);
       const l=document.getElementById("paneL"),r=document.getElementById("paneR");if(l)l.scrollTop=0;if(r)r.scrollTop=0;return}
