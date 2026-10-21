@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <script>try{var __t=localStorage.getItem("quiz-theme");if(__t==="light"||__t==="dark")document.documentElement.setAttribute("data-theme",__t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>刷題目錄｜巨量資料概論・TOEIC</title>
+<title>刷題目錄｜統計學・巨量資料概論・TOEIC</title>
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F0F0F" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -278,7 +278,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;backgroun
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
 /* ===== 題庫資料放在 data/ 資料夾（由 data/manifest.json 列出），開啟網頁時載入 ===== */
-const TAGS={}, TOEIC_EXAMS=[], PAST=[], EXAMS=[];
+const TAGS={}, TOEIC_EXAMS=[], PAST=[], EXAMS=[], STAT_PAST=[];
 const DATA_DIR="data/";
 let DATA_READY=false;
 
@@ -290,12 +290,12 @@ function addData(d){
   if(!d||typeof d!=="object")return;
   if(d.tags)Object.assign(TAGS,d.tags);
   (d.exams||[]).forEach(ex=>{
-    const arr=ex.kind==="past"?PAST:ex.kind==="mock"?EXAMS:TOEIC_EXAMS;
+    const arr=ex.scope==="stat"?STAT_PAST:ex.kind==="past"?PAST:ex.kind==="mock"?EXAMS:TOEIC_EXAMS;
     const i=arr.findIndex(e=>e.id===ex.id);if(i>=0)arr[i]=ex;else arr.push(ex);
   });
 }
 function buildIndex(){
-  ALL.length=0;ALL.push(...TOEIC_EXAMS,...PAST,...EXAMS);
+  ALL.length=0;ALL.push(...TOEIC_EXAMS,...STAT_PAST,...PAST,...EXAMS);
   Object.keys(QM).forEach(k=>delete QM[k]);
   ALL.forEach(ex=>ex.qs.forEach((q,i)=>{QM[ex.id+"-"+i]={ex,i,q}}));
 }
@@ -385,12 +385,13 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const okAns=(q,k)=>k===q.a||(Array.isArray(q.acc)&&q.acc.includes(k));
 const keyTxt=q=>Array.isArray(q.acc)&&q.acc.length>1?(q.acc.length===4?"一律給分":q.acc.map(k=>"("+L[k]+")").join(" 或 ")):"("+L[q.a]+")";
 const isWrong=id=>st.ans[id]!==undefined&&!okAns(QM[id].q,st.ans[id]);
-const inScope=(id,sc)=>(QM[id].ex.kind==="toeic")===((sc||st.scope)==="toeic");
+const exScope=ex=>ex.scope||(ex.kind==="toeic"?"toeic":"bigdata");
+const inScope=(id,sc)=>exScope(QM[id].ex)===(sc||st.scope);
 const scopeIds=sc=>Object.keys(QM).filter(id=>inScope(id,sc));
 const wrongIds=sc=>scopeIds(sc).filter(isWrong);
 const flagIds=sc=>scopeIds(sc).filter(id=>st.flags[id]);
-const scopeTags=sc=>Object.keys(TAGS).filter(k=>k.startsWith("t_")===((sc||st.scope)==="toeic"));
-const scopeName=sc=>(sc||st.scope)==="toeic"?"TOEIC":"巨量資料概論";
+const scopeTags=sc=>{const s=sc||st.scope;return Object.keys(TAGS).filter(k=>s==="toeic"?k.startsWith("t_"):s==="stat"?k.startsWith("s_"):!k.startsWith("t_")&&!k.startsWith("s_"))};
+const scopeName=sc=>({toeic:"TOEIC",stat:"統計學",bigdata:"巨量資料概論"}[sc||st.scope]||"巨量資料概論");
 const app=document.getElementById("app");
 const topbar=document.getElementById("topbar");
 const isWide=()=>window.matchMedia("(min-width:768px)").matches;
@@ -649,10 +650,14 @@ function toolLeaf(label,act,sc,meta){
 function progMeta(s){return s.d?`<b>${s.d}</b>/${s.n}．${Math.round(s.o/s.d*100)}%`:`${s.n} 題`}
 function groupMeta(list){let d=0,n=0;list.forEach(e=>{d+=examStats(e).d;n+=e.qs.length});return d?`<b>${d}</b>/${n}`:`${n} 題`}
 function vHome(){
-  const B=scopeStats("bigdata"),T=scopeStats("toeic");
-  const past=[...PAST].reverse();
-  const bw=wrongIds("bigdata").length,bf=flagIds("bigdata").length,tw=wrongIds("toeic").length,tf=flagIds("toeic").length;
+  const S=scopeStats("stat"),B=scopeStats("bigdata"),T=scopeStats("toeic");
+  const spast=[...STAT_PAST].reverse(),past=[...PAST].reverse();
+  const sw=wrongIds("stat").length,sf=flagIds("stat").length,bw=wrongIds("bigdata").length,bf=flagIds("bigdata").length,tw=wrongIds("toeic").length,tf=flagIds("toeic").length;
   const wf=(w,f)=>[w?`錯 ${w}`:"",f?`標註 ${f}`:""].filter(Boolean).join("．");
+  const stat=folder("stat","統計學",progMeta(S),
+      `<li>${folder("spast","考古題",`${STAT_PAST.length} 份`,spast.map(examLeaf).join(""))}</li>`+
+      toolLeaf("錯題分析","report","stat")+
+      toolLeaf("錯題抽考","pset","stat",wf(sw,sf)));
   const bigdata=folder("bigdata","巨量資料概論",progMeta(B),
       `<li>${folder("past","考古題",`${PAST.length} 份`,past.map(examLeaf).join(""))}</li>`+
       `<li>${folder("mock","模擬考",`${EXAMS.length} 份`,EXAMS.map(examLeaf).join(""))}</li>`+
@@ -677,7 +682,7 @@ function vHome(){
       toolLeaf("錯題分析","report","toeic")+
       toolLeaf("錯題抽考","pset","toeic",wf(tw,tf)));
   return `<h1>目錄</h1><p class="sub">選擇資料夾開始練習</p>
-  <ul class="tree"><li>${bigdata}</li><li>${toeic}</li></ul>`;
+  <ul class="tree"><li>${stat}</li><li>${bigdata}</li><li>${toeic}</li></ul>`;
 }
 
 /* ---------- 作答 ---------- */
@@ -873,7 +878,7 @@ document.addEventListener("click",e=>{
   const ex=findEx(st.exam);let scroll=null;
   switch(a){
     case"go":st.view=d.v;scroll=toTop;break;
-    case"open":st.view="exam";st.exam=d.ex;st.scope=findEx(d.ex).kind==="toeic"?"toeic":"bigdata";scroll=toTop;break;
+    case"open":st.view="exam";st.exam=d.ex;st.scope=exScope(findEx(d.ex));scroll=toTop;break;
     case"goto":st.cur[st.exam]=+d.i;scroll=qTop;break;
     case"pgoto":st.pr.i=+d.i;scroll=qTop;break;
     case"pick":if(st.view==="prac"){st.pr.ans[d.id]=+d.k;if(!st.pr.end&&st.pr.ids.every(x=>st.pr.ans[x]!==undefined))st.pr.end=now()}else setAns(d.id,+d.k);break;
@@ -901,7 +906,7 @@ document.addEventListener("click",e=>{
       if(!ids.length){document.getElementById("pmsg").textContent="這個範圍目前沒有題目。";return}
       if(!(n>0)){document.getElementById("pmsg").textContent="請輸入 1 以上的題數。";return}
       st.pr={ids:shuffle([...ids]).slice(0,n),ans:{},i:0,src:"pset",pool,n,scope:st.scope};st.view="prac";scroll=toTop;break}
-    case"jump":{const {ex:x,i}=QM[d.id];st.view="exam";st.exam=x.id;st.cur[x.id]=i;scroll=toTop;break}
+    case"jump":{const {ex:x,i}=QM[d.id];st.view="exam";st.exam=x.id;st.scope=exScope(x);st.cur[x.id]=i;scroll=toTop;break}
     case"nextWrong":{const c=st.cur[ex.id]||0,n=ex.qs.length;let f=-1;
       for(let s=1;s<=n;s++){const i=(c+s)%n;if(isWrong(ex.id+"-"+i)){f=i;break}}
       if(f<0){showToast("本卷沒有錯題");return}st.cur[ex.id]=f;scroll=qTop;break}

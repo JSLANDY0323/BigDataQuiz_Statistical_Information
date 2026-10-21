@@ -10,6 +10,7 @@
 | toeic_p5_adv.json | Part 5 進階考點 |
 | toeic_p6.json | Part 6 |
 | toeic_part7.json | Part 7 |
+| stat_past.json | 統計學 考古題 |
 | bigdata_past.json ／ bigdata_mock.json | 巨量資料概論 考古題／模擬考 |
 
 ## 格式
