@@ -269,6 +269,24 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;backgroun
   .tree ul{margin-left:8px;padding-left:12px}
   .row{gap:10px;padding:8px 4px}
 }
+/* 計時與統計 */
+.qtimer{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qtimer b{color:var(--ink);font-weight:600}
+.vtime{font-weight:400;color:var(--muted);font-size:.85rem}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 8px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.kpi span{display:block;font-size:.78rem;color:var(--muted)}
+.kpi b{display:block;font-size:1.45rem;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
+.stbl{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums;margin:8px 0 6px}
+.stbl th,.stbl td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.stbl th{font-weight:600;color:var(--muted);font-size:.8rem}
+.stbl th:first-child,.stbl td:first-child{text-align:left;white-space:normal}
+.stbl tr.hl td{font-weight:700}
+.speed{border:1px solid var(--ink);border-radius:10px;padding:14px 16px;margin:14px 0 4px;font-size:.95rem}
+.speed b{font-variant-numeric:tabular-nums}
+.toprow .name{font-weight:700;font-size:1.08rem}
+.tree>li>.toprow{min-height:60px}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}.stbl{font-size:.84rem}.stbl th,.stbl td{padding:8px 4px}}
 @media (prefers-reduced-motion:no-preference){.exp{animation:in .2s ease-out}@keyframes in{from{opacity:0}}}
 </style>
 </head>
@@ -278,7 +296,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;backgroun
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
 /* ===== 題庫資料放在 data/ 資料夾（由 data/manifest.json 列出），開啟網頁時載入 ===== */
-const TAGS={}, TOEIC_EXAMS=[], PAST=[], EXAMS=[], STAT_PAST=[];
+const TAGS={}, TOEIC_EXAMS=[], PAST=[], EXAMS=[], STAT_PAST=[], AI_JR=[], AI_SR=[];
 const DATA_DIR="data/";
 let DATA_READY=false;
 
@@ -290,12 +308,12 @@ function addData(d){
   if(!d||typeof d!=="object")return;
   if(d.tags)Object.assign(TAGS,d.tags);
   (d.exams||[]).forEach(ex=>{
-    const arr=ex.scope==="stat"?STAT_PAST:ex.kind==="past"?PAST:ex.kind==="mock"?EXAMS:TOEIC_EXAMS;
+    const arr=ex.scope==="stat"?STAT_PAST:ex.scope==="ai_jr"?AI_JR:ex.scope==="ai_sr"?AI_SR:ex.kind==="past"?PAST:ex.kind==="mock"?EXAMS:TOEIC_EXAMS;
     const i=arr.findIndex(e=>e.id===ex.id);if(i>=0)arr[i]=ex;else arr.push(ex);
   });
 }
 function buildIndex(){
-  ALL.length=0;ALL.push(...TOEIC_EXAMS,...STAT_PAST,...PAST,...EXAMS);
+  ALL.length=0;ALL.push(...TOEIC_EXAMS,...STAT_PAST,...AI_JR,...AI_SR,...PAST,...EXAMS);
   Object.keys(QM).forEach(k=>delete QM[k]);
   ALL.forEach(ex=>ex.qs.forEach((q,i)=>{QM[ex.id+"-"+i]={ex,i,q}}));
 }
@@ -309,9 +327,9 @@ async function loadData(){
 const qNo=id=>{const {i,q}=QM[id];return q.n||i+1};
 const qLabel=id=>QM[id].ex.title+" 第 "+qNo(id)+" 題";
 const findEx=id=>ALL.find(e=>e.id===id)||ALL[0];
-const VIEWS=["home","exam","pset","prac","report","sync"];
+const VIEWS=["home","exam","pset","prac","report","sync","stats"];
 
-let st={view:"home", scope:"bigdata", exam:"toeic_p5_full", open:{}, sheetOpen:null, cur:{}, ans:{}, flags:{}, pr:null, ansT:{}, flagT:{}, curT:{}};
+let st={view:"home", scope:"bigdata", exam:"toeic_p5_full", open:{}, sheetOpen:null, cur:{}, ans:{}, flags:{}, pr:null, ansT:{}, flagT:{}, curT:{}, tlog:[]};
 
 const EXAM_MIGRATE={"p5_pos_1": ["p5_pos", 0], "p5_pos_2": ["p5_pos", 20], "p5_pos_3": ["p5_pos", 40], "p5_pos_4": ["p5_pos", 60], "p5_conj_1": ["p5_conj", 0], "p5_conj_2": ["p5_conj", 15], "p5_conj_3": ["p5_conj", 30], "p5_conj_4": ["p5_conj", 45], "p5_pron_2": ["p5_pron", 25], "p5_fin_2": ["p5_fin", 25], "p5_voice_2": ["p5_voice", 25], "p5_tense_2": ["p5_tense", 25], "p5_chunk_1": ["p5_chunk", 0], "p5_chunk_2": ["p5_chunk", 20], "p5_chunk_3": ["p5_chunk", 40], "p5_chunk_4": ["p5_chunk", 60], "p5_vocab_1": ["p5_vocab", 0], "p5_vocab_2": ["p5_vocab", 15], "p5_vocab_3": ["p5_vocab", 30], "p5_vocab_4": ["p5_vocab", 45]};
 // 舊題組（例如 詞性題 1～4）合併後，把「舊題組-題號」轉成「新題組-題號」，保留作答、標註與進度
@@ -353,6 +371,7 @@ function load(){
     st.migratedV1=true;
   }
   ["ansT","flagT","curT","open"].forEach(k=>{if(!st[k]||typeof st[k]!=="object")st[k]={}});
+  if(!Array.isArray(st.tlog))st.tlog=[];pruneTlog();
   Object.keys(st.ans).forEach(k=>{if(!st.ansT[k])st.ansT[k]=1});
   Object.keys(st.flags).forEach(k=>{if(!st.flagT[k])st.flagT[k]=1});
   Object.keys(st.cur).forEach(k=>{if(!st.curT[k])st.curT[k]=1});
@@ -380,6 +399,38 @@ function save(){
   if(dirty){dirty=false;Sync.schedule()}
 }
 
+/* ---------- 作答計時：顯示中的題目（或題組）才計時；離開頁面、切到別題就重新計時 ---------- */
+const QT={key:null,start:0,away:false};
+const TLOG_DAYS=180;
+function curSet(ex){const sets=p7Sets(ex),cur=st.cur[ex.id]||0;return sets.find(s=>s.idx.includes(cur))||sets[0]}
+function timingKey(){
+  if(!DATA_READY||QT.away||document.visibilityState!=="visible")return null;
+  if(st.view==="exam"){const ex=findEx(st.exam);if(!ex)return null;
+    if(ex.part===6||ex.part===7){const set=curSet(ex);if(!set||p7Status(ex,set).done)return null;return "set|"+ex.id+"|"+set.p}
+    const id=ex.id+"-"+(st.cur[ex.id]||0);return st.ans[id]===undefined?"q|"+id:null}
+  if(st.view==="prac"&&st.pr&&st.pr.ids&&st.pr.ids.length){const id=st.pr.ids[st.pr.i];return st.pr.ans[id]===undefined?"p|"+id+"|"+st.pr.i:null}
+  return null}
+function syncTimer(){const k=timingKey();if(k!==QT.key){QT.key=k;QT.start=k?now():0}tickTimer()}
+function elapsedFor(k){return QT.key===k&&QT.start?now()-QT.start:null}
+function tickTimer(){const el=document.getElementById("qtimer");if(el)el.textContent=QT.key?fmtDur(now()-QT.start):"0:00"}
+setInterval(tickTimer,1000);
+document.addEventListener("visibilitychange",syncTimer);
+window.addEventListener("blur",()=>{QT.away=true;syncTimer()});
+window.addEventListener("focus",()=>{QT.away=false;syncTimer()});
+function pruneTlog(){if(!Array.isArray(st.tlog)||!st.tlog.length)return;const lim=now()-TLOG_DAYS*864e5;if(st.tlog[0].t<lim)st.tlog=st.tlog.filter(r=>r.t>=lim)}
+function logTime(id,ms,ok,extra){
+  if(!Array.isArray(st.tlog))st.tlog=[];
+  const r={t:now(),id,ok:ok?1:0};if(ms!=null&&ms>=0)r.ms=Math.round(ms);if(extra)Object.assign(r,extra);
+  st.tlog.push(r);dirty=true;
+}
+function lastTime(id){const L=st.tlog||[];for(let i=L.length-1;i>=0;i--)if(L[i].id===id)return L[i];return null}
+const dayKey=t=>{const d=new Date(t);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+function aggTime(list){let n=0,o=0,tn=0,ms=0;list.forEach(r=>{n++;if(r.ok)o++;if(r.ms!=null){tn++;ms+=r.ms}});return{n,o,tn,ms,acc:n?o/n:0,avg:tn?ms/tn:0}}
+function todayAgg(){const k=dayKey(now());return aggTime((st.tlog||[]).filter(r=>dayKey(r.t)===k))}
+function tlogCat(r){const it=QM[r.id];if(!it)return "其他";const ex=it.ex,sc=exScope(ex);
+  if(sc==="toeic")return "TOEIC Part "+(ex.part||5);
+  return {stat:"統計學",bigdata:"巨量資料概論",ai_jr:"AI應用規劃師（初級）",ai_sr:"AI應用規劃師（中級）"}[sc]||"其他"}
+function timerChip(){const T=todayAgg();return `<span class="qtimer">計時 <b id="qtimer">0:00</b>${T.tn?`．今日平均 ${fmtDur(T.avg)}／題`:""}</span>`}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 // 官方公告多重正解（acc）或一律給分時，acc 內的選項都算答對
 const okAns=(q,k)=>k===q.a||(Array.isArray(q.acc)&&q.acc.includes(k));
@@ -390,18 +441,22 @@ const inScope=(id,sc)=>exScope(QM[id].ex)===(sc||st.scope);
 const scopeIds=sc=>Object.keys(QM).filter(id=>inScope(id,sc));
 const wrongIds=sc=>scopeIds(sc).filter(isWrong);
 const flagIds=sc=>scopeIds(sc).filter(id=>st.flags[id]);
-const scopeTags=sc=>{const s=sc||st.scope;return Object.keys(TAGS).filter(k=>s==="toeic"?k.startsWith("t_"):s==="stat"?k.startsWith("s_"):!k.startsWith("t_")&&!k.startsWith("s_"))};
-const scopeName=sc=>({toeic:"TOEIC",stat:"統計學",bigdata:"巨量資料概論"}[sc||st.scope]||"巨量資料概論");
+const scopeTags=sc=>{const s=sc||st.scope;return Object.keys(TAGS).filter(k=>s==="toeic"?k.startsWith("t_"):s==="stat"?k.startsWith("s_"):(s==="ai_jr"||s==="ai_sr")?k.startsWith("ai_"):!k.startsWith("t_")&&!k.startsWith("s_")&&!k.startsWith("ai_"))};
+const scopeName=sc=>({toeic:"TOEIC",stat:"統計學",bigdata:"巨量資料概論",ai_jr:"AI應用規劃師（初級）",ai_sr:"AI應用規劃師（中級）"}[sc||st.scope]||"巨量資料概論");
 const app=document.getElementById("app");
 const topbar=document.getElementById("topbar");
 const isWide=()=>window.matchMedia("(min-width:768px)").matches;
 
 /* ---------- 跨裝置同步（GitHub Gist） ---------- */
 const SYNC_KEY="quiz-sync-v1", GIST_FILE="quiz-progress.json", GIST_DESC="刷題學習系統｜作答紀錄同步（請勿刪除）";
-function payload(){return {app:"quiz-sync",v:1,optv:1,updatedAt:now(),ans:st.ans,ansT:st.ansT,flags:st.flags,flagT:st.flagT,cur:st.cur,curT:st.curT}}
+function payload(){return {app:"quiz-sync",v:1,optv:1,updatedAt:now(),ans:st.ans,ansT:st.ansT,flags:st.flags,flagT:st.flagT,cur:st.cur,curT:st.curT,tlog:st.tlog||[]}}
 function stable(o){if(o===null||typeof o!=="object")return JSON.stringify(o);if(Array.isArray(o))return "["+o.map(stable).join(",")+"]";
   return "{"+Object.keys(o).sort().map(k=>JSON.stringify(k)+":"+stable(o[k])).join(",")+"}"}
-const dataKey=o=>stable({ans:o.ans||{},ansT:o.ansT||{},flags:o.flags||{},flagT:o.flagT||{},cur:o.cur||{},curT:o.curT||{}});
+const dataKey=o=>stable({ans:o.ans||{},ansT:o.ansT||{},flags:o.flags||{},flagT:o.flagT||{},cur:o.cur||{},curT:o.curT||{},tl:Array.isArray(o.tlog)?o.tlog.length:0,tt:Array.isArray(o.tlog)&&o.tlog.length?o.tlog[o.tlog.length-1].t:0});
+function mergeTlog(r){if(!Array.isArray(r)||!r.length)return false;if(!Array.isArray(st.tlog))st.tlog=[];
+  const seen=new Set(st.tlog.map(x=>x.t+"|"+x.id));let ch=false;
+  r.forEach(x=>{if(x&&x.t&&x.id&&!seen.has(x.t+"|"+x.id)){st.tlog.push(x);seen.add(x.t+"|"+x.id);ch=true}});
+  if(ch){st.tlog.sort((a,b)=>a.t-b.t);pruneTlog()}return ch}
 function mergeMap(lv,lt,rv,rt){
   let ch=false;rv=rv||{};rt=rt||{};
   new Set([...Object.keys(lt),...Object.keys(rt),...Object.keys(lv),...Object.keys(rv)]).forEach(k=>{
@@ -421,6 +476,7 @@ function mergeRemote(r){
   let ch=mergeMap(st.ans,st.ansT,r.ans,r.ansT);
   ch=mergeMap(st.flags,st.flagT,r.flags,r.flagT)||ch;
   ch=mergeMap(st.cur,st.curT,r.cur,r.curT)||ch;
+  ch=mergeTlog(r.tlog)||ch;
   prevCur={...st.cur};
   return ch;
 }
@@ -592,7 +648,7 @@ function copyQuestion(id){
 function card(id,num,ansMap,showSrc){
   const {ex,q}=QM[id],a=ansMap[id],done=a!==undefined,fl=!!st.flags[id];
   let h=`<div class="panel"><div class="qtop">
-  <span class="qno">第 ${num} 題<span class="chip">${TAGS[q.g]?TAGS[q.g].n:""}</span></span>
+  <span class="qno">第 ${num} 題<span class="chip">${TAGS[q.g]?TAGS[q.g].n:""}</span></span>${done?"":timerChip()}
   <div class="qactions">
     <button class="copybtn" data-act="copy" data-id="${id}" title="複製此題、選項與解析">複製</button>
     <button class="flagbtn ${fl?"on":""}" data-act="flag" data-id="${id}" aria-pressed="${fl}">${fl?"已標註":"標註"}</button>
@@ -608,9 +664,9 @@ function card(id,num,ansMap,showSrc){
   h+=st.optFirst&&!done&&!isP?`${op}<div class="optfirst-q">${qt}</div>`:qt+op;
   if(!done&&q.h)h+=`<details class="hint"><summary>提示</summary><p>${esc(q.h)}</p></details>`;
   else if(done){
-    const g=okAns(q,a);
+    const g=okAns(q,a),lt=lastTime(id);
     h+=`<div class="exp ${g?"":"isbad"}">
-    <p class="verdict">${g?"答對":"答錯．你選 ("+L[a]+")"}，正解 ${keyTxt(q)}</p>
+    <p class="verdict">${g?"答對":"答錯．你選 ("+L[a]+")"}，正解 ${keyTxt(q)}${lt&&lt.ms!=null?`<span class="vtime">．用時 ${fmtDur(lt.ms)}</span>`:""}</p>
     ${q.trans?`<div class="qtrans"><strong>中文翻譯　</strong>${esc(q.trans)}</div>`:""}
     ${q.e?`<p class="qexp-text"><strong>${ex.unofficial?"參考解析":"詳解"}　</strong>${esc(q.e)}</p>`:`<p class="note">此題目前僅收錄${ex.kind==="past"?"官方公布答案":"答案"}。</p>`}
     ${q.w?`<div class="qopt-breakdown"><strong>其他選項　</strong>${esc(q.w)}</div>`:""}
@@ -650,9 +706,9 @@ function toolLeaf(label,act,sc,meta){
 function progMeta(s){return s.d?`<b>${s.d}</b>/${s.n}．${Math.round(s.o/s.d*100)}%`:`${s.n} 題`}
 function groupMeta(list){let d=0,n=0;list.forEach(e=>{d+=examStats(e).d;n+=e.qs.length});return d?`<b>${d}</b>/${n}`:`${n} 題`}
 function vHome(){
-  const S=scopeStats("stat"),B=scopeStats("bigdata"),T=scopeStats("toeic");
+  const S=scopeStats("stat"),B=scopeStats("bigdata"),AJ=scopeStats("ai_jr"),AS=scopeStats("ai_sr"),A={n:AJ.n+AS.n,d:AJ.d+AS.d,o:AJ.o+AS.o},T=scopeStats("toeic");
   const spast=[...STAT_PAST].reverse(),past=[...PAST].reverse();
-  const sw=wrongIds("stat").length,sf=flagIds("stat").length,bw=wrongIds("bigdata").length,bf=flagIds("bigdata").length,tw=wrongIds("toeic").length,tf=flagIds("toeic").length;
+  const sw=wrongIds("stat").length,sf=flagIds("stat").length,bw=wrongIds("bigdata").length,bf=flagIds("bigdata").length,ajw=wrongIds("ai_jr").length,ajf=flagIds("ai_jr").length,asw=wrongIds("ai_sr").length,asf=flagIds("ai_sr").length,tw=wrongIds("toeic").length,tf=flagIds("toeic").length;
   const wf=(w,f)=>[w?`錯 ${w}`:"",f?`標註 ${f}`:""].filter(Boolean).join("．");
   const stat=folder("stat","統計學",progMeta(S),
       `<li>${folder("spast","考古題",`${STAT_PAST.length} 份`,spast.map(examLeaf).join(""))}</li>`+
@@ -663,6 +719,14 @@ function vHome(){
       `<li>${folder("mock","模擬考",`${EXAMS.length} 份`,EXAMS.map(examLeaf).join(""))}</li>`+
       toolLeaf("錯題分析","report","bigdata")+
       toolLeaf("錯題抽考","pset","bigdata",wf(bw,bf)));
+  const aiJr=folder("ai_jr","初級",progMeta(AJ),
+      AI_JR.map(examLeaf).join("")+
+      toolLeaf("錯題分析","report","ai_jr")+
+      toolLeaf("錯題抽考","pset","ai_jr",wf(ajw,ajf)));
+  const aiSr=folder("ai_sr","中級",AS.n?progMeta(AS):"待新增",
+      AI_SR.length?AI_SR.map(examLeaf).join("")+toolLeaf("錯題分析","report","ai_sr")+toolLeaf("錯題抽考","pset","ai_sr",wf(asw,asf)):`<li class="note" style="padding:8px 4px">題庫建置中</li>`);
+  const ai=folder("ai","AI應用規劃師",progMeta(A),
+      `<li>${aiJr}</li><li>${aiSr}</li>`);
   const p6all=TOEIC_EXAMS.filter(e=>e.part===6),p7all=TOEIC_EXAMS.filter(e=>e.part===7);
   const p5all=TOEIC_EXAMS.filter(e=>(e.part||5)===5),byStage=n=>p5all.filter(e=>(e.stage||0)===n);
   const sub=(key,name,list)=>`<li>${folder(key,name,groupMeta(list),list.map(examLeaf).join(""))}</li>`;
@@ -682,7 +746,8 @@ function vHome(){
       toolLeaf("錯題分析","report","toeic")+
       toolLeaf("錯題抽考","pset","toeic",wf(tw,tf)));
   return `<h1>目錄</h1><p class="sub">選擇資料夾開始練習</p>
-  <ul class="tree"><li>${stat}</li><li>${bigdata}</li><li>${toeic}</li></ul>`;
+  <ul class="tree"><li>${stat}</li><li>${bigdata}</li><li>${ai}</li><li>${toeic}</li>
+  <li><button class="row toprow" data-act="go" data-v="stats"><span class="name">刷題統計</span><span class="meta">${(()=>{const T=todayAgg();return T.n?`今日 <b>${T.n}</b> 題．${Math.round(T.acc*100)}%${T.tn?"．"+fmtDur(T.avg)+"／題":""}`:"今日尚未作答"})()}</span></button></li></ul>`;
 }
 
 /* ---------- 作答 ---------- */
@@ -730,8 +795,9 @@ function vReading(){
         ${q.w?`<div class="qopt-breakdown"><strong>其他選項　</strong>${esc(q.w)}</div>`:""}</div>`}
     h+=`</div>`});
   const filled=set.idx.filter(i=>{const id=ex.id+"-"+i;return st.ans[id]!==undefined||st.p7d[id]!==undefined}).length;
-  if(!review)h+=`<div class="submitbar"><span class="note">已選 ${filled}／${set.idx.length} 題${filled<set.idx.length?"．全部選完才能交卷":""}</span><button class="btn primary" data-act="p7submit" ${filled<set.idx.length?"disabled":""}>交卷並檢討</button></div>`;
-  else h+=`<div class="result"><p><strong>本題組答對 ${S.ok}／${S.n}</strong></p></div>`;
+  if(!review)h+=`<div class="submitbar"><span class="note">${timerChip()}<br>已選 ${filled}／${set.idx.length} 題${filled<set.idx.length?"．全部選完才能交卷":""}</span><button class="btn primary" data-act="p7submit" ${filled<set.idx.length?"disabled":""}>交卷並檢討</button></div>`;
+  else{const lt=lastTime(ex.id+"-"+set.idx[0]);
+    h+=`<div class="result"><p><strong>本題組答對 ${S.ok}／${S.n}</strong>${lt&&lt.sm!=null?`<br><span class="note">本題組用時 ${fmtDur(lt.sm)}．平均每題 ${fmtDur(lt.ms)}</span>`:""}</p></div>`}
   const prev=si>0?sets[si-1].idx[0]:-1,next=si<sets.length-1?sets[si+1].idx[0]:-1;
   h+=`<div class="nav"><button class="btn" data-act="p7set" data-i="${prev}" ${prev<0?"disabled":""}>上一題組</button><button class="btn ${review?"primary":""}" data-act="p7set" data-i="${next}" ${next<0?"disabled":""}>下一題組</button></div>
   <div class="tools">${review?`<button data-act="p7redo">清除本題組重做</button>`:""}<button data-act="resetExam">清除本卷紀錄</button></div>
@@ -807,6 +873,39 @@ function vReport(){
   return h;
 }
 
+/* ---------- 刷題統計：正確率與速度 ---------- */
+function vStats(){
+  const L=st.tlog||[],today=dayKey(now()),T=todayAgg();
+  const pct=a=>a.n?Math.round(a.acc*100)+"%":"—",avg=a=>a.tn?fmtDur(a.avg):"—";
+  let h=`${backHome}<h1>刷題統計</h1><p class="sub">每題從顯示到送出答案的時間；Part 6／7 以整個題組的時間平均到每一題</p>`;
+  h+=`<h2>今天</h2><div class="kpis">
+    <div class="kpi"><span>作答題數</span><b>${T.n}</b></div>
+    <div class="kpi"><span>正確率</span><b>${pct(T)}</b></div>
+    <div class="kpi"><span>平均每題</span><b>${avg(T)}</b></div>
+    <div class="kpi"><span>作答總時間</span><b>${T.tn?fmtDur(T.ms):"—"}</b></div></div>`;
+  const timed=L.filter(r=>r.ms!=null),recent=timed.slice(-10),R=aggTime(recent);
+  if(recent.length){
+    const diff=T.tn?R.avg-T.avg:0;
+    h+=`<div class="speed">目前速度：最近 ${recent.length} 題平均 <b>${fmtDur(R.avg)}</b>／題，正確率 <b>${pct(R)}</b>${T.tn&&Math.abs(diff)>=1000?`．比今日平均${diff<0?"快":"慢"} ${fmtDur(Math.abs(diff))}`:""}</div>`;
+  }
+  const todays=L.filter(r=>dayKey(r.t)===today);
+  if(todays.length){
+    const cats={};todays.forEach(r=>{const c=tlogCat(r);(cats[c]=cats[c]||[]).push(r)});
+    h+=`<h2>今天各科</h2><table class="stbl"><thead><tr><th>科目</th><th>題數</th><th>正確率</th><th>平均每題</th></tr></thead><tbody>`;
+    Object.keys(cats).sort().forEach(c=>{const a=aggTime(cats[c]);h+=`<tr><td>${esc(c)}</td><td>${a.n}</td><td>${pct(a)}</td><td>${avg(a)}</td></tr>`});
+    h+=`</tbody></table>`;
+  }
+  const days={};L.forEach(r=>{const k=dayKey(r.t);(days[k]=days[k]||[]).push(r)});
+  const keys=Object.keys(days).sort().reverse().slice(0,14);
+  if(keys.length){
+    h+=`<h2>最近紀錄</h2><table class="stbl"><thead><tr><th>日期</th><th>題數</th><th>正確率</th><th>平均每題</th><th>總時間</th></tr></thead><tbody>`;
+    keys.forEach(k=>{const a=aggTime(days[k]);h+=`<tr class="${k===today?"hl":""}"><td>${k.slice(5).replace("-","/")}${k===today?"（今天）":""}</td><td>${a.n}</td><td>${pct(a)}</td><td>${avg(a)}</td><td>${a.tn?fmtDur(a.ms):"—"}</td></tr>`});
+    h+=`</tbody></table>`;
+  }else h+=`<p style="margin-top:22px">還沒有計時紀錄。開始做題後，每題送出答案時會自動記錄用時。</p>`;
+  h+=`<p class="note" style="margin-top:18px">計時規則：題目顯示時開始計時；切換到其他分頁或 App、或換到別題後再回來，會從 0 重新計時。抽考與每日 15 題也列入統計。紀錄保留 ${TLOG_DAYS} 天，並隨跨裝置同步。<br>多益常見的時間分配參考：Part 5 每題約 20–30 秒、Part 6 每題約 30–40 秒、Part 7 每題約 1 分鐘。</p>`;
+  return h;
+}
+
 /* ---------- 同步設定 ---------- */
 function vSync(){
   const on=Sync.on(),[s,label]=syncLabel();
@@ -837,7 +936,7 @@ function vSync(){
 function render(){
   if(st.view==="prac"&&!(st.pr&&st.pr.ids.length))st.view="home";
   const isRead=st.view==="exam"&&(findEx(st.exam).part===7||findEx(st.exam).part===6);
-  const v=isRead?vReading:({home:vHome,exam:vExam,pset:vPset,prac:vPrac,report:vReport,sync:vSync}[st.view]||vHome);
+  const v=isRead?vReading:({home:vHome,exam:vExam,pset:vPset,prac:vPrac,report:vReport,sync:vSync,stats:vStats}[st.view]||vHome);
   const pl=document.getElementById("paneL"),pr=document.getElementById("paneR");
   const keep=pl&&pr?{k:pl.dataset.key,l:pl.scrollTop,r:pr.scrollTop}:null;
   app.innerHTML=v();
@@ -846,6 +945,7 @@ function render(){
     if(keep&&nl&&nl.dataset.key===keep.k){nl.scrollTop=keep.l;if(!p7ResetR)nr.scrollTop=keep.r}
     p7ResetR=false}
   renderTopbar();
+  syncTimer();
 }
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -881,7 +981,11 @@ document.addEventListener("click",e=>{
     case"open":st.view="exam";st.exam=d.ex;st.scope=exScope(findEx(d.ex));scroll=toTop;break;
     case"goto":st.cur[st.exam]=+d.i;scroll=qTop;break;
     case"pgoto":st.pr.i=+d.i;scroll=qTop;break;
-    case"pick":if(st.view==="prac"){st.pr.ans[d.id]=+d.k;if(!st.pr.end&&st.pr.ids.every(x=>st.pr.ans[x]!==undefined))st.pr.end=now()}else setAns(d.id,+d.k);break;
+    case"pick":{const k=+d.k,q=QM[d.id].q,pr=st.view==="prac";
+      if(pr?st.pr.ans[d.id]!==undefined:st.ans[d.id]!==undefined)break;
+      const ms=elapsedFor(pr?"p|"+d.id+"|"+st.pr.i:"q|"+d.id);
+      if(pr){st.pr.ans[d.id]=k;if(!st.pr.end&&st.pr.ids.every(x=>st.pr.ans[x]!==undefined))st.pr.end=now()}else setAns(d.id,k);
+      logTime(d.id,ms,okAns(q,k),{src:pr?"p":"e"});QT.key=null;break}
     case"optFirst":st.optFirst=!st.optFirst;break;
     case"flag":toggleFlag(d.id);break;
     case"copy":copyQuestion(d.id);return;
@@ -922,7 +1026,9 @@ document.addEventListener("click",e=>{
       const l=document.getElementById("paneL"),r=document.getElementById("paneR");if(l)l.scrollTop=0;if(r)r.scrollTop=0;return}
     case"p7submit":{const sets=p7Sets(ex),cur=st.cur[ex.id]||0,set=sets.find(s=>s.idx.includes(cur))||sets[0];
       if(set.idx.some(i=>st.ans[ex.id+"-"+i]===undefined&&(st.p7d||{})[ex.id+"-"+i]===undefined))return;
-      set.idx.forEach(i=>{const id=ex.id+"-"+i;if(st.ans[id]===undefined)setAns(id,st.p7d[id]);delete st.p7d[id]});
+      const ms=elapsedFor("set|"+ex.id+"|"+set.p),newIds=set.idx.map(i=>ex.id+"-"+i).filter(id=>st.ans[id]===undefined),per=ms!=null&&newIds.length?ms/newIds.length:null;
+      newIds.forEach(id=>{setAns(id,st.p7d[id]);logTime(id,per,okAns(QM[id].q,st.p7d[id]),{src:"e",set:newIds.length,sm:ms==null?null:Math.round(ms)})});
+      set.idx.forEach(i=>{delete st.p7d[ex.id+"-"+i]});QT.key=null;
       p7ResetR=true;save();render();const r=document.getElementById("paneR");if(r)r.scrollTop=0;return}
     case"p7redo":{const sets=p7Sets(ex),cur=st.cur[ex.id]||0,set=sets.find(s=>s.idx.includes(cur))||sets[0];
       if(!confirm("清除這個題組的作答，重新作答？"))return;

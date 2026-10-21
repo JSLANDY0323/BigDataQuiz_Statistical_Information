@@ -12,6 +12,7 @@
 | toeic_part7.json | Part 7 |
 | stat_past.json | 統計學 考古題 |
 | bigdata_past.json ／ bigdata_mock.json | 巨量資料概論 考古題／模擬考 |
+| ai_jr.json | AI應用規劃師 初級（章節模擬試題） |
 
 ## 格式
 

@@ -1,8 +1,8 @@
 {
  "about":"題庫目錄。網頁依 files 的順序載入；新增檔案時加在這裡。v 是內容雜湊（python tools/update_manifest.py 會自動更新）。",
  "files":[
-  {"path":"tags.json","title":"所有考點標籤（錯題分析依這裡的順序顯示）","v":"577a86ae","exams":[]},
-  {"path":"stat_past.json","title":"統計學 考古題","v":"40e0f2a0","exams":["s104","s105","s106","s107","s108","s109","s110","s111","s112","s113","s115"]},
+  {"path":"tags.json","title":"所有考點標籤（錯題分析依這裡的順序顯示）","v":"a0c4d5ae","exams":[]},
+  {"path":"stat_past.json","title":"統計學 考古題","v":"0f1bf610","exams":["s104","s105","s106","s107","s108","s109","s110","s111","s112","s113","s115"]},
   {"path":"toeic_p5_mock.json","title":"TOEIC Part 5 綜合模擬與早期專項特訓","v":"50b14b5a","exams":["toeic_p5_full","toeic_p5_grammar","toeic_p5_vocab","toeic_p5_pos","toeic_p5_conn"]},
   {"path":"toeic_p5_s1.json","title":"TOEIC Part 5 第一階段：保底秒殺題","v":"1a3976c4","exams":["p5_pos","p5_conj","p5_pron"]},
   {"path":"toeic_p5_s2.json","title":"TOEIC Part 5 第二階段：動詞檢查","v":"c0be0bb9","exams":["p5_fin","p5_voice","p5_tense"]},
@@ -11,6 +11,7 @@
   {"path":"toeic_p6.json","title":"TOEIC Part 6 段落填空","v":"90ddd9be","exams":["p6_1","p6_2","p6_3","p6_4","p6_5","p6_6","p6_7","p6_8","p6_9","p6_10","p6_11"]},
   {"path":"toeic_part7.json","title":"TOEIC Part 7 閱讀測驗","v":"771ecf89","exams":["p7_t1","p7_t2","p7_t3","p7_t4","p7_x2","p7_5"]},
   {"path":"bigdata_past.json","title":"巨量資料概論 考古題","v":"572106f9","exams":["p104","p105","p106","p107","p108","p109","p110","p111","p112","p113","p115"]},
-  {"path":"bigdata_mock.json","title":"巨量資料概論 模擬考","v":"2203c379","exams":["e1","e2","e3"]}
+  {"path":"bigdata_mock.json","title":"巨量資料概論 模擬考","v":"2203c379","exams":["e1","e2","e3"]},
+  {"path":"ai_jr.json","title":"AI應用規劃師 初級（iPAS 能力鑑定指南 第一篇～第七篇 章節模擬試題）","v":"1399d546","exams":["ai_jr_p1c1","ai_jr_p1c2","ai_jr_p2c1","ai_jr_p2c2","ai_jr_p2c3","ai_jr_p3c1","ai_jr_p3c2","ai_jr_p4c1","ai_jr_p4c2","ai_jr_p5c1","ai_jr_p5c2","ai_jr_p6c1","ai_jr_p6c2","ai_jr_p7c1","ai_jr_p7c2","ai_jr_p7c3"]}
  ]
 }
