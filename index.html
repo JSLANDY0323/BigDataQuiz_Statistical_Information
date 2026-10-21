@@ -381,7 +381,10 @@ function save(){
 }
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const isWrong=id=>st.ans[id]!==undefined&&st.ans[id]!==QM[id].q.a;
+// 官方公告多重正解（acc）或一律給分時，acc 內的選項都算答對
+const okAns=(q,k)=>k===q.a||(Array.isArray(q.acc)&&q.acc.includes(k));
+const keyTxt=q=>Array.isArray(q.acc)&&q.acc.length>1?(q.acc.length===4?"一律給分":q.acc.map(k=>"("+L[k]+")").join(" 或 ")):"("+L[q.a]+")";
+const isWrong=id=>st.ans[id]!==undefined&&!okAns(QM[id].q,st.ans[id]);
 const inScope=(id,sc)=>(QM[id].ex.kind==="toeic")===((sc||st.scope)==="toeic");
 const scopeIds=sc=>Object.keys(QM).filter(id=>inScope(id,sc));
 const wrongIds=sc=>scopeIds(sc).filter(isWrong);
@@ -535,8 +538,8 @@ const I={
 };
 
 /* ---------- 共用元件 ---------- */
-function examStats(ex){let d=0,o=0;ex.qs.forEach((q,i)=>{const a=st.ans[ex.id+"-"+i];if(a!==undefined){d++;if(a===q.a)o++}});return{d,o}}
-function scopeStats(sc){const ids=scopeIds(sc);let d=0,o=0;ids.forEach(id=>{const a=st.ans[id];if(a!==undefined){d++;if(a===QM[id].q.a)o++}});return{n:ids.length,d,o}}
+function examStats(ex){let d=0,o=0;ex.qs.forEach((q,i)=>{const a=st.ans[ex.id+"-"+i];if(a!==undefined){d++;if(okAns(q,a))o++}});return{d,o}}
+function scopeStats(sc){const ids=scopeIds(sc);let d=0,o=0;ids.forEach(id=>{const a=st.ans[id];if(a!==undefined){d++;if(okAns(QM[id].q,a))o++}});return{n:ids.length,d,o}}
 
 function showToast(msg){
   let t=document.getElementById("toast");
@@ -574,7 +577,7 @@ function copyQuestion(id){
   const {ex,q}=item,tag=TAGS[q.g]?TAGS[q.g].n:"";
   let text=`【${ex.title} 第 ${qNo(id)} 題】${tag?`[${tag}]`:""}\n${passagePlain(ex,q)}${q.q}\n\n`;
   q.o.forEach((opt,idx)=>{text+=`(${L[idx]}) ${opt}\n`});
-  text+=`\n【正解】(${L[q.a]})\n`;
+  text+=`\n【正解】${keyTxt(q)}\n`;
   if(q.trans)text+=`【中文翻譯】${q.trans}\n`;
   if(q.e)text+=`【考點詳解】${q.e}\n`;
   if(q.w)text+=`【其他選項解析】${q.w}\n`;
@@ -598,15 +601,15 @@ function card(id,num,ansMap,showSrc){
   let qt=(isP?passageHtml(ex,q,ansMap):"")+`<p class="qtext">${esc(q.q)}</p>`;
   if(showSrc)qt+=`<p class="src">出自${qLabel(id)}</p>`;
   let op=`<div class="opts">`;
-  q.o.forEach((t,k)=>{let c="opt";if(done){if(k===q.a)c+=" right";else if(k===a)c+=" wrong"}
+  q.o.forEach((t,k)=>{let c="opt";if(done){if(okAns(q,k))c+=" right";else if(k===a)c+=" wrong"}
     op+=`<button class="${c}" data-act="pick" data-id="${id}" data-k="${k}" ${done?"disabled":""}><span class="bub">${L[k]}</span><span>${esc(t)}</span></button>`});
   op+=`</div>`;
   h+=st.optFirst&&!done&&!isP?`${op}<div class="optfirst-q">${qt}</div>`:qt+op;
   if(!done&&q.h)h+=`<details class="hint"><summary>提示</summary><p>${esc(q.h)}</p></details>`;
   else if(done){
-    const g=a===q.a;
+    const g=okAns(q,a);
     h+=`<div class="exp ${g?"":"isbad"}">
-    <p class="verdict">${g?"答對":"答錯．你選 ("+L[a]+")"}，正解 (${L[q.a]})</p>
+    <p class="verdict">${g?"答對":"答錯．你選 ("+L[a]+")"}，正解 ${keyTxt(q)}</p>
     ${q.trans?`<div class="qtrans"><strong>中文翻譯　</strong>${esc(q.trans)}</div>`:""}
     ${q.e?`<p class="qexp-text"><strong>${ex.unofficial?"參考解析":"詳解"}　</strong>${esc(q.e)}</p>`:`<p class="note">此題目前僅收錄${ex.kind==="past"?"官方公布答案":"答案"}。</p>`}
     ${q.w?`<div class="qopt-breakdown"><strong>其他選項　</strong>${esc(q.w)}</div>`:""}
@@ -619,7 +622,7 @@ function card(id,num,ansMap,showSrc){
 
 function gridCell(id,label,ansMap,cur,act,idx){
   const a=ansMap[id],q=QM[id].q;let c="cell";
-  if(a!==undefined)c+=a===q.a?" ok":" bad";if(cur)c+=" cur";if(st.flags[id])c+=" fl";
+  if(a!==undefined)c+=okAns(q,a)?" ok":" bad";if(cur)c+=" cur";if(st.flags[id])c+=" fl";
   return `<button class="${c}" data-act="${act}" data-i="${idx}" aria-label="第 ${label} 題">${label}</button>`;
 }
 const legend=`<div class="legend"><span><i style="background:var(--ink)"></i>答對</span><span><i style="background:var(--mid)"></i>答錯</span><span><i style="border:1px solid var(--faint)"></i>未作答</span><span><i style="background:var(--ink);border-radius:50%;transform:scale(.8)"></i>標註</span></div>`;
@@ -683,7 +686,7 @@ const backHome=`<button class="back" data-act="go" data-v="home">← 目錄</but
 let p7ResetR=false;
 function p7Sets(ex){const m=new Map();ex.qs.forEach((q,i)=>{const k=q.p||0;if(!m.has(k))m.set(k,[]);m.get(k).push(i)});return [...m.entries()].map(([p,idx])=>({p,idx}))}
 function p7Status(ex,set){const ids=set.idx.map(i=>ex.id+"-"+i);const d=ids.filter(id=>st.ans[id]!==undefined).length;
-  return {done:d===ids.length,d,n:ids.length,ok:ids.filter(id=>st.ans[id]!==undefined&&st.ans[id]===QM[id].q.a).length}}
+  return {done:d===ids.length,d,n:ids.length,ok:ids.filter(id=>st.ans[id]!==undefined&&okAns(QM[id].q,st.ans[id])).length}}
 function vReading(){
   const ex=findEx(st.exam),sets=p7Sets(ex);if(!st.p7d||typeof st.p7d!=="object")st.p7d={};
   let cur=st.cur[ex.id]||0;if(cur<0||cur>=ex.qs.length)cur=0;
@@ -712,11 +715,11 @@ function vReading(){
       <div class="qactions"><button class="flagbtn ${fl?"on":""}" data-act="flag" data-id="${id}" aria-pressed="${fl}">${fl?"已標註":"標註"}</button></div></div>
       ${q.q?`<p class="qtext rq-text">${esc(q.q)}</p>`:""}<div class="opts">`;
     q.o.forEach((t,k)=>{let c="opt";
-      if(review){if(k===q.a)c+=" right";else if(k===a)c+=" wrong"}else if(sel===k)c+=" sel";
+      if(review){if(okAns(q,k))c+=" right";else if(k===a)c+=" wrong"}else if(sel===k)c+=" sel";
       h+=`<button class="${c}" data-act="p7pick" data-id="${id}" data-k="${k}" ${review||locked?"disabled":""}><span class="optl">(${L[k]})</span><span>${esc(t)}</span></button>`});
     h+=`</div>`;
-    if(review){const g=a===q.a;
-      h+=`<div class="exp ${g?"":"isbad"}"><p class="verdict">${g?"答對":"答錯．你選 ("+L[a]+")"}，正解 (${L[q.a]})</p>
+    if(review){const g=okAns(q,a);
+      h+=`<div class="exp ${g?"":"isbad"}"><p class="verdict">${g?"答對":"答錯．你選 ("+L[a]+")"}，正解 ${keyTxt(q)}</p>
         ${q.trans?`<div class="qtrans"><strong>${isP6?"句子翻譯":"題目翻譯"}　</strong>${esc(q.trans)}</div>`:""}
         ${q.e?`<p class="qexp-text"><strong>詳解　</strong>${esc(q.e)}</p>`:""}
         ${q.w?`<div class="qopt-breakdown"><strong>其他選項　</strong>${esc(q.w)}</div>`:""}</div>`}
@@ -759,7 +762,7 @@ function vPset(){
 
 function vPrac(){
   const p=st.pr,id=p.ids[p.i];let ok=0,done=0;
-  p.ids.forEach(x=>{if(p.ans[x]!==undefined){done++;if(p.ans[x]===QM[x].q.a)ok++}});
+  p.ids.forEach(x=>{if(p.ans[x]!==undefined){done++;if(okAns(QM[x].q,p.ans[x]))ok++}});
   let h=`${backHome}<h1>${p.title||"隨機抽考"}</h1><p class="sub">${scopeName(p.scope||"toeic")}${p.timed?`．<span id="timer">${timerText()}</span>`:""}</p>`;
   if(done===p.ids.length)h+=`<div class="result"><p><strong>完成：答對 ${ok}／${p.ids.length}（${Math.round(ok/p.ids.length*100)}%）${p.timed&&p.end?`．用時 ${fmtDur(p.end-p.start)}`:""}</strong></p>${p.timed?`<p class="note" style="margin-top:-6px">檢討時把錯題分成兩類記下來：結構／文法錯 → 寫「漏看了哪個訊號」；單字／搭配錯 → 只抄核心搭配詞組。</p>`:""}
   <div class="row-btns"><button class="btn primary" data-act="pstartAgain">再抽一回</button><button class="btn" data-act="go" data-v="home">回目錄</button></div></div>`;
@@ -776,7 +779,7 @@ function vReport(){
   const tags=scopeTags(),stat={};tags.forEach(k=>stat[k]={d:0,o:0,wr:[]});
   let D=0,O=0;
   scopeIds().forEach(id=>{const a=st.ans[id];if(a===undefined)return;const {q}=QM[id];const s=stat[q.g];
-    if(s){s.d++;D++;if(a===q.a){s.o++;O++}else s.wr.push(id)}});
+    if(s){s.d++;D++;if(okAns(q,a)){s.o++;O++}else s.wr.push(id)}});
   let h=`${backHome}<h1>錯題分析</h1>`;
   if(!D)return h+`<p class="sub">${scopeName()}</p><p style="margin-top:22px">還沒有作答紀錄。完成一份試卷後，這裡會列出各概念的答對率與補強建議。</p>`;
   h+=`<p class="sub">${scopeName()}．作答 ${D} 題，答對 ${O} 題（${Math.round(O/D*100)}%）．不含抽考</p><h2>各概念答對率</h2><div>`;
