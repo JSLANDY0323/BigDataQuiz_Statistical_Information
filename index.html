@@ -285,6 +285,21 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;backgroun
 .speed{border:1px solid var(--ink);border-radius:10px;padding:14px 16px;margin:14px 0 4px;font-size:.95rem}
 .speed b{font-variant-numeric:tabular-nums}
 .toprow .name{font-weight:700;font-size:1.08rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.chips button{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:999px;padding:5px 12px;font-size:.82rem;cursor:pointer}
+.chips button.on{border-color:var(--ink);background:var(--ink);color:var(--on-ink)}
+.chartwrap{position:relative;margin:6px 0 2px}
+.chartwrap h3{margin:14px 0 2px;font-size:.88rem;font-weight:600}
+.chart{display:block;width:100%;height:auto;overflow:visible}
+.ch-grid{stroke:var(--line);stroke-width:1}
+.ch-line{fill:none;stroke:var(--ink);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.ch-dot{fill:var(--bg);stroke:var(--ink);stroke-width:2}
+.ch-hit{fill:transparent;stroke:none;cursor:pointer}
+.chart text{stroke:none}
+.ch-txt{fill:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.ch-val{fill:var(--ink);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.chtip{position:absolute;pointer-events:none;background:var(--ink);color:var(--on-ink);font-size:.78rem;padding:6px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-110%);display:none;z-index:5}
+.trend{font-size:.92rem;margin:4px 0 0}
 .tree>li>.toprow{min-height:60px}
 @media (max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}.stbl{font-size:.84rem}.stbl th,.stbl td{padding:8px 4px}}
 @media (prefers-reduced-motion:no-preference){.exp{animation:in .2s ease-out}@keyframes in{from{opacity:0}}}
@@ -873,6 +888,62 @@ function vReport(){
   return h;
 }
 
+/* ---------- 進步曲線：只畫有作答的日子 ---------- */
+const CAT_ORDER=["TOEIC Part 5","TOEIC Part 6","TOEIC Part 7","統計學","巨量資料概論","AI應用規劃師（初級）","AI應用規劃師（中級）","其他"];
+function firstOnly(L){const seen=new Set();return L.filter(r=>{if(seen.has(r.id))return false;seen.add(r.id);return true})}
+function niceTime(v){const c=[30e3,60e3,90e3,120e3,180e3,240e3,300e3,600e3,900e3,1200e3,1800e3,3600e3];for(const x of c)if(x>=v*1.08)return x;return Math.ceil(v/3600e3)*3600e3}
+function lineChart(pts,o){ // pts:[{lab,y,tip}]（y 為 null 時不畫點）
+  const W=Math.round(Math.max(300,Math.min(680,(app.clientWidth||640)))),H=160,ml=46,mr=18,mt=18,mb=26,n=pts.length,iw=W-ml-mr,ih=H-mt-mb;
+  const X=i=>n===1?ml+iw/2:ml+i*iw/(n-1),Y=v=>mt+ih*(1-v/o.max);
+  let g="";o.ticks.forEach(t=>{const y=Y(t).toFixed(1);g+=`<line class="ch-grid" x1="${ml}" x2="${W-mr}" y1="${y}" y2="${y}"/><text class="ch-txt" x="${ml-8}" y="${(+y+4).toFixed(1)}" text-anchor="end">${o.fmt(t)}</text>`});
+  const step=Math.max(1,Math.ceil(n/6));
+  pts.forEach((p,i)=>{if(i%step===0||i===n-1)g+=`<text class="ch-txt" x="${X(i).toFixed(1)}" y="${H-6}" text-anchor="middle">${p.lab}</text>`});
+  let d="",pen=false;pts.forEach((p,i)=>{if(p.y==null){pen=false;return}d+=(pen?"L":"M")+X(i).toFixed(1)+" "+Y(p.y).toFixed(1);pen=true});
+  let dots="",hits="";pts.forEach((p,i)=>{if(p.y==null)return;const x=X(i).toFixed(1),y=Y(p.y).toFixed(1);
+    dots+=`<circle class="ch-dot" cx="${x}" cy="${y}" r="4"/>`;
+    hits+=`<circle class="ch-hit" cx="${x}" cy="${y}" r="14" data-tip="${esc(p.tip)}"><title>${esc(p.tip)}</title></circle>`});
+  const li=pts.map(p=>p.y!=null).lastIndexOf(true);
+  const last=li>=0?`<text class="ch-val" x="${X(li).toFixed(1)}" y="${(Y(pts[li].y)-10).toFixed(1)}" text-anchor="${n>1?"end":"middle"}">${o.fmt(pts[li].y)}</text>`:"";
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label)}">${g}<path class="ch-line" d="${d}"/>${dots}${last}${hits}</svg>`;
+}
+function vTrend(L){
+  const cats=CAT_ORDER.filter(c=>L.some(r=>tlogCat(r)===c));
+  if(!cats.length)return "";
+  let cat=st.chartCat;if(!cats.includes(cat)){const lastR=L[L.length-1];cat=tlogCat(lastR)}
+  let rows=L.filter(r=>tlogCat(r)===cat);const first=!!st.chartFirst;
+  if(first)rows=firstOnly(rows);
+  const days={};rows.forEach(r=>{const k=dayKey(r.t);(days[k]=days[k]||[]).push(r)});
+  const keys=Object.keys(days).sort(),agg=keys.map(k=>({k,a:aggTime(days[k])}));
+  let h=`<h2>進步曲線</h2><p class="note">只畫有作答的日子；每一科分開計算</p>
+  <div class="chips">${cats.map(c=>`<button class="${c===cat?"on":""}" data-act="chartCat" data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+  <div class="chips"><button class="${first?"":"on"}" data-act="chartFirst" data-v="0">含重做</button><button class="${first?"on":""}" data-act="chartFirst" data-v="1">只算第一次作答</button></div>`;
+  if(!agg.length)return h+`<p style="margin-top:14px">這個範圍還沒有紀錄。</p>`;
+  const lab=k=>k.slice(5).replace("-","/");
+  const accPts=agg.map(({k,a})=>({lab:lab(k),y:a.acc*100,tip:`${lab(k)}．${a.n} 題．正確率 ${Math.round(a.acc*100)}%`}));
+  const tPts=agg.map(({k,a})=>({lab:lab(k),y:a.tn?a.avg:null,tip:`${lab(k)}．${a.tn} 題計時．平均 ${fmtDur(a.avg)}／題`}));
+  const tMax=niceTime(Math.max(...agg.map(x=>x.a.tn?x.a.avg:0),1));
+  const A0=agg[0].a,A1=agg[agg.length-1].a;
+  if(agg.length>1){
+    const dAcc=Math.round(A1.acc*100)-Math.round(A0.acc*100);
+    h+=`<p class="trend">${agg.length} 天．正確率 ${Math.round(A0.acc*100)}% → <b>${Math.round(A1.acc*100)}%</b>（${dAcc>=0?"+":""}${dAcc}）`+
+      (A0.tn&&A1.tn?`．平均每題 ${fmtDur(A0.avg)} → <b>${fmtDur(A1.avg)}</b>（${A1.avg<=A0.avg?"快了":"慢了"} ${fmtDur(Math.abs(A1.avg-A0.avg))}）`:"")+`</p>`;
+  }else h+=`<p class="trend">目前只有 1 天的紀錄，再練一天就能看到變化。</p>`;
+  h+=`<div class="chartwrap"><div class="chtip" id="chtip"></div>
+    <h3>正確率</h3>${lineChart(accPts,{max:100,ticks:[0,50,100],fmt:v=>Math.round(v)+"%",label:cat+" 每日正確率"})}
+    <h3>平均每題時間</h3>${lineChart(tPts,{max:tMax,ticks:[0,tMax/2,tMax],fmt:v=>fmtDur(v),label:cat+" 每日平均每題時間"})}</div>`;
+  return h;
+}
+function chartTip(e){
+  const tip=document.getElementById("chtip");if(!tip)return;
+  const t=e.target&&e.target.closest?e.target.closest("[data-tip]"):null;
+  if(!t){tip.style.display="none";return}
+  const wrap=tip.parentElement.getBoundingClientRect(),r=t.getBoundingClientRect();
+  tip.textContent=t.dataset.tip;tip.style.left=(r.left+r.width/2-wrap.left)+"px";tip.style.top=(r.top+r.height/2-wrap.top)+"px";tip.style.display="block";
+}
+document.addEventListener("pointerover",chartTip);
+let chartRW=0;window.addEventListener("resize",()=>{clearTimeout(chartRW);chartRW=setTimeout(()=>{if(st.view==="stats"&&DATA_READY)render()},200)});
+document.addEventListener("pointerdown",chartTip);
+
 /* ---------- 刷題統計：正確率與速度 ---------- */
 function vStats(){
   const L=st.tlog||[],today=dayKey(now()),T=todayAgg();
@@ -888,6 +959,7 @@ function vStats(){
     const diff=T.tn?R.avg-T.avg:0;
     h+=`<div class="speed">目前速度：最近 ${recent.length} 題平均 <b>${fmtDur(R.avg)}</b>／題，正確率 <b>${pct(R)}</b>${T.tn&&Math.abs(diff)>=1000?`．比今日平均${diff<0?"快":"慢"} ${fmtDur(Math.abs(diff))}`:""}</div>`;
   }
+  h+=vTrend(L);
   const todays=L.filter(r=>dayKey(r.t)===today);
   if(todays.length){
     const cats={};todays.forEach(r=>{const c=tlogCat(r);(cats[c]=cats[c]||[]).push(r)});
@@ -902,7 +974,7 @@ function vStats(){
     keys.forEach(k=>{const a=aggTime(days[k]);h+=`<tr class="${k===today?"hl":""}"><td>${k.slice(5).replace("-","/")}${k===today?"（今天）":""}</td><td>${a.n}</td><td>${pct(a)}</td><td>${avg(a)}</td><td>${a.tn?fmtDur(a.ms):"—"}</td></tr>`});
     h+=`</tbody></table>`;
   }else h+=`<p style="margin-top:22px">還沒有計時紀錄。開始做題後，每題送出答案時會自動記錄用時。</p>`;
-  h+=`<p class="note" style="margin-top:18px">計時規則：題目顯示時開始計時；切換到其他分頁或 App、或換到別題後再回來，會從 0 重新計時。抽考與每日 15 題也列入統計。紀錄保留 ${TLOG_DAYS} 天，並隨跨裝置同步。<br>多益常見的時間分配參考：Part 5 每題約 20–30 秒、Part 6 每題約 30–40 秒、Part 7 每題約 1 分鐘。</p>`;
+  h+=`<p class="note" style="margin-top:18px">計時規則：題目顯示時開始計時；切換到其他分頁或 App、或換到別題後再回來，會從 0 重新計時。抽考與每日 15 題也列入統計。清除作答紀錄或錯題重做不會刪除這裡的歷史，重做會再記一筆（可切換「只算第一次作答」）。紀錄保留 ${TLOG_DAYS} 天，並隨跨裝置同步。<br>多益常見的時間分配參考：Part 5 每題約 20–30 秒、Part 6 每題約 30–40 秒、Part 7 每題約 1 分鐘。</p>`;
   return h;
 }
 
@@ -1017,6 +1089,8 @@ document.addEventListener("click",e=>{
     case"retryWrong":{let f=-1;ex.qs.forEach((q,i)=>{const id=ex.id+"-"+i;if(isWrong(id)){delAns(id);if(f<0)f=i}});
       if(f<0){showToast("本卷沒有錯題");return}st.cur[ex.id]=f;scroll=toTop;break}
     case"theme":applyTheme(d.v);renderTopbar();return;
+    case"chartCat":st.chartCat=d.c;persist();render();return;
+    case"chartFirst":st.chartFirst=d.v==="1";persist();render();return;
     case"jumpblank":{const el=document.getElementById("blank-"+d.n),pl=document.getElementById("paneL");
       if(el&&pl){pl.scrollTop+=el.getBoundingClientRect().top-pl.getBoundingClientRect().top-pl.clientHeight/3;el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1200)}return}
     case"jumpq":{const el=document.getElementById("rq-"+d.n),pr=document.getElementById("paneR");
